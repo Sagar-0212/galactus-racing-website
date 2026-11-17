@@ -2,7 +2,7 @@
 // gsap.matchMedia: desktop (>= 900px) gets pins + parallax; under 900px no pinning and lighter reveals;
 // prefers-reduced-motion skips every animation and shows final states.
 import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens } from './core.js';
-import { heroEls, watchStage, heroScroll, heroIntro } from './hero.js';
+import { heroEls, heroScroll, heroIntro, startLights, carTilt } from './hero.js';
 import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl };
@@ -12,7 +12,6 @@ export function initHomeMotion(root, { onActive } = {}) {
   tokens();
   const lenis = smoothScroll();
   const H = heroEls(root);
-  watchStage(H);
   chrome(root, onActive);
 
   const mm = gsap.matchMedia();
@@ -26,20 +25,23 @@ export function initHomeMotion(root, { onActive } = {}) {
     reveals([...root.querySelectorAll('[data-reveal]')], !desktop);
     counts(root);
     journey(root, false);
-    heroScroll(H);
+    heroScroll(H, desktop);
     wedgeRise(root);
     const stopMarq = marquee(root);
+    let stopTilt = null;
     if (desktop) {
+      stopTilt = carTilt(H);
       carsPin(root);
       parallax([...root.querySelectorAll('[data-speed],[data-hx]')].filter((el) => !el.matches('.gal__col')));
       galTweens = parallax(galCols());
     }
-    return () => { if (stopMarq) stopMarq(); galTweens = []; };
+    return () => { if (stopMarq) stopMarq(); if (stopTilt) stopTilt(); galTweens = []; };
   });
 
   return {
     lenis,
-    intro: () => { if (!matchMedia(REDUCE).matches) heroIntro(root); },
+    // Start lights, then the hero intro. Reduced motion: loader goes, final hero shows at once.
+    intro: (loader) => startLights(loader, () => { if (!matchMedia(REDUCE).matches) heroIntro(H); }, { skip: matchMedia(REDUCE).matches }),
     refresh: () => ScrollTrigger.refresh(),
     // Gallery grid was re-rendered (filter / column change): new reveals + column parallax.
     refreshGallery(grid) {

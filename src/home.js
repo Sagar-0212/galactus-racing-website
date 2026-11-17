@@ -196,8 +196,7 @@ let shown = false;
 function show() {
   if (shown) return; shown = true;
   const ld = $('[data-loader]');
-  if (ld) { ld.style.opacity = 0; ld.style.visibility = 'hidden'; ld.style.pointerEvents = 'none'; }
-  motion.intro();
+  motion.intro(ld);
   motion.refresh();
   const id = decodeURIComponent((location.hash || '').slice(1));
   if (id && document.getElementById(id)) setTimeout(() => go(id, true), 60);

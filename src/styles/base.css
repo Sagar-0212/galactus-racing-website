@@ -2,7 +2,6 @@
    Smooth scrolling is Lenis (src/motion/core.js); no CSS scroll-behavior, so there is only one smoother. */
 @import '../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css';
 
-@keyframes gr-load { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 body { margin: 0; background: var(--surface-page); }
 a { color: inherit; }
 a:hover { color: var(--accent); }

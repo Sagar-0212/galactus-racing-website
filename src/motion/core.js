@@ -29,13 +29,16 @@ export function tokens() {
 }
 
 // Smooth scroll. Not created under prefers-reduced-motion (native scroll, instant jumps).
-let lenis = null;
+let lenis = null, lastScroll = -1e9;
+// True while the page moves (and 150ms after). Hover effects use it so cards sliding under a still
+// cursor during a wheel scroll don't start hover transitions (they repaint every frame).
+export const isScrolling = () => performance.now() - lastScroll < 150;
 export function smoothScroll(opts = {}) {
   if (lenis || matchMedia(REDUCE).matches) return lenis;
   lenis = new Lenis({ autoRaf: false, ...opts });
   // Smooth (wheel) scrolls update ScrollTrigger in the same tick. Native scrolls (touch, keyboard,
   // scrollbar) are already seen by ScrollTrigger's own listener; updating twice forces a second reflow.
-  lenis.on('scroll', (l) => { if (l.isScrolling !== 'native') ScrollTrigger.update(); });
+  lenis.on('scroll', (l) => { lastScroll = performance.now(); if (l.isScrolling !== 'native') ScrollTrigger.update(); });
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
   return lenis;

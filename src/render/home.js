@@ -8,30 +8,31 @@ const spec = (car, k) => (car.specs.find((s) => s.k === k) || {}).v || '';
 export function hero({ cars }) {
   const car = cars.find((c) => c.current) || cars[0];
   const heroSpec = [car.name, spec(car, 'Weight'), spec(car, 'Top speed')];
-  const layer = (name) =>
-    `<div class="hero__layer hero__layer--${name}" data-l="${name}"><div class="hero__in" data-in="${name}"><img src="/assets/hero-l-${name}.webp" width="1724" height="912" decoding="async" alt="" draggable="false"></div></div>`;
+  // Layers: [data-l] wrappers are driven by the scroll timeline, [data-in] children by the intro,
+  // so the two never fight over the same transform.
   return `<section id="home" class="hero" data-hero="" data-sector-label="S01 / Home">
     <div class="hero__sticky" data-hero-sticky="">
-      <h1 class="sr-only">Galactus Racing — Freedom for failure</h1>
-      <div class="hero__stage" data-stage="">
-        <div class="hero__bg" aria-hidden="true"></div>
-        ${layer('wedge')}${layer('galactus')}${layer('racing')}
-        <div class="hero__car" data-l="car">
+      <div class="hero__wedge-l" data-l="wedge" aria-hidden="true"><div class="hero__wedge" data-in="wedge"></div></div>
+      <h1 class="hero__title">
+        <span class="hero__word hero__word--g" data-l="galactus"><span class="hero__ink" data-in="galactus">Galactus</span></span>
+        <span class="hero__word hero__word--r" data-l="racing"><span class="hero__ink" data-in="racing">Racing</span></span>
+        <span class="sr-only"> — Freedom for failure</span>
+      </h1>
+      <div class="hero__car" data-l="car">
+        <div class="hero__car-tilt" data-car-tilt="">
           <div class="hero__car-in" data-in="car">
-            <img data-hero-main="" fetchpriority="high" src="/assets/hero-car-clean.png" width="1015" height="645" decoding="async" alt="Team Galactus Racing Baja car Abhimanyu, number M04" draggable="false">
+            <span class="hero__streak" data-streak="" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="hero__dust" data-dust="" aria-hidden="true">${'<i></i>'.repeat(8)}</span>
+            <img data-hero-main="" fetchpriority="high" src="/assets/hero-car.webp" srcset="/assets/hero-car-640.webp 640w, /assets/hero-car.webp 995w" sizes="(min-width: 900px) 60vw, 100vw" width="995" height="604" decoding="async" alt="Team Galactus Racing Baja car Abhimanyu, number M04" draggable="false">
           </div>
         </div>
-        <div class="hero__details" data-l="details">
-          <a href="#about" class="hero__scroll" aria-label="Scroll to next section"><span class="hero__scroll-line"></span>Scroll ↓</a>
-          <span class="hero__spec">${heroSpec.map((s) => `<span>${t(s)}</span>`).join('')}</span>
-        </div>
+      </div>
+      <div class="hero__details" data-l="details">
+        <span class="hero__spec" data-hero-spec="">${heroSpec.map((s) => `<span>${t(s)}</span>`).join('')}</span>
+        <a href="#about" class="hero__scroll" data-hero-scroll="" aria-label="Scroll to next section"><span class="hero__scroll-line"></span>Scroll ↓</a>
       </div>
       <div class="hero__badge" data-hero-badge="">
         <div class="hero__badge-text"><span>Baja SAE India</span><span>Est. 2008</span></div>
-      </div>
-      <div class="hero__narrow" data-hero-narrow="">
-        <img src="/assets/logo-gr.png" width="640" height="446" alt="Galactus Racing logo" class="hero__narrow-logo">
-        ${headline({ as: 'p', size: 'xl', text: 'Galactus Racing.', accent: 'Racing.' })}
       </div>
       <div class="hero__ui" data-hero-ui="">
         ${button({ label: 'Meet our cars', iconRight: '→', attr: { 'data-go': 'cars' } })}
@@ -291,9 +292,8 @@ export function contactSection({ contact }) {
 
 export function loader() {
   return `<div class="loader" data-loader="" role="status" aria-label="Loading Galactus Racing">
-    <img src="/assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" class="loader__logo">
-    <div class="loader__track"><div class="loader__bar"></div></div>
-    <span class="loader__text">Warming up the engine</span>
+    <div class="loader__lights" aria-hidden="true"><i data-light=""></i><i data-light=""></i><i data-light=""></i></div>
+    <span class="loader__text" data-loader-text="">S00 / Start</span>
   </div>`;
 }
 

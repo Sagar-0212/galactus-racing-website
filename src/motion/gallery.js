@@ -1,13 +1,16 @@
 // Gallery card hover (state via the .is-hover class in CSS, mouse tilt here) and lightbox transitions.
-import { gsap, tokens, REDUCE } from './core.js';
+import { gsap, tokens, REDUCE, isScrolling } from './core.js';
 
 const reduced = () => matchMedia(REDUCE).matches;
 
 export function bindCard(c) {
   const img = c.querySelector('[data-gimg]');
   let r = null;
-  c.addEventListener('pointerenter', (e) => { c.classList.add('is-hover'); if (e.pointerType === 'mouse') r = c.getBoundingClientRect(); });
+  // Mouse: hover starts on the first real pointer move that isn't caused by the page scrolling.
+  const enter = (e) => { if (e.pointerType === 'mouse' && isScrolling()) return false; c.classList.add('is-hover'); if (e.pointerType === 'mouse') r = c.getBoundingClientRect(); return true; };
+  c.addEventListener('pointerenter', enter);
   c.addEventListener('pointermove', (e) => {
+    if (!c.classList.contains('is-hover') && !enter(e)) return;
     if (!r || reduced() || e.pointerType !== 'mouse') return;
     const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
     c.style.transform = 'rotateX(' + (-y * 7).toFixed(2) + 'deg) rotateY(' + (x * 9).toFixed(2) + 'deg)';

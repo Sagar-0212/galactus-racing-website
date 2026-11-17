@@ -18,10 +18,10 @@ Visitors: company sponsors on laptops, students on mid-range Android phones, jud
 | `src/home.js`, `src/team.js` | Page behaviour: menu, gallery filter, lightbox, enquiry form |
 | `src/motion/` | GSAP + ScrollTrigger + Lenis (Prompt 3). `core.js` = plugins, token durations/easings, Lenis, `reveal()`; `hero.js`, `effects.js` (chrome, counts, bars, journey, parallax, cars pin, marquee, wedge), `gallery.js` (hover, lightbox), `index.js` = `initHomeMotion` / `initTeamMotion` with `gsap.matchMedia` |
 | `src/styles/*.css` | `base.css` (tokens import, header, menu, footer), `components.css` (design-system components), `home.css`, `team.css` |
-| `public/assets/` | Images shipped as-is: logo, favicon, hero layers, car cut-out `hero-car-clean.png` (= Abhimanyu, M04), `photos/abhimanyu-real-01.jpg`, `gallery/g8.webp` |
+| `public/assets/` | Images shipped as-is: logo, favicon, car cut-out `hero-car.webp` + `hero-car-640.webp` (= Abhimanyu, M04; cleaned from `archive/assets/hero-car-clean.png`). The hero headline and wedge are HTML/CSS, `photos/abhimanyu-real-01.jpg`, `gallery/g8.webp` |
 | `_ds/mtvna-design-system-*/` | **Our design system** (tokens, fonts, rules in `readme.md`) |
 | `archive/claude-design/` | The original Claude Design source (`.dc.html` pages, runtime, export). **Visual reference** for "how it looked before". Serve the repo root (`archive` config in `.claude/launch.json`) and open `/archive/claude-design/Galactus%20Racing.dc.html` |
-| `archive/assets/` | Images no page uses (hero-bg, hero-full, hero-galactus, hero-car png/webp) |
+| `archive/assets/` | Images no page uses (hero-bg, hero-full, hero-galactus, hero-car png/webp, old hero-l-* text layers, hero-car-clean.png original) |
 | `archive/baja-website/` | Old first draft. Ignore |
 | `uploads/`, `scraps/` | Reference images only. Don't ship |
 
@@ -29,7 +29,7 @@ Don't build anything inside `.dc.html` any more; the archive is reference only.
 
 ## Hero car: Abhimanyu (M04)
 - **Abhimanyu (M04) is our current car and THE car the landing page showcases.** The old placeholder name "GR-26 Valkyrie" is gone everywhere (hero spec strip, cars section, evolution row, gallery captions, data, admin seed).
-- Hero: Abhimanyu is the main visual. Cut-out: `public/assets/hero-car-clean.png`. Real photo: `public/assets/photos/abhimanyu-real-01.jpg`.
+- Hero: Abhimanyu is the main visual. Cut-out: `public/assets/hero-car.webp` (srcset with `hero-car-640.webp`). Real photo: `public/assets/photos/abhimanyu-real-01.jpg`.
 - Cars section: Abhimanyu comes first and gets the big scroll-driven showcase (Prompt 5). Older cars become a smaller "previous cars" row after it.
 - The hero spec strip reads its values from the current car in `src/data/cars.json` (single source).
 - Abhimanyu's specs are **not verified**: every value is marked `[TODO]`; top speed shows `[TODO] km/h` until confirmed (the old site said 38 in the hero and 58 in the table).
@@ -61,7 +61,7 @@ Use tokens from `_ds/.../tokens/*.css`. Never hard-code a colour, font size, eas
 - Use `gsap.matchMedia()`: desktop gets pins and parallax; under 900px **no pinning** for the cars track (vertical stack); `prefers-reduced-motion` shows final states instantly.
 
 ## Performance limits
-- Total page weight on first load under 1.5MB on mobile. Images WebP/AVIF, `srcset`, lazy below the fold. Don't preload PNGs when a WebP exists (today `hero-car-clean.png` is a 970KB preload).
+- Total page weight on first load under 1.5MB on mobile. Images WebP/AVIF, `srcset`, lazy below the fold. Don't preload PNGs when a WebP exists.
 - Keep unused heavy files out of `public/` (anything there ships). Unused originals live in `archive/assets/`.
 - 3D: GLB under 2MB (Draco/Meshopt), lazy-loaded, render paused off-screen, DPR max 1.5, static image fallback on phones.
 - Target: Lighthouse mobile performance 85+, 60fps scroll on a mid-range laptop.
