@@ -1,0 +1,9 @@
+[
+  { "id": "chassis", "label": "Chassis", "desc": "Designs and fabricates the roll cage: tube selection, FEA, jigs and welding. Every other system bolts onto their work." },
+  { "id": "power", "label": "Powertrain", "desc": "Engine mounting, CVT tuning and gearbox design. They turn 10 HP into acceleration and hill-climb pace." },
+  { "id": "susp", "label": "Suspension", "desc": "Geometry, shocks and knuckles. They decide how the car lands jumps, ruts and rocks." },
+  { "id": "brakes", "label": "Brakes", "desc": "Hydraulic system, rotors and calipers. The car must lock all four wheels at inspection, every time." },
+  { "id": "elec", "label": "Electrical", "desc": "Kill switches, brake lights, wiring harness and the data-logging sensors we test with." },
+  { "id": "mfg", "label": "Manufacturing", "desc": "Machining, CNC, process planning and quality checks. They turn CAD into parts on time." },
+  { "id": "biz", "label": "Business & Marketing", "desc": "Sponsorship, cost report, business presentation, social media and this website." }
+]

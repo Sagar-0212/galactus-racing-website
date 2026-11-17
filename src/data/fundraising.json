@@ -1,0 +1,13 @@
+{
+  "raised": 780000,
+  "goal": 1200000,
+  "todo": true,
+  "budget": [
+    { "id": "b1", "label": "Materials & parts", "amount": 420000 },
+    { "id": "b2", "label": "Testing & tooling", "amount": 220000 },
+    { "id": "b3", "label": "Travel & logistics", "amount": 240000 },
+    { "id": "b4", "label": "Registration", "amount": 180000 },
+    { "id": "b5", "label": "Safety gear", "amount": 140000 }
+  ],
+  "interestOptions": ["Bronze", "Silver", "Gold", "Title", "In-kind (parts / services)", "Individual donation"]
+}

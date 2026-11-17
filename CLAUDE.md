@@ -7,29 +7,42 @@ Website for **Galactus Racing**, the Baja SAE team of Rajarambapu Institute of T
 Goal, in order: 1) win sponsors (Invest in Us), 2) recruit students (Join), 3) show the cars and results.
 Visitors: company sponsors on laptops, students on mid-range Android phones, judges, alumni.
 
-## What's in the folder (exported from Claude Design)
+## What's in the folder (converted to Vite, Prompt 2)
 | Path | What it is |
 |---|---|
-| `Galactus Racing.dc.html` | **Home page, the main site.** 10 sections: hero (pinned), about, journey, cars (pinned horizontal), achievements, gallery + lightbox, sponsors, invest (packages + enquiry form), contact, footer |
-| `Team.dc.html` | Team page: intro, leadership, sub-teams, recruitment |
-| `Galactus Admin.dc.html` + `admin-api.js` | Admin panel. Uses a **mock** API in localStorage (login admin / galactus). Not connected to the public pages yet |
-| `hero-car-3d.html` | Experiment: a buggy built from Three.js primitives. Not used on the site |
-| `export/Galactus-Racing.html` | Standalone bundle of the home page. **This is the visual reference** for "how it looks today" |
-| `support.js`, `image-slot.js`, `.image-slots.state.json` | Claude Design runtime. Needed only to view `.dc.html` files |
+| `index.html` | **Home page.** 10 sections: hero (pinned), about, journey, cars (pinned horizontal), achievements, gallery + lightbox, sponsors, invest (packages + enquiry form), contact, footer. Body is `<!-- @render … -->` markers filled at build time |
+| `team.html` | Team page: intro, leadership, sub-teams, recruitment |
+| `admin.html` | Admin panel, **dev only** (not in the production build). Still runs on the Claude Design runtime (`src/admin/support.js`, loads React from a CDN) with the **mock** API in `src/admin/admin-api.js`. Rebuild it when the real backend exists |
+| `src/data/*.json` | **All content** (stats, cars, evolution, journey, achievements, gallery, team, subteams, sponsors, packages, fundraising, contact). Unverified facts carry `[TODO]` |
+| `src/render/*.js` | Turns the JSON into HTML. `ui.js` = design-system components (Button, Card, Headline…), `layout.js` = header/menu/footer, `home.js`, `team.js`. Run at build time by the plugin in `vite.config.js`; the gallery grid is also re-rendered at runtime |
+| `src/home.js`, `src/team.js` | Page behaviour: menu, gallery filter, lightbox, enquiry form |
+| `src/motion/legacy.js` | The original `frame()` animation loop, ported as-is. Replaced by GSAP/ScrollTrigger/Lenis in Prompt 3 |
+| `src/styles/*.css` | `base.css` (tokens import, header, menu, footer), `components.css` (design-system components), `home.css`, `team.css` |
+| `public/assets/` | Images shipped as-is: logo, favicon, hero layers, car cut-out `hero-car-clean.png` (= Abhimanyu, M04), `photos/abhimanyu-real-01.jpg`, `gallery/g8.webp` |
 | `_ds/mtvna-design-system-*/` | **Our design system** (tokens, fonts, rules in `readme.md`) |
-| `assets/` | Real images: logo, favicon, hero layers, car cut-out (`hero-car*.png/webp` = our car "Abhimanyu", M04) |
-| `baja-website/` | **Old first draft** (Teko/Barlow, orange). Ignore it. Move it to `/archive` |
+| `archive/claude-design/` | The original Claude Design source (`.dc.html` pages, runtime, export). **Visual reference** for "how it looked before". Serve the repo root (`archive` config in `.claude/launch.json`) and open `/archive/claude-design/Galactus%20Racing.dc.html` |
+| `archive/assets/` | Images no page uses (hero-bg, hero-full, hero-galactus, hero-car png/webp) |
+| `archive/baja-website/` | Old first draft. Ignore |
 | `uploads/`, `scraps/` | Reference images only. Don't ship |
 
-`.dc.html` is Claude Design's own format (`<x-dc>`, `{{ }}` templates, a `DCLogic` class, `support.js` runtime). **We are converting it to normal code.** Don't build new features inside `.dc.html`.
+Don't build anything inside `.dc.html` any more; the archive is reference only.
+
+## Hero car: Abhimanyu (M04)
+- **Abhimanyu (M04) is our current car and THE car the landing page showcases.** The old placeholder name "GR-26 Valkyrie" is gone everywhere (hero spec strip, cars section, evolution row, gallery captions, data, admin seed).
+- Hero: Abhimanyu is the main visual. Cut-out: `public/assets/hero-car-clean.png`. Real photo: `public/assets/photos/abhimanyu-real-01.jpg`.
+- Cars section: Abhimanyu comes first and gets the big scroll-driven showcase (Prompt 5). Older cars become a smaller "previous cars" row after it.
+- The hero spec strip reads its values from the current car in `src/data/cars.json` (single source).
+- Abhimanyu's specs are **not verified**: every value is marked `[TODO]`; top speed shows `[TODO] km/h` until confirmed (the old site said 38 in the hero and 58 in the table).
+- Older cars (GR-25 Raptor, GR-24 Titan, GR-01/05/09/12): names, years and specs are AI placeholders, all `[TODO]`.
+- The full list of facts to confirm is in `docs/TODO-FACTS.md`.
 
 ## Target stack (after conversion)
-- **Vite, multi-page, vanilla JS + CSS.** Pages: `index.html`, `team.html`, `admin.html`. No React (keep it simple to maintain).
+- **Vite 8, multi-page, vanilla JS + CSS.** Pages: `index.html`, `team.html` (built), `admin.html` (dev only). No React on the public pages.
 - Content lives in `src/data/*.json` (stats, cars, journey, achievements, gallery, team, sponsors, packages, contact), shaped like the `SEED` in `admin-api.js`, so the admin panel and a future backend can feed it later.
 - Animation: **GSAP + ScrollTrigger**, **Lenis** smooth scroll driven from the GSAP ticker (`lenis.on('scroll', ScrollTrigger.update)`, `gsap.ticker.add(t => lenis.raf(t*1000))`, `gsap.ticker.lagSmoothing(0)`).
 - 3D: **Three.js** (plain, ES modules via npm). Only in the Cars section, and only if it beats the photo.
 - Before using any GSAP, ScrollTrigger, Lenis or Three.js API, check the current docs (Context7 MCP). Their APIs change.
-- Deploy target: [Vercel / Netlify / GitHub Pages]. Repo: `Sagar-0212/G` (empty right now).
+- Deploy target: **Vercel** (`vercel.json`: build `npm run build`, output `dist`). Not deployed yet. Repo: `Sagar-0212/G` (empty right now).
 
 ## Design system (MTVNA) — follow it
 Use tokens from `_ds/.../tokens/*.css`. Never hard-code a colour, font size, easing or duration that has a token.
@@ -48,22 +61,22 @@ Use tokens from `_ds/.../tokens/*.css`. Never hard-code a colour, font size, eas
 
 ## Performance limits
 - Total page weight on first load under 1.5MB on mobile. Images WebP/AVIF, `srcset`, lazy below the fold. Don't preload PNGs when a WebP exists (today `hero-car-clean.png` is a 970KB preload).
-- Delete unused heavy files from the build (`hero-bg.png` 2.2MB, `hero-galactus.png` 2.4MB) unless something uses them.
+- Keep unused heavy files out of `public/` (anything there ships). Unused originals live in `archive/assets/`.
 - 3D: GLB under 2MB (Draco/Meshopt), lazy-loaded, render paused off-screen, DPR max 1.5, static image fallback on phones.
 - Target: Lighthouse mobile performance 85+, 60fps scroll on a mid-range laptop.
 
 ## Content and honesty
-Much of the current copy was written by AI as a placeholder. **Never invent or "improve" facts.** These must come from me, until then mark them `[TODO]`:
-- Car names: the site says GR-26 Valkyrie / GR-25 Raptor / GR-24 Titan, but our real car is **Abhimanyu (M04)**. Real names: [fill in]
-- Stats (18 years, 35+ competitions, 14 podiums, 42 members, 20+ sponsors), results (P1 MEGA ATV 2025, etc.), awards, journey chapters, fundraising (₹7,78,998 of ₹12,00,000), package prices: [real / placeholder]
-- Hero says top speed 38 km/h, the spec table says 58 km/h. Real: [ ]
-- Email `team@galactusracing.in`, phone, socials, UPI: [real values]
+Much of the current copy was written by AI as a placeholder. **Never invent or "improve" facts.** These must come from me, until then they are marked `[TODO]` in `src/data/*.json` (shown on the page as a small red `[TODO]`). The full checklist is `docs/TODO-FACTS.md`; when I confirm a fact, update the JSON, remove its `[TODO]`, and tick it there.
+- Car names: our current car is **Abhimanyu (M04)** (confirmed). Older car names (GR-25 Raptor, GR-24 Titan, GR-01…12) are placeholders.
+- Stats, results, awards, journey chapters, fundraising (₹7,80,000 of ₹12,00,000), package prices: placeholders.
+- Abhimanyu's top speed: unknown (old site said 38 and 58 km/h).
+- Email `team@galactusracing.in`, phone, socials, UPI: placeholders.
 - Never put bank account numbers on the page. Never ship the mock admin password as real security.
 - Real photos only: our car, our team, our events. Sponsor logos only for sponsors we actually have.
 
 ## How to work with me
 - I'm comfortable with code (backend Java), newer to animation and 3D. Explain choices in short plain English.
 - **One step at a time:** plan → build → verify → commit. Don't start the next step until I say go.
-- **Verify every step yourself** before reporting: run `npm run dev`, use Playwright/Chrome DevTools MCP to screenshot at **1440px and 390px**, scroll through animations in small steps, check the console is clean, and compare against `export/Galactus-Racing.html`. Fix problems first, then report.
+- **Verify every step yourself** before reporting: run `npm run dev`, use Playwright/Chrome DevTools MCP to screenshot at **1440px and 390px**, scroll through animations in small steps, check the console is clean, and compare against the previous commit (or `archive/claude-design/` for the original look). Fix problems first, then report.
 - Report: what changed, what you checked (with numbers), what's left. Short.
 - Git commit after each working step.

@@ -1,0 +1,11 @@
+[
+  { "id": "k1", "kind": "Email", "label": "Team email", "value": "team@galactusracing.in", "primary": true, "todo": true },
+  { "id": "k2", "kind": "Phone", "label": "Team phone", "value": "", "display": "+91 XXXXX XXXXX", "primary": false, "todo": true },
+  { "id": "k3", "kind": "Address", "label": "Workshop", "value": "Galactus Racing Workshop, Rajarambapu Institute of Technology, Rajaramnagar, Islampur, Sangli, Maharashtra 415414", "primary": false },
+  { "id": "k4", "kind": "Instagram", "label": "Instagram", "value": "", "primary": false, "todo": true },
+  { "id": "k5", "kind": "LinkedIn", "label": "LinkedIn", "value": "", "primary": false, "todo": true },
+  { "id": "k6", "kind": "YouTube", "label": "YouTube", "value": "", "primary": false, "todo": true },
+  { "id": "k7", "kind": "Lead", "label": "Lead", "value": "[Name], Business Head", "primary": false },
+  { "id": "k8", "kind": "UPI", "label": "UPI", "value": "[team-upi-id]@bank", "primary": false, "todo": true },
+  { "id": "k9", "kind": "Bank", "label": "Bank", "value": "Shared on request via RIT's official account", "primary": false }
+]

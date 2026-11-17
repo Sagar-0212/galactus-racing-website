@@ -1,0 +1,6 @@
+[
+  { "id": "p1", "name": "Bronze", "price": 25000, "plus": false, "featured": false, "todo": true, "perks": ["Logo on team website", "Social media thank-you", "Partnership certificate"] },
+  { "id": "p2", "name": "Silver", "price": 75000, "plus": false, "featured": false, "todo": true, "perks": ["Everything in Bronze", "Logo on car side panel", "Logo on pit shirts"] },
+  { "id": "p3", "name": "Gold", "price": 200000, "plus": false, "featured": true, "todo": true, "perks": ["Everything in Silver", "Large logo on car body", "Banner at every event", "Campus recruitment session"] },
+  { "id": "p4", "name": "Title", "price": 500000, "plus": true, "featured": false, "todo": true, "perks": ["Team name co-branding", "Nose and hood placement", "Car display at your office"] }
+]

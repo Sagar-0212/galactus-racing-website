@@ -1,0 +1,11 @@
+{
+  "sponsors": [],
+  "tiers": [
+    { "id": "title", "name": "Title", "note": "Co-branding", "height": "120px", "slots": 1, "slotLabel": "Title sponsor logo" },
+    { "id": "gold", "name": "Gold", "note": "Car body", "height": "96px", "slots": 3, "slotLabel": "Gold logo" },
+    { "id": "silver", "name": "Silver", "note": "Side panel", "height": "80px", "slots": 4, "slotLabel": "Silver logo" },
+    { "id": "bronze", "name": "Bronze", "note": "Supporters", "height": "64px", "slots": 5, "slotLabel": "Supporter logo" }
+  ],
+  "marquee": ["Title sponsor", "Gold partner", "Silver partner", "Your brand here"],
+  "benefits": ["Brand visibility", "Networking", "Recruitment access", "CSR value", "Logo on the car"]
+}

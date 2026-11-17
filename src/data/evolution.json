@@ -1,0 +1,9 @@
+[
+  { "id": "e1", "year": "2009", "name": "GR-01", "note": "First car. Steel frame, solid axle. [TODO]" },
+  { "id": "e2", "year": "2013", "name": "GR-05", "note": "First independent front suspension. [TODO]" },
+  { "id": "e3", "year": "2017", "name": "GR-09", "note": "Switched to CVT. [TODO]" },
+  { "id": "e4", "year": "2020", "name": "GR-12", "note": "First chromoly chassis, −22 kg. [TODO]" },
+  { "id": "e5", "year": "2024", "name": "GR-24 Titan", "note": "In-house gearbox. [TODO]" },
+  { "id": "e6", "year": "2025", "name": "GR-25 Raptor", "note": "Endurance champions. [TODO]" },
+  { "id": "e7", "year": "2026", "name": "Abhimanyu (M04)", "note": "Current car. 158 kg. [TODO]" }
+]

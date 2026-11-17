@@ -1,0 +1,25 @@
+{
+  "podiums": [
+    { "id": "p1", "year": 2025, "place": "P1", "title": "Endurance race", "event": "MEGA ATV Championship", "detail": "MEGA ATV Championship, Indore. Four hours, zero DNFs. [TODO]", "featured": true },
+    { "id": "p2", "year": 2024, "place": "P2", "title": "Overall", "event": "ATV Championship", "detail": "ATV Championship, Pune. First car with an in-house gearbox. [TODO]", "featured": false },
+    { "id": "p3", "year": 2023, "place": "P3", "title": "Hill climb", "event": "SAE BAJA India", "detail": "SAE BAJA India, Pithampur. Out of 100+ teams. [TODO]", "featured": false }
+  ],
+  "milestones": [
+    { "id": "m1", "year": 2008, "title": "Team founded", "detail": "Twelve students and one welding machine. [TODO]" },
+    { "id": "m2", "year": 2011, "title": "First SAE BAJA finish", "detail": "Completed the full endurance race. [TODO]" },
+    { "id": "m3", "year": 2016, "title": "Top 10 overall", "detail": "SAE BAJA India, 100+ teams. [TODO]" },
+    { "id": "m4", "year": 2021, "title": "In-house CVT rig", "detail": "Our own drivetrain test bench. [TODO]" },
+    { "id": "m5", "year": 2025, "title": "Endurance champions", "detail": "P1 at MEGA ATV, zero DNFs. [TODO]" }
+  ],
+  "totals": [
+    { "id": "t1", "n": 14, "label": "Podiums", "todo": true },
+    { "id": "t2", "n": 6, "label": "Event wins", "todo": true },
+    { "id": "t3", "n": 9, "label": "Design awards", "todo": true }
+  ],
+  "awards": [
+    { "id": "a1", "title": "Best design report · 2024 [TODO]" },
+    { "id": "a2", "title": "Best cost report · 2023 [TODO]" },
+    { "id": "a3", "title": "Endurance rank 4 · 2022 [TODO]" },
+    { "id": "a4", "title": "Best safety innovation · 2021 [TODO]" }
+  ]
+}

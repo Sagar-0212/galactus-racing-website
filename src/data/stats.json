@@ -1,0 +1,7 @@
+[
+  { "id": "s1", "n": 18, "suffix": "", "label": "Years active", "todo": true },
+  { "id": "s2", "n": 35, "suffix": "+", "label": "Competitions", "todo": true },
+  { "id": "s3", "n": 14, "suffix": "", "label": "Podium finishes", "todo": true },
+  { "id": "s4", "n": 42, "suffix": "", "label": "Team members", "todo": true },
+  { "id": "s5", "n": 20, "suffix": "+", "label": "Sponsors", "todo": true }
+]

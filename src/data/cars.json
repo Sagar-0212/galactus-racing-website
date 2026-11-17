@@ -1,0 +1,53 @@
+[
+  {
+    "id": "m04", "code": "M04", "name": "Abhimanyu (M04)", "season": 2026, "current": true, "photo": "",
+    "tag": "Current car · 2026 [TODO]",
+    "desc": "Our lightest and stiffest car yet. Redesigned chromoly frame, in-house tuned CVT and a four-wheel independent setup built to finish the four-hour endurance. [TODO]",
+    "specs": [
+      { "k": "Engine", "v": "B&S 10 HP Vanguard, 305 cc [TODO]" },
+      { "k": "Transmission", "v": "CVT + 2-stage gearbox, 9.2:1 [TODO]" },
+      { "k": "Suspension", "v": "Double wishbone F / trailing arm R [TODO]" },
+      { "k": "Brakes", "v": "Hydraulic disc, inboard rear [TODO]" },
+      { "k": "Chassis", "v": "AISI 4130 chromoly, 25.4 mm [TODO]" },
+      { "k": "Weight", "v": "158 kg [TODO]" },
+      { "k": "Top speed", "v": "[TODO] km/h" },
+      { "k": "Tyres", "v": "23×7–10 F / 22×10–10 R [TODO]" },
+      { "k": "Steering", "v": "Rack & pinion, 1.6 turns [TODO]" },
+      { "k": "Safety", "v": "5-pt harness, kill switches, firewall [TODO]" }
+    ]
+  },
+  {
+    "id": "gr25", "code": "25", "name": "GR-25 Raptor [TODO]", "season": 2025, "current": false, "photo": "",
+    "tag": "Season · 2025 [TODO]",
+    "desc": "The car that took P1 in endurance at MEGA ATV. Zero DNFs across the season. [TODO]",
+    "specs": [
+      { "k": "Engine", "v": "B&S 10 HP Vanguard, 305 cc [TODO]" },
+      { "k": "Transmission", "v": "CVT + single reduction, 8.4:1 [TODO]" },
+      { "k": "Suspension", "v": "Double wishbone F / semi-trailing R [TODO]" },
+      { "k": "Brakes", "v": "Hydraulic disc, outboard [TODO]" },
+      { "k": "Chassis", "v": "AISI 4130 chromoly, 25.4 mm [TODO]" },
+      { "k": "Weight", "v": "172 kg [TODO]" },
+      { "k": "Top speed", "v": "55 km/h [TODO]" },
+      { "k": "Tyres", "v": "23×7–10 / 22×10–10 [TODO]" },
+      { "k": "Steering", "v": "Rack & pinion, 2 turns [TODO]" },
+      { "k": "Safety", "v": "5-pt harness, kill switches [TODO]" }
+    ]
+  },
+  {
+    "id": "gr24", "code": "24", "name": "GR-24 Titan [TODO]", "season": 2024, "current": false, "photo": "",
+    "tag": "Season · 2024 [TODO]",
+    "desc": "First car with a fully in-house gearbox. P2 overall at the ATV Championship. [TODO]",
+    "specs": [
+      { "k": "Engine", "v": "B&S 10 HP, 305 cc [TODO]" },
+      { "k": "Transmission", "v": "CVT + chain drive [TODO]" },
+      { "k": "Suspension", "v": "Double wishbone F / H-arm R [TODO]" },
+      { "k": "Brakes", "v": "Hydraulic disc, outboard [TODO]" },
+      { "k": "Chassis", "v": "AISI 1018 steel [TODO]" },
+      { "k": "Weight", "v": "188 kg [TODO]" },
+      { "k": "Top speed", "v": "52 km/h [TODO]" },
+      { "k": "Tyres", "v": "23×7–10 / 22×10–10 [TODO]" },
+      { "k": "Steering", "v": "Rack & pinion [TODO]" },
+      { "k": "Safety", "v": "5-pt harness, kill switch [TODO]" }
+    ]
+  }
+]

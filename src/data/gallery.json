@@ -1,0 +1,11 @@
+[
+  { "id": "g1", "photo": "", "caption": "Endurance start, MEGA ATV 2025", "category": "race", "shape": "4/5", "alt": "" },
+  { "id": "g2", "photo": "", "caption": "Welding the Abhimanyu (M04) cage", "category": "workshop", "shape": "4/3", "alt": "" },
+  { "id": "g3", "photo": "", "caption": "After technical inspection", "category": "team", "shape": "3/2", "alt": "" },
+  { "id": "g4", "photo": "", "caption": "Suspension test, campus track", "category": "testing", "shape": "1/1", "alt": "" },
+  { "id": "g5", "photo": "", "caption": "Hill climb, SAE BAJA India", "category": "race", "shape": "3/2", "alt": "" },
+  { "id": "g6", "photo": "", "caption": "CVT tuning on the rig", "category": "workshop", "shape": "4/5", "alt": "" },
+  { "id": "g7", "photo": "", "caption": "Night test session", "category": "testing", "shape": "4/3", "alt": "" },
+  { "id": "g8", "photo": "/assets/gallery/g8.webp", "caption": "Design presentation", "category": "team", "shape": "1/1", "alt": "Design presentation" },
+  { "id": "g9", "photo": "", "caption": "Rock crawl section", "category": "race", "shape": "4/3", "alt": "" }
+]

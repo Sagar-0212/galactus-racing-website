@@ -9,17 +9,17 @@
 <x-dc>
 <helmet>
   <title>Galactus Racing · Admin</title>
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/fonts.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/colors.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/typography.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/spacing.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/effects.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/motion.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/base.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css">
-  <script src="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/_ds_bundle.js"></script>
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/fonts.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/colors.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/typography.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/spacing.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/effects.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/motion.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/base.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css">
+  <script src="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/_ds_bundle.js"></script>
   <script src="admin-api.js"></script>
-  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="icon" type="image/png" href="../../public/assets/favicon.png">
   <style>
     html, body { margin: 0; background: #EEE7DD; }
     a { color: inherit; text-decoration: none; }
@@ -36,7 +36,7 @@
       <form onSubmit="{{ onLogin }}" noValidate="" style="position:relative;width:min(440px,100%);box-sizing:border-box;background:var(--surface-raised);border:1px solid var(--border-strong);box-shadow:var(--shadow-hard);padding:clamp(24px,5vw,40px);display:flex;flex-direction:column;gap:28px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:16px">
           <div style="display:flex;align-items:center;gap:14px">
-            <img src="assets/logo-gr.png" width="640" height="446" alt="Galactus Racing logo" style="height:40px;width:auto;display:block">
+            <img src="../../public/assets/logo-gr.png" width="640" height="446" alt="Galactus Racing logo" style="height:40px;width:auto;display:block">
             <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" tagline="Racing · Site admin" rule="{{ false }}" hint-size="140px,40px"></x-import>
           </div>
           <a href="Galactus Racing.dc.html" style="display:inline-flex;align-items:center;min-height:44px;text-decoration:none;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">← Website</a>
@@ -61,7 +61,7 @@
         <aside aria-label="Sections" style="position:{{ sidePos }};top:0;left:0;z-index:50;flex:none;width:min(280px,86vw);height:100vh;box-sizing:border-box;background:var(--surface-inverse);color:var(--text-inverse);display:flex;flex-direction:column;padding:24px 0 12px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:0 24px 24px">
             <div style="display:flex;align-items:center;gap:12px">
-              <img src="assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" style="height:34px;width:auto;display:block">
+              <img src="../../public/assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" style="height:34px;width:auto;display:block">
               <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" tagline="Racing · Site admin" inverse="{{ true }}" rule="{{ false }}" hint-size="120px,40px"></x-import>
             </div>
             <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
@@ -91,7 +91,7 @@
       <div style="flex:1;min-width:0;display:flex;flex-direction:column">
         <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
           <div style="position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;height:60px;padding:0 8px 0 20px;background:var(--surface-inverse);color:var(--text-inverse)">
-            <div style="display:flex;align-items:center;gap:10px"><img src="assets/logo-gr-light.png" width="640" height="446" alt="" style="height:26px;width:auto;display:block"><x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" inverse="{{ true }}" rule="{{ false }}" hint-size="100px,20px"></x-import></div>
+            <div style="display:flex;align-items:center;gap:10px"><img src="../../public/assets/logo-gr-light.png" width="640" height="446" alt="" style="height:26px;width:auto;display:block"><x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" inverse="{{ true }}" rule="{{ false }}" hint-size="100px,20px"></x-import></div>
             <button type="button" onClick="{{ openNav }}" aria-label="Open sections menu" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 12px;border:0;background:none;color:var(--text-inverse);cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">{{ sectionLabel }} <span style="color:var(--red-400)">↓</span></button>
           </div>
         </sc-if>

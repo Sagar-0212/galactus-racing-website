@@ -10,16 +10,16 @@
 <helmet>
   <title>Team | Galactus Racing</title>
   <meta name="description" content="Meet the pit crew behind Galactus Racing, the Baja SAE team of Rajarambapu Institute of Technology.">
-  <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/fonts.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/colors.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/typography.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/spacing.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/effects.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/motion.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/base.css">
-  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css">
-  <script src="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/_ds_bundle.js"></script>
+  <link rel="icon" type="image/png" href="../../public/assets/favicon.png">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/fonts.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/colors.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/typography.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/spacing.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/effects.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/motion.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/base.css">
+  <link rel="stylesheet" href="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css">
+  <script src="../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/_ds_bundle.js"></script>
   <script src="./image-slot.js"></script>
   <style>
     html { scroll-behavior: smooth; }
@@ -36,7 +36,7 @@
 
   <header data-hdr="" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px;box-sizing:border-box;padding:0 var(--gutter);background:var(--surface-page);border-bottom:1px solid var(--border-hairline)">
     <a href="{{ homeHref }}" aria-label="Galactus Racing, home" style="flex:none;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text-primary)">
-      <img src="assets/logo-gr.png" width="640" height="446" alt="" style="height:30px;width:auto;display:block">
+      <img src="../../public/assets/logo-gr.png" width="640" height="446" alt="" style="height:30px;width:auto;display:block">
       <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS RACING" rule="{{ false }}" hint-size="140px,14px"></x-import>
     </a>
     <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
@@ -145,7 +145,7 @@
       <p style="margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(72px,14vw,240px);line-height:var(--lh-display);text-transform:uppercase;white-space:nowrap">Let's <span style="color:var(--accent)">race.</span></p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:48px;align-items:start">
         <div style="display:flex;flex-direction:column;gap:20px">
-          <img src="assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" style="height:clamp(48px,5vw,64px);width:auto;align-self:flex-start;display:block">
+          <img src="../../public/assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" style="height:clamp(48px,5vw,64px);width:auto;align-self:flex-start;display:block">
           <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS RACING" inverse="{{ true }}" tagline="We reply within 48 hours." hint-size="300px,32px"></x-import>
           <p style="margin:0;max-width:40ch;color:var(--text-inverse-muted);line-height:var(--lh-body)">Galactus Racing Workshop, Rajarambapu Institute of Technology, Rajaramnagar, Islampur, Sangli, Maharashtra 415414</p>
           <a href="mailto:team@galactusracing.in" style="font-family:var(--font-display);font-size:clamp(32px,4vw,56px);line-height:1;text-transform:uppercase;text-decoration:none;overflow-wrap:anywhere">team@galactusracing.in</a>
