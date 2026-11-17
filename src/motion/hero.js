@@ -13,7 +13,7 @@ export function heroEls(root) {
   const [wedgeL, wedge] = pair('wedge'), [gL, g] = pair('galactus'), [rL, r] = pair('racing'), [carL, car] = pair('car');
   return {
     hero, sticky: q('[data-hero-sticky]'), wedgeL, wedge, gL, g, rL, r, carL, car,
-    details: q('[data-l="details"]'), tilt: q('[data-car-tilt]'), streak: qa('[data-streak] i'), dust: qa('[data-dust] i'),
+    details: q('[data-l="details"]'), tilt: q('[data-car-tilt]'), streak: qa('[data-streak] i'), dustCanvas: q('[data-dust]'),
     spec: qa('[data-hero-spec] > span'), scrollLink: q('[data-hero-scroll]'), badge: q('[data-hero-badge]'), ui: q('[data-hero-ui]'),
   };
 }
@@ -24,11 +24,15 @@ const Ht = (H) => H.sticky.clientHeight;
 // Scroll (scrub, linear): GALACTUS exits left, RACING right, Abhimanyu drives forward (toward the
 // viewer = left and a little bigger, anchored at its bottom edge so it never leaves the frame),
 // the wedge lags behind (sinks), details fade and lift.
-export function heroScroll(H, desktop) {
+export function heroScroll(H, desktop, dust) {
   if (!H) return null;
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
-    scrollTrigger: { trigger: H.hero, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
+    scrollTrigger: {
+      trigger: H.hero, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true,
+      // scrolling down = the car drives forward: kick dust in proportion to scroll speed
+      onUpdate: dust ? (st) => { const v = st.getVelocity(); if (v > 40 && st.progress < 0.98) dust.kick(Math.min(320, v * 0.15)); } : undefined,
+    },
   });
   tl.to(H.gL, { x: () => -W(H) * 0.62, y: () => -Ht(H) * 0.03, scale: 1.16, duration: 1 }, 0).to(H.gL, { opacity: 0, duration: 0.74 }, 0)
     .to(H.rL, { x: () => W(H) * 0.62, y: () => Ht(H) * 0.03, scale: 1.16, duration: 1 }, 0).to(H.rL, { opacity: 0, duration: 0.74 }, 0)
@@ -58,7 +62,7 @@ export function startLights(loader, go, { skip = false } = {}) {
 // Intro, ~1.6s: wedge wipes along its diagonal, words slam in from both sides (hard stop, no
 // overshoot), Abhimanyu drives in from the right with a streak + dust and one 3px suspension dip,
 // the spec strip types in, then the buttons.
-export function heroIntro(H) {
+export function heroIntro(H, dust) {
   if (!H) return null;
   const t = tokens(), w = W(H);
   const tl = gsap.timeline({ defaults: { ease: t.out } });
@@ -81,10 +85,7 @@ export function heroIntro(H) {
     tl.set(H.streak, { opacity: 1, scaleX: 1 }, 0.3)
       .to(H.streak, { scaleX: 0, opacity: 0, duration: 0.42, stagger: 0.04, clearProps: 'transform,opacity' }, 0.5);
   }
-  if (H.dust.length) {
-    tl.fromTo(H.dust, { opacity: 0.85, x: 0, y: 0, scale: 0.6 },
-      { opacity: 0, x: (i) => 24 + ((i * 37) % 60), y: (i) => -(8 + ((i * 23) % 30)), scale: 1.6, duration: 0.6, stagger: 0.02, clearProps: 'transform,opacity' }, 0.62);
-  }
+  if (dust) tl.call(() => dust.kick(220), null, 0.32).call(() => dust.kick(420), null, 0.78);
   tl.to(H.car, { y: 3, duration: 0.09, ease: t.inOut }, 0.88)
     .to(H.car, { y: 0, duration: 0.16, clearProps: 'transform' }, 0.97);
 

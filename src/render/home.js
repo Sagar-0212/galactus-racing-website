@@ -22,8 +22,8 @@ export function hero({ cars }) {
         <div class="hero__car-tilt" data-car-tilt="">
           <div class="hero__car-in" data-in="car">
             <span class="hero__streak" data-streak="" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="hero__dust" data-dust="" aria-hidden="true">${'<i></i>'.repeat(8)}</span>
-            <img data-hero-main="" fetchpriority="high" src="/assets/hero-car.webp" srcset="/assets/hero-car-640.webp 640w, /assets/hero-car.webp 995w" sizes="(min-width: 900px) 60vw, 100vw" width="995" height="604" decoding="async" alt="Team Galactus Racing Baja car Abhimanyu, number M04" draggable="false">
+            <canvas class="hero__dust" data-dust="" aria-hidden="true"></canvas>
+            <img data-hero-main="" fetchpriority="high" src="/assets/hero-car.webp" srcset="/assets/hero-car-640.webp 640w, /assets/hero-car.webp 1200w" sizes="(min-width: 900px) 55vw, 100vw" width="1200" height="823" decoding="async" alt="Team Galactus Racing Baja car Abhimanyu, number M04" draggable="false">
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@ export function hero({ cars }) {
         <a href="#about" class="hero__scroll" data-hero-scroll="" aria-label="Scroll to next section"><span class="hero__scroll-line"></span>Scroll ↓</a>
       </div>
       <div class="hero__badge" data-hero-badge="">
-        <div class="hero__badge-text"><span>Baja SAE India</span><span>Est. 2008</span></div>
+        <div class="hero__badge-text"><span>Baja SAE India</span><span>Est. 2008</span><span>RIT Rajaramnagar</span></div>
       </div>
       <div class="hero__ui" data-hero-ui="">
         ${button({ label: 'Meet our cars', iconRight: '→', attr: { 'data-go': 'cars' } })}

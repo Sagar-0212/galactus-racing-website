@@ -3,6 +3,7 @@
 // prefers-reduced-motion skips every animation and shows final states.
 import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens } from './core.js';
 import { heroEls, heroScroll, heroIntro, startLights, carTilt } from './hero.js';
+import { createDust } from './dust.js';
 import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl };
@@ -12,6 +13,9 @@ export function initHomeMotion(root, { onActive } = {}) {
   tokens();
   const lenis = smoothScroll();
   const H = heroEls(root);
+  // Dust: lighter on phones, one static haze frame under reduced motion.
+  const phone = !matchMedia(DESKTOP).matches;
+  const dust = H && createDust(H.dustCanvas, { reduce: matchMedia(REDUCE).matches, max: phone ? 60 : 150, haze: phone ? 10 : 22, dprMax: phone ? 1 : 1.5 });
   chrome(root, onActive);
 
   const mm = gsap.matchMedia();
@@ -25,7 +29,7 @@ export function initHomeMotion(root, { onActive } = {}) {
     reveals([...root.querySelectorAll('[data-reveal]')], !desktop);
     counts(root);
     journey(root, false);
-    heroScroll(H, desktop);
+    heroScroll(H, desktop, dust);
     wedgeRise(root);
     const stopMarq = marquee(root);
     let stopTilt = null;
@@ -41,7 +45,7 @@ export function initHomeMotion(root, { onActive } = {}) {
   return {
     lenis,
     // Start lights, then the hero intro. Reduced motion: loader goes, final hero shows at once.
-    intro: (loader) => startLights(loader, () => { if (!matchMedia(REDUCE).matches) heroIntro(H); }, { skip: matchMedia(REDUCE).matches }),
+    intro: (loader) => startLights(loader, () => { if (!matchMedia(REDUCE).matches) heroIntro(H, dust); }, { skip: matchMedia(REDUCE).matches }),
     refresh: () => ScrollTrigger.refresh(),
     // Gallery grid was re-rendered (filter / column change): new reveals + column parallax.
     refreshGallery(grid) {
