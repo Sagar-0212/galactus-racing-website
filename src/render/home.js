@@ -53,10 +53,14 @@ const BAJA_EVENTS = [
 // value, so no-JS and reduced motion get the final number. Motion animates the strip from the top.
 const strip = (seq, cls) => `<span class="${cls}__col"><span class="${cls}__strip" data-strip="" style="--n:${seq.length};--i:${seq.length - 1}">${seq.map((c) => `<span>${c}</span>`).join('')}</span></span>`;
 // Roll: the rightmost digit spins the most (like a lap timer's fast column), all land together.
+// Non-digits (the commas in ₹7,80,000) stay put.
 function roll(n) {
-  const ds = String(n).split('');
-  return `<span class="roll" aria-hidden="true">${ds.map((d, p) => {
-    const cycles = Math.max(0, 2 - (ds.length - 1 - p));
+  const ds = String(n).split(''), nd = ds.filter((d) => /\d/.test(d)).length;
+  let p = -1;
+  return `<span class="roll" aria-hidden="true">${ds.map((d) => {
+    if (!/\d/.test(d)) return `<span class="roll__static">${esc(d)}</span>`;
+    p++;
+    const cycles = Math.max(0, 2 - (nd - 1 - p));
     const seq = [];
     for (let c = 0; c < cycles; c++) for (let k = 0; k < 10; k++) seq.push(k);
     for (let k = 0; k <= +d; k++) seq.push(k);
@@ -296,19 +300,23 @@ export function achievements({ achievements: a }) {
 export const GAL_CATS = { race: 'Race day', workshop: 'Workshop', team: 'Team', testing: 'Testing' };
 export const galColCount = (w) => (w < 640 ? 1 : w < 960 ? 2 : 3);
 
-// Also used at runtime by src/home.js when the filter or column count changes.
-export function galleryGrid(items, nCols) {
+// Also used at runtime by src/home.js when the column count changes. Every photo is rendered (so the
+// filter can move the same nodes with GSAP Flip); the ones outside `filter` are [hidden] at the end of
+// column 1. data-open is the photo's index in the full list.
+export function galleryGrid(items, nCols, filter = 'all') {
   const speeds = [-0.12, 0.1, -0.05];
-  const cols = Array.from({ length: nCols }, (_, i) => ({ speed: nCols === 1 ? 0 : speeds[i], items: items.map((g, j) => ({ g, j })).filter(({ j }) => j % nCols === i) }));
-  return cols.map((col, i) => `<div class="gal__col" data-speed="${col.speed}">${col.items.map(({ g, j }, r) => {
-    const cat = GAL_CATS[g.category];
-    return `<figure class="gal__fig" data-reveal="" data-delay="${i * 90 + r * 120}">
+  const vis = items.filter((g) => filter === 'all' || g.category === filter);
+  const cols = Array.from({ length: nCols }, () => []);
+  vis.forEach((g, k) => cols[k % nCols].push(g));
+  items.filter((g) => !vis.includes(g)).forEach((g) => cols[0].push(g));
+  return cols.map((col, i) => `<div class="gal__col" data-speed="${nCols === 1 ? 0 : speeds[i]}">${col.map((g, r) => {
+    const cat = GAL_CATS[g.category], gi = items.indexOf(g);
+    return `<figure class="gal__fig" data-reveal="" data-delay="${i * 90 + r * 120}" data-flip-id="${esc(g.id)}"${vis.includes(g) ? '' : ' hidden'}>
         <div class="gal__card" data-gcard="" style="aspect-ratio:${esc(g.shape)}">
           <div class="gal__img" data-gimg="">${slot({ src: g.photo, alt: g.alt || g.caption, placeholder: g.caption })}</div>
           <div class="gal__ov" data-gov="" aria-hidden="true"></div>
-          <div class="gal__cap" data-gcap="" aria-hidden="true"><span class="gal__cap-cat">${esc(cat)}</span><span class="gal__cap-text">${esc(g.caption)}</span></div>
-          <span class="gal__line" data-gline="" aria-hidden="true"></span>
-          <button type="button" class="gal__btn" data-gbtn="" data-open="${j}" aria-label="View ${esc(g.caption)} fullscreen">↗</button>
+          <div class="gal__cap" data-gcap="" aria-hidden="true"><span class="gal__cap-cat">${esc(cat)}</span><span class="gal__cap-text">${esc(g.caption)}</span><span class="gal__cap-line"></span></div>
+          <button type="button" class="gal__btn" data-gbtn="" data-open="${gi}" aria-label="View ${esc(g.caption)} fullscreen">↗</button>
         </div>
         <figcaption class="gal__figcap"><span>${esc(g.caption)}</span><span class="gal__figcap-cat">${esc(cat)}</span></figcaption>
       </figure>`;
@@ -348,10 +356,27 @@ export function lightbox() {
 export function sponsors({ sponsors: sp }) {
   const marq = [...sp.marquee, ...sp.marquee].map((m) => `<span class="sp__m1-item">${esc(m)}<span class="sp__accent">↗</span></span>`).join('');
   const marq2 = [...sp.benefits, ...sp.benefits].map((m) => `<span class="sp__m2-item">${esc(m)}<span class="sp__accent">●</span></span>`).join('');
-  const tiers = sp.tiers.map((tr) => `<div class="sp__tier" data-reveal="">
+  // Real logos (sponsors[], shaped like the admin panel: {logo, name, tier, url, active}) fill their tier
+  // first; the rest stay placeholders. A logo sits in colour under a greyscale copy that fades out on
+  // hover (opacity only; same file, one download). An empty Title tier shows the "Your brand here" slot.
+  const live = (sp.sponsors || []).filter((s) => s.active !== false && s.logo);
+  const logo = (s, h) => {
+    const img = (cls) => `<img class="sp__logo ${cls}" src="${esc(s.logo)}" alt="${cls === 'sp__logo--grey' ? '' : esc(s.name)}" loading="lazy" decoding="async">`;
+    const inner = img('sp__logo--colour') + img('sp__logo--grey');
+    return s.url ? `<a class="sp__slot sp__slot--logo" style="height:${esc(h)}" href="${esc(s.url)}" target="_blank" rel="noopener">${inner}</a>`
+      : `<div class="sp__slot sp__slot--logo" style="height:${esc(h)}">${inner}</div>`;
+  };
+  const brand = (h) => `<a class="sp__slot sp__brand" style="height:${esc(h)}" href="#invest" data-brand=""><span class="sp__brand-ring" data-brand-ring="" aria-hidden="true"></span><span class="sp__brand-title">Your brand here</span><span class="sp__brand-cta">Title slot open ↗</span></a>`;
+  const tiers = sp.tiers.map((tr) => {
+    const mine = live.filter((s) => (s.tier || '').toLowerCase() === tr.id);
+    const slots = mine.map((s) => logo(s, tr.height));
+    if (tr.id === 'title' && !mine.length) slots.push(brand(tr.height));
+    for (let i = slots.length; i < tr.slots; i++) slots.push(`<div class="sp__slot" style="height:${esc(tr.height)}">${slot({ placeholder: `${tr.slotLabel} ${i + 1}`, fit: 'contain' })}</div>`);
+    return `<div class="sp__tier" data-reveal="">
       <div class="sp__tier-name"><span class="sp__tier-title">${esc(tr.name)}</span><span class="micro">${esc(tr.note)}</span></div>
-      ${Array.from({ length: tr.slots }, (_, i) => `<div class="sp__slot" style="height:${esc(tr.height)}">${slot({ placeholder: `${tr.slotLabel} ${i + 1}`, fit: 'contain' })}</div>`).join('')}
-    </div>`).join('');
+      ${slots.join('')}
+    </div>`;
+  }).join('');
   return `<section id="sponsors" class="sp" data-scene="" data-sector-label="S07 / Sponsors">
     <div class="sp__head" data-reveal="">${headline({ as: 'h2', size: 'l', text: 'Powered by our partners.', accent: 'partners.' })}</div>
     <div class="sp__tapes">
@@ -370,7 +395,7 @@ export function invest({ fundraising: f, packages, contact }) {
   const total = f.budget.reduce((s, b) => s + b.amount, 0);
   const budget = f.budget.map((b) => {
     const pct = Math.round((b.amount / total) * 100);
-    return `<li class="inv__b"><span class="inv__b-pct">${pct}%</span><div class="inv__b-track"><div class="inv__b-bar" data-bar="${pct}" style="--p:${pct / 100}"></div></div><span class="inv__b-label">${esc(b.label)}</span><span class="inv__b-amt">${inr(b.amount)}${todo(f.todo)}</span></li>`;
+    return `<li class="inv__b"><span class="inv__b-pct">${pct}%</span><div class="inv__b-track"><div class="inv__b-bar" data-ibar="" style="--p:${pct / 100}"></div></div><span class="inv__b-label">${esc(b.label)}</span><span class="inv__b-amt">${inr(b.amount)}${todo(f.todo)}</span></li>`;
   }).join('');
   const pk = packages.map((p) => {
     const price = inr(p.price) + (p.plus ? '+' : '') + (p.featured ? ' · Most popular' : '') + (p.todo ? ' [TODO]' : '');
@@ -388,7 +413,7 @@ export function invest({ fundraising: f, packages, contact }) {
       <div data-reveal="">${headline({ as: 'h2', size: 'xl', text: 'Fuel the season.', accent: 'season.' })}</div>
       <div class="inv__raised" data-reveal="">
         <span class="eyebrow eyebrow--plain">Raised so far${todo(f.todo)}</span>
-        <span class="inv__raised-n">₹<span data-count="${f.raised}" data-fmt="inr">0</span></span>
+        <span class="inv__raised-n">₹<span data-iroll="">${roll(f.raised.toLocaleString('en-IN'))}</span></span>
         <span class="inv__raised-of">of ${inr(f.goal)} season goal · ${pct}%</span>
       </div>
     </div>
@@ -410,7 +435,7 @@ export function invest({ fundraising: f, packages, contact }) {
       <aside class="inv__aside">
         <span class="eyebrow eyebrow--inv">Direct support</span>
         <dl class="inv__support">${support}</dl>
-        <a href="#" class="inv__brochure">Download sponsorship brochure <span>↓</span></a>
+        ${f.brochure ? `<a href="${esc(f.brochure)}" class="inv__brochure" download>Download sponsorship brochure <span>↓</span></a>` : '<!-- Brochure link hidden until fundraising.json has "brochure" (docs/TODO-FACTS.md §8) -->'}
       </aside>
     </div>
   </section>`;
@@ -420,8 +445,8 @@ export function contactSection({ contact }) {
   return `<section id="contact" class="contact" data-scene="" data-sector-label="S09 / Contact">
     <div class="contact__wedge" data-wedge="rise" aria-hidden="true"></div>
     <div class="contact__inner">
-      <h2 class="contact__title"><span data-hx="-0.35">Let's </span><span class="contact__race" data-hx="0.35">race.</span></h2>
-      ${contactDetails({ contact })}
+      <h2 class="contact__title" data-cwipe=""><span class="contact__w"><span class="contact__word">Let's</span></span> <span class="contact__w contact__race"><span class="contact__word">race.</span></span></h2>
+      ${contactDetails({ contact, copyEmail: true })}
     </div>
     <footer class="foot foot--home">${footerBar({ links: [['team.html', 'Team'], ['#journey', 'Our journey']] })}</footer>
   </section>`;

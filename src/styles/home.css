@@ -296,20 +296,23 @@
 .gal__col { display: flex; flex-direction: column; gap: 20px; }
 .gal__fig { margin: 0; display: flex; flex-direction: column; gap: 10px; perspective: 1000px; }
 .gal__card { position: relative; background: var(--ink-800); overflow: hidden; transform-style: preserve-3d; transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
-.gal__img { position: absolute; inset: 0; transition: transform var(--dur-wipe) var(--ease-out); }
+.gal__fig[hidden] { display: none; }
+/* Photo zoom: slow in (2.5× the wipe token, like a camera creeping in), quick back out. */
+.gal__img { position: absolute; inset: 0; transition: transform var(--dur-slow) var(--ease-out); }
 .gal__ov { position: absolute; inset: 0; pointer-events: none; background: var(--scrim); opacity: 0; top: auto; height: 45%; transition: opacity var(--dur-base) var(--ease-out); }
 .gal__cap { position: absolute; left: 18px; right: 68px; bottom: 18px; pointer-events: none; display: flex; flex-direction: column; gap: 6px; opacity: 0; transform: translateY(14px); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-slow) var(--ease-out); }
 .gal__cap-cat { font-weight: 700; font-size: 10px; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--red-200); }
 .gal__cap-text { font-family: var(--font-display); font-size: clamp(22px, 2.2vw, 30px); line-height: .95; text-transform: uppercase; color: var(--paper-100); }
-.gal__line { position: absolute; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-slow) var(--ease-out); pointer-events: none; }
+/* Red caption line under the caption text: draws from the left a beat after the caption rises. */
+.gal__cap-line { display: block; height: 2px; margin-top: 4px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-base) var(--ease-out); }
 .gal__btn { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: var(--paper-100); color: var(--ink-900); font-family: var(--font-body); font-weight: 700; font-size: 16px; cursor: pointer; opacity: 0; transition: opacity var(--dur-base) var(--ease-out), background var(--dur-fast), color var(--dur-fast); }
 .gal__btn:hover { background: var(--accent); color: var(--paper-100); }
 /* Hover state (class set by src/motion/gallery.js). Hard red shadow instead of the old glow. */
 .gal__card.is-hover { box-shadow: 3px 3px 0 var(--accent); }
-.gal__card.is-hover .gal__img { transform: scale(1.06); }
+.gal__card.is-hover .gal__img { transform: scale(1.08); transition-duration: calc(var(--dur-wipe) * 2.5); }
 .gal__card.is-hover .gal__ov, .gal__card.is-hover .gal__cap, .gal__card.is-hover .gal__btn { opacity: 1; }
 .gal__card.is-hover .gal__cap { transform: none; }
-.gal__card.is-hover .gal__line { transform: scaleX(1); }
+.gal__card.is-hover .gal__cap-line { transform: scaleX(1); transition-duration: var(--dur-slow); transition-delay: var(--dur-fast); }
 @media (hover: none) { .gal__btn { opacity: 1; } }
 .gal__figcap { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-inverse-muted); }
 .gal__figcap-cat { color: var(--red-200); }
@@ -353,6 +356,20 @@
 .sp__tier-name .micro { font-size: var(--fs-micro); }
 .sp__tier-title { font-family: var(--font-display); font-size: 32px; line-height: var(--lh-display); text-transform: uppercase; }
 .sp__slot { position: relative; border: 1px solid var(--border-hairline); background: var(--surface-page); }
+/* Logos: colour image under a greyscale copy; hover fades the grey copy out (opacity only). */
+.sp__slot--logo { display: block; }
+.sp__logo { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); object-fit: contain; }
+.sp__logo--grey { filter: grayscale(1); opacity: 1; transition: opacity var(--dur-slow) var(--ease-out); }
+.sp__slot--logo:hover .sp__logo--grey, .sp__slot--logo:focus-visible .sp__logo--grey { opacity: 0; }
+/* Placeholders (no logo yet) follow the same idea: muted until hovered. */
+.sp__slot .slot__empty { opacity: .55; transition: opacity var(--dur-slow) var(--ease-out); }
+.sp__slot:hover .slot__empty { opacity: 1; }
+/* Open Title slot. Pulses once on enter (src/motion/sections.js → brandPulse). */
+.sp__brand { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; border: 2px dashed var(--accent); text-decoration: none; color: var(--text-primary); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+.sp__brand:hover, .sp__brand:focus-visible { transform: translate(-3px, -3px); box-shadow: var(--shadow-hard); }
+.sp__brand-ring { position: absolute; inset: -2px; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
+.sp__brand-title { font-family: var(--font-display); font-size: clamp(28px, 3vw, 40px); line-height: var(--lh-display); text-transform: uppercase; color: var(--accent); }
+.sp__brand-cta { font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-secondary); }
 .sp__cta { padding: 0 var(--gutter); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 28px; }
 .sp__text { margin: 0; max-width: 68ch; font-size: var(--fs-body-l); line-height: var(--lh-body); color: var(--text-secondary); }
 .sp__text strong { color: var(--text-primary); }
@@ -391,6 +408,13 @@
 .contact__inner { position: relative; padding: clamp(140px, 24vh, 240px) var(--gutter) 0; display: flex; flex-direction: column; gap: 48px; }
 .contact__title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(96px, 18vw, 320px); line-height: var(--lh-display); letter-spacing: var(--tracking-display); text-transform: uppercase; white-space: nowrap; }
 .contact__title span { display: inline-block; }
+/* Phones: one word per line, sized to the width (at 390 the single line was wider than the screen
+   and the trailing space inside the inline-block collapsed, so the words touched). */
+@media (max-width: 699px) {
+  .contact__title { font-size: 33vw; }
+  .contact__title .contact__w { display: block; }
+}
+.contact__copy-hint { margin-top: -12px; }
 .sheet__vs { color: var(--text-muted); }
 
 /* ---------- Digit strips: lap-timer roll (stats) and split-flap (journey years) ----------
@@ -399,7 +423,7 @@
 .roll, .flap { display: inline-flex; }
 .roll__col, .flap__col { position: relative; display: inline-flex; flex-direction: column; height: 1em; overflow: clip; } /* inline-flex: baseline comes from the strip's first digit, not the clipped box's bottom edge */
 .roll__strip, .flap__strip { display: block; flex: none; transform: translateY(calc(var(--i) * -100% / var(--n))); }
-.roll__strip > span, .flap__strip > span, .flap__static { display: block; height: 1em; line-height: 1; }
+.roll__strip > span, .flap__strip > span, .flap__static, .roll__static { display: block; height: 1em; line-height: 1; }
 /* Anton digits have different widths: only the final digit sizes the column; the flicking ones may
    overhang sideways for their 50ms (vertical clip only). */
 .flap__col { overflow: visible clip; }

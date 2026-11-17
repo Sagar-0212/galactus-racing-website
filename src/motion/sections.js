@@ -2,7 +2,7 @@
 // years, tip tick, counter strip), Achievements (starting-grid cards, award tags).
 // Only transform / opacity / clip-path are animated. Digit strips rest on their final value in CSS,
 // so reduced motion simply never calls these.
-import { gsap, tokens } from './core.js';
+import { gsap, ScrollTrigger, tokens, REDUCE } from './core.js';
 import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(SplitText);
@@ -109,4 +109,86 @@ export function awardTags(root) {
     scrollTrigger: { trigger: wrap, start: 'top 92%', once: true },
     onComplete: () => { wrap.setAttribute('data-done', ''); gsap.set(tags, { clearProps: 'transform,opacity,clipPath' }); },
   });
+}
+
+// =====================================================================================================
+// Home sections B: Sponsors ("Your brand here" pulse), Invest (₹ raised roll, then budget bars),
+// Contact ("LET'S RACE." wedge wipe), plus form message / toast transitions used by src/home.js.
+// =====================================================================================================
+
+// ---------- Sponsors: the open Title slot pulses once when it enters ----------
+// One hard "ping": the slot kicks up 4% and a red ring expands off it and fades. No repeat.
+export function brandPulse(root) {
+  const el = root.querySelector('[data-brand]'); if (!el || el.hasAttribute('data-done')) return;
+  const ring = el.querySelector('[data-brand-ring]'), t = tokens();
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: el, start: 'top 80%', once: true }, delay: 0.24,
+    onComplete: () => { el.setAttribute('data-done', ''); gsap.set([el, ring], { clearProps: 'transform,opacity' }); },
+  });
+  tl.fromTo(el, { scale: 1 }, { scale: 1.04, duration: t.fast, ease: t.out })
+    .to(el, { scale: 1, duration: t.base, ease: t.inOut })
+    .fromTo(ring, { scale: 1, opacity: 1 }, { scale: 1.14, opacity: 0, duration: t.slow, ease: t.out }, 0);
+}
+
+// ---------- Invest: ₹ raised rolls like the About stats, then the budget bars fill one by one ----------
+// The bars wait for both: the roll finished AND the bar row on screen (on phones the row is further down).
+export function investRaised(root) {
+  const t = tokens();
+  const num = root.querySelector('[data-iroll]'), bars = [...root.querySelectorAll('[data-ibar]')];
+  const row = bars.length ? bars[0].closest('ul') : null;
+  let rolled = !num || num.hasAttribute('data-done'), inView = false;
+  const fill = () => {
+    if (!rolled || !inView || !row || row.hasAttribute('data-done')) return;
+    gsap.fromTo(bars, { scaleX: 0 }, { scaleX: (i, b) => +getComputedStyle(b).getPropertyValue('--p') || 1, duration: t.slow, ease: t.out, stagger: 0.12,
+      onComplete: () => { row.setAttribute('data-done', ''); gsap.set(bars, { clearProps: 'transform' }); } });
+  };
+  if (row && !row.hasAttribute('data-done')) {
+    gsap.set(bars, { scaleX: 0 });
+    ScrollTrigger.create({ trigger: row, start: 'top 88%', once: true, onEnter: () => { inView = true; fill(); } });
+  }
+  if (!rolled) {
+    const strips = [...num.querySelectorAll('[data-strip]')];
+    gsap.timeline({
+      scrollTrigger: { trigger: num, start: 'top 90%', once: true },
+      onComplete: () => { num.setAttribute('data-done', ''); gsap.set(strips, { clearProps: 'transform' }); rolled = true; fill(); },
+    }).fromTo(strips, { y: 0, yPercent: 0 }, { yPercent: (i, s) => endY(s), duration: t.wipe * 1.6, ease: 'power2.out' }, 0);
+  }
+}
+
+// ---------- Contact: "LET'S RACE." wipes in behind a -17°-ish slanted edge, word by word ----------
+// Fires as the paper wedge is rising off the top of the section. The red word lands last.
+// Desktop: the two words also slide in from opposite sides, scrubbed with the wedge (same range), and
+// stop at their resting place when the section reaches the top, so they never cross or touch.
+export function contactWipe(root, desktop) {
+  const h = root.querySelector('[data-cwipe]'); if (!h) return;
+  if (desktop) {
+    const sides = [...h.querySelectorAll('.contact__w')];
+    gsap.fromTo(sides, { x: (i) => (i ? 1 : -1) * innerWidth * 0.12 }, { x: 0, ease: 'none',
+      scrollTrigger: { trigger: h.closest('section'), start: 'top bottom', end: 'top top', scrub: true, invalidateOnRefresh: true } });
+  }
+  if (h.hasAttribute('data-done')) return;
+  const words = [...h.querySelectorAll('.contact__word')], t = tokens();
+  gsap.fromTo(words,
+    { clipPath: 'polygon(0% -15%, 0% -15%, -30% 115%, -30% 115%)', x: -24 },
+    { clipPath: 'polygon(0% -15%, 130% -15%, 100% 115%, -30% 115%)', x: 0, duration: t.wipe, ease: t.out, stagger: 0.08,
+      scrollTrigger: { trigger: h, start: 'top 85%', once: true },
+      onComplete: () => { h.setAttribute('data-done', ''); gsap.set(words, { clearProps: 'clipPath,transform' }); } });
+}
+
+// ---------- Form + toast transitions (called from src/home.js; instant under reduced motion) ----------
+const still = () => matchMedia(REDUCE).matches;
+export function slideMsg(el) {
+  if (still()) return;
+  const t = tokens();
+  gsap.fromTo(el, { y: -8, opacity: 0, clipPath: 'inset(0% 0% 100% 0%)' }, { y: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: t.base, ease: t.out, clearProps: 'transform,opacity,clipPath' });
+}
+export function toastIn(el) {
+  if (still()) return;
+  const t = tokens();
+  gsap.fromTo(el, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: t.base, ease: t.out, clearProps: 'transform,opacity' });
+}
+export function toastOut(el, done) {
+  if (still()) { done(); return; }
+  const t = tokens();
+  gsap.to(el, { y: 16, opacity: 0, duration: t.base, ease: t.out, onComplete: () => { gsap.set(el, { clearProps: 'transform,opacity' }); done(); } });
 }

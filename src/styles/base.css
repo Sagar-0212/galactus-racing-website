@@ -61,8 +61,18 @@ a:hover { color: var(--accent); }
 .contact__email--wrap { overflow-wrap: anywhere; }
 .contact__links { display: flex; flex-wrap: wrap; gap: 24px; font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; }
 .contact__links a { text-decoration: none; }
-.contact__map { aspect-ratio: 16 / 10; border: 1px solid var(--border-inverse); }
-.contact__map iframe { width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(.9) contrast(.9); }
+.contact__map { position: relative; overflow: hidden; aspect-ratio: 16 / 10; border: 1px solid var(--border-inverse); background: var(--ink-900); }
+.contact__map iframe { display: block; width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(.9) contrast(.9); }
+/* Map placeholder until "Load map" (src/ui/map.js): hairline grid, two roads, a red pin. Static. */
+.map-ph { position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, var(--border-inverse) 0 1px, transparent 1px 48px), repeating-linear-gradient(90deg, var(--border-inverse) 0 1px, transparent 1px 48px); }
+.map-ph__road { position: absolute; left: -10%; right: -10%; height: 10px; background: var(--ink-800); border-block: 1px solid var(--border-inverse); }
+.map-ph__road--a { top: 34%; rotate: -17deg; }
+.map-ph__road--b { top: 58%; rotate: 8deg; }
+.map-ph__pin { position: absolute; left: 50%; top: 42%; width: 16px; height: 16px; margin: -8px 0 0 -8px; background: var(--accent); rotate: 45deg; box-shadow: 0 0 0 6px var(--ink-900), 0 0 0 7px var(--accent); }
+.map-ph__ui { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 14px 16px; background: var(--ink-1000); border-top: 1px solid var(--border-inverse); }
+.map-ph__label, .map-ph__link { font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-inverse-muted); text-decoration: none; }
+.map-ph__link:hover { color: var(--text-inverse); }
+.map-ph__label { flex-basis: 100%; }
 
 .foot { position: relative; margin-top: 80px; }
 .foot__checker { height: 16px; background: conic-gradient(var(--paper-100) 25%, var(--ink-1000) 0 50%, var(--paper-100) 0 75%, var(--ink-1000) 0) 0 0 / 16px 16px; }

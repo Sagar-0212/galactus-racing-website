@@ -119,19 +119,21 @@ Only one real photo so far (g8, "Design presentation"). The other 8 tiles are em
 | Silver package | ₹75,000 — + side panel logo, pit shirts | |
 | Gold package | ₹2,00,000 — + large car logo, event banner, recruitment session | |
 | Title package | ₹5,00,000+ — co-branding, nose/hood, car display at your office | |
-| Sponsorship brochure (PDF) | link is `#` | |
+| Sponsorship brochure (PDF) | **hidden** until a link exists. Add `"brochure": "/assets/brochure.pdf"` (or a URL) to `fundraising.json` and the "Download sponsorship brochure ↓" link appears in the Invest aside | |
 
 ## 9. Contact  `[src/data/contact.json]`
 
 | Item | Now | Real |
 |---|---|---|
 | Email | team@galactusracing.in | |
-| Phone | +91 XXXXX XXXXX | |
-| Instagram / LinkedIn / YouTube | links are `#` | |
+| Phone | +91 XXXXX XXXXX (shown as plain text, not a `tel:` link, until `value` is set) | |
+| Instagram URL | **hidden** until `value` is set in `contact.json` | |
+| LinkedIn URL | **hidden** until `value` is set | |
+| YouTube URL | **hidden** until `value` is set | |
 | UPI ID | [team-upi-id]@bank | |
 | Sponsorship lead | [Name], Business Head | |
 | Workshop address | Galactus Racing Workshop, RIT, Rajaramnagar, Islampur, Sangli, Maharashtra 415414 | confirm wording |
-| Enquiry form destination | not connected (shows a success toast only) | Formspree / email / backend? |
+| Enquiry form destination | simulated: `submitEnquiry()` in `src/api/enquiries.js` (same contract as `POST /enquiries` in admin-api.js) resolves after 700ms and shows the toast. Nothing is stored or emailed | Supabase `enquiries` table (decided, after the frontend) |
 
 Never put bank account numbers on the page.
 

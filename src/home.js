@@ -4,8 +4,10 @@ import './styles/components.css';
 import './styles/home.css';
 import galleryData from './data/gallery.json';
 import carsData from './data/cars.json';
-import { initHomeMotion, scrollToEl, bindCard, animateLb, animateSheet } from './motion/index.js';
+import { initHomeMotion, scrollToEl, bindCard, animateLb, animateSheet, flipGallery, slideMsg, toastIn, toastOut } from './motion/index.js';
 import { initMenu } from './ui/menu.js';
+import { initMaps } from './ui/map.js';
+import { submitEnquiry } from './api/enquiries.js';
 import { galleryGrid, galColCount, GAL_CATS, specTable } from './render/home.js';
 import { slot, toast, pad2 } from './render/ui.js';
 
@@ -63,18 +65,27 @@ const galItems = () => galleryData.filter((g) => galFilter === 'all' || g.catego
 
 function bindGalleryCards() {
   $$('[data-gcard]', galGrid).forEach(bindCard);
-  $$('[data-open]', galGrid).forEach((b) => b.addEventListener('click', () => openLb(+b.dataset.open)));
+  // data-open = index in the full list; the lightbox walks the filtered list.
+  $$('[data-open]', galGrid).forEach((b) => b.addEventListener('click', () => openLb(galItems().indexOf(galleryData[+b.dataset.open]))));
 }
 function renderGallery({ refresh = true } = {}) {
   galGrid.style.setProperty('--cols', galCols);
-  galGrid.innerHTML = galleryGrid(galItems(), galCols);
+  galGrid.innerHTML = galleryGrid(galleryData, galCols, galFilter);
   bindGalleryCards();
   if (refresh && motion) motion.refreshGallery(galGrid);
 }
+// Filter: move the existing figures (same nodes, so Flip can animate them) into their new columns.
+function layoutGallery() {
+  const byId = new Map($$('[data-flip-id]', galGrid).map((f) => [f.dataset.flipId, f]));
+  const cols = $$('.gal__col', galGrid), vis = galItems();
+  vis.forEach((g, k) => { const f = byId.get(g.id); f.hidden = false; cols[k % cols.length].appendChild(f); });
+  galleryData.filter((g) => !vis.includes(g)).forEach((g) => { const f = byId.get(g.id); f.hidden = true; cols[0].appendChild(f); });
+}
 $$('[data-gal-tabs] [role="tab"]').forEach((tab) => tab.addEventListener('click', () => {
+  if (tab.dataset.value === galFilter) return;
   galFilter = tab.dataset.value;
   $$('[data-gal-tabs] [role="tab"]').forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
-  renderGallery();
+  flipGallery(galGrid, layoutGallery);
 }));
 
 // ---------- Lightbox ----------
@@ -195,10 +206,13 @@ document.addEventListener('keydown', (e) => {
 const form = $('[data-enquiry]');
 const formData = {};
 const interestSel = $('select[name="interest"]', form);
+// The message slides in under the field when it first appears (not when its text just changes).
 function setFieldError(name, msg) {
   const f = $(`[data-field="${name}"]`, form); if (!f) return;
   f.classList.toggle('is-error', !!msg);
-  const m = $('.field__msg', f); m.textContent = msg || ''; m.hidden = !msg;
+  const m = $('.field__msg', f), was = !m.hidden;
+  m.textContent = msg || ''; m.hidden = !msg;
+  if (msg && !was) slideMsg(m);
 }
 $$('input, textarea, select', form).forEach((el) => el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => {
   formData[el.name] = el.value;
@@ -211,27 +225,56 @@ $$('[data-choose]').forEach((b) => b.addEventListener('click', () => {
 
 const toastWrap = $('[data-toast]');
 let toastTimer;
-function showToast() {
-  toastWrap.innerHTML = toast({ title: 'Enquiry sent', message: 'Our sponsorship lead will reply within 48 hours.' });
+function showToast({ title, message }) {
+  const fresh = toastWrap.hidden;
+  toastWrap.innerHTML = toast({ title, message });
   toastWrap.hidden = false;
   $('.toast__close', toastWrap).addEventListener('click', hideToast);
+  if (fresh) toastIn(toastWrap);
   clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 5000);
 }
-function hideToast() { toastWrap.hidden = true; toastWrap.innerHTML = ''; }
+function hideToast() {
+  clearTimeout(toastTimer);
+  if (toastWrap.hidden) return;
+  toastOut(toastWrap, () => { toastWrap.hidden = true; toastWrap.innerHTML = ''; });
+}
 
-form.addEventListener('submit', (e) => {
+let sending = false;
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (sending) return;
   const d = formData, errors = {};
   if (!(d.name || '').trim()) errors.name = 'Tell us your name.';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email || '')) errors.email = 'Enter a valid email.';
   if (!(d.message || '').trim()) errors.message = 'Add a short message.';
   ['name', 'email', 'message'].forEach((k) => setFieldError(k, errors[k]));
-  if (Object.keys(errors).length) return;
-  // BACKEND: save the enquiry to Supabase here, once the frontend is done. [TODO]
-  const label = $('[data-submit] .btn__label', form);
-  label.textContent = 'Sending…';
-  setTimeout(() => { label.textContent = 'Send enquiry'; showToast(); }, 700);
+  const bad = ['name', 'email', 'message'].find((k) => errors[k]);
+  if (bad) { $(`[name="${bad}"]`, form).focus({ preventScroll: true }); return; }
+  const btn = $('[data-submit]', form), label = $('.btn__label', btn);
+  sending = true; btn.disabled = true; label.textContent = 'Sending…';
+  try {
+    await submitEnquiry(d); // simulated until Supabase is wired in (src/api/enquiries.js)
+    form.reset(); Object.keys(formData).forEach((k) => delete formData[k]);
+    showToast({ title: 'Enquiry sent', message: 'Our sponsorship lead will reply within 48 hours.' });
+  } catch (err) {
+    showToast({ title: 'Not sent', message: (err && err.message) || 'Something went wrong. Try again or email us.' });
+  } finally {
+    sending = false; btn.disabled = false; label.textContent = 'Send enquiry';
+  }
 });
+
+// ---------- Contact: click the email to copy it ----------
+// Falls back to the normal mailto: link when the clipboard API isn't available or is refused.
+$$('[data-copy-email]').forEach((a) => a.addEventListener('click', (e) => {
+  if (!navigator.clipboard || !window.isSecureContext) return;
+  e.preventDefault();
+  const email = a.dataset.copyEmail;
+  navigator.clipboard.writeText(email).then(
+    () => showToast({ title: 'Email copied', message: email }),
+    () => { location.href = a.href; },
+  );
+}));
+initMaps(root);
 
 // ---------- Hero image fallback ----------
 const heroImg = $('[data-hero-main]');

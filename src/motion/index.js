@@ -5,12 +5,13 @@ import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens 
 import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } from './hero.js';
 import { createDust } from './dust.js';
 import { teardown, teardownCards, evoIn } from './cars.js';
-import { headlineLines, bigDrift, rolls, flaps, startingGrid, awardTags } from './sections.js';
+import { headlineLines, bigDrift, rolls, flaps, startingGrid, awardTags, brandPulse, investRaised, contactWipe } from './sections.js';
 import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl };
-export { bindCard, animateLb } from './gallery.js';
+export { bindCard, animateLb, flipGallery } from './gallery.js';
 export { animateSheet } from './cars.js';
+export { slideMsg, toastIn, toastOut } from './sections.js';
 
 export function initHomeMotion(root, { onActive } = {}) {
   tokens();
@@ -44,6 +45,9 @@ export function initHomeMotion(root, { onActive } = {}) {
     flaps(root);
     startingGrid(root, desktop);
     awardTags(root);
+    brandPulse(root);
+    investRaised(root);
+    contactWipe(root, desktop);
     heroScroll(H, dust);
     wedgeRise(root);
     const stopMarq = marquee(root);

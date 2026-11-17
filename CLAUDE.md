@@ -79,6 +79,7 @@ Much of the current copy was written by AI as a placeholder. **Never invent or "
 ## How to work with me
 - I'm comfortable with code (backend Java), newer to animation and 3D. Explain choices in short plain English.
 - **One step at a time:** plan → build → verify → commit. Don't start the next step until I say go.
+- **Verification uses `npm run preview` (port 4173), never the dev server. Every Playwright call has a 60s timeout.** (The dev server reloads the page on file changes and hung a run for 58 minutes.) Build first with `npm run build`. If a Playwright call fails twice, skip it and list it in the report; no call may run longer than 2 minutes.
 - **Verify every step yourself** before reporting: run `npm run dev`, use Playwright/Chrome DevTools MCP to screenshot at **1440px and 390px**, scroll through animations in small steps, check the console is clean, and compare against the previous commit (or `archive/claude-design/` for the original look). Fix problems first, then report.
 - Report: what changed, what you checked (with numbers), what's left. Short.
 - Git commit after each working step.

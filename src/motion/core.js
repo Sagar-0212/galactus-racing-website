@@ -22,7 +22,8 @@ export function tokens() {
   if (T) return T;
   const css = getComputedStyle(document.documentElement);
   const v = (n) => css.getPropertyValue(n).trim();
-  const ms = (n, fb) => (parseFloat(v(n)) || fb) / 1000;
+  // Seconds. Respect the unit: the production CSS minifier rewrites "480ms" as ".48s".
+  const ms = (n, fb) => { const s = v(n), x = parseFloat(s); return !x ? fb / 1000 : /ms$/.test(s) ? x / 1000 : /s$/.test(s) ? x : x / 1000; };
   const bez = (n, fb) => { const m = v(n).match(/cubic-bezier\(([^)]+)\)/); return CustomEase.create('gr' + n, m ? m[1] : fb); };
   T = {
     fast: ms('--dur-fast', 120), base: ms('--dur-base', 220), slow: ms('--dur-slow', 480), wipe: ms('--dur-wipe', 720),
