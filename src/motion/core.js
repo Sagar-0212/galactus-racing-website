@@ -10,6 +10,9 @@ gsap.registerPlugin(ScrollTrigger, CustomEase);
 
 export { gsap, ScrollTrigger };
 
+// Dev only: lets verification scripts slow the global timeline (gsap.globalTimeline.timeScale).
+if (import.meta.env.DEV) window.__gsap = gsap;
+
 export const REDUCE = '(prefers-reduced-motion: reduce)';
 export const DESKTOP = '(min-width: 900px)';
 

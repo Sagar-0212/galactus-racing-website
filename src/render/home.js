@@ -47,6 +47,33 @@ const BAJA_EVENTS = [
   { group: 'Dynamic events', items: ['Acceleration', 'Hill climb', 'Suspension', 'Endurance · 4 h'] },
 ];
 
+
+// Digit strips for the lap-timer roll (stats) and split-flap (journey years). Each digit is a column
+// that clips a vertical strip of digits; the strip's resting transform (CSS, --i / --n) shows the real
+// value, so no-JS and reduced motion get the final number. Motion animates the strip from the top.
+const strip = (seq, cls) => `<span class="${cls}__col"><span class="${cls}__strip" data-strip="" style="--n:${seq.length};--i:${seq.length - 1}">${seq.map((c) => `<span>${c}</span>`).join('')}</span></span>`;
+// Roll: the rightmost digit spins the most (like a lap timer's fast column), all land together.
+function roll(n) {
+  const ds = String(n).split('');
+  return `<span class="roll" aria-hidden="true">${ds.map((d, p) => {
+    const cycles = Math.max(0, 2 - (ds.length - 1 - p));
+    const seq = [];
+    for (let c = 0; c < cycles; c++) for (let k = 0; k < 10; k++) seq.push(k);
+    for (let k = 0; k <= +d; k++) seq.push(k);
+    return strip(seq, 'roll');
+  }).join('')}</span><span class="sr-only">${esc(String(n))}</span>`;
+}
+// Flap: each digit flicks through a few characters, later digits flick longer so they settle left to right.
+function flap(text) {
+  let p = 0;
+  return `<span class="flap" aria-hidden="true">${String(text).split('').map((ch) => {
+    if (!/[0-9]/.test(ch)) return `<span class="flap__static">${esc(ch)}</span>`;
+    const k = 4 + 2 * p++, d = +ch, seq = [];
+    for (let j = k; j >= 0; j--) seq.push((d - j + 20) % 10);
+    return strip(seq, 'flap');
+  }).join('')}</span><span class="sr-only">${esc(String(text))}</span>`;
+}
+
 export function about({ stats }) {
   const events = BAJA_EVENTS.map((g, gi) => `<div class="about__evgroup">
       <span class="micro micro--inv">${esc(g.group)}</span>
@@ -54,18 +81,18 @@ export function about({ stats }) {
     </div>`).join('');
   const statsHtml = stats.map((s, i) => `<div class="stat" data-reveal="" data-delay="${i * 90}">
       <span class="micro micro--inv">${pad2(i + 1)}</span>
-      <span class="stat__num"><span data-count="${s.n}">0</span><span class="stat__suffix">${esc(s.suffix)}</span></span>
+      <span class="stat__num" data-roll="" data-delay="${i * 80}">${roll(s.n)}<span class="stat__suffix">${esc(s.suffix)}</span></span>
       <span class="stat__label">${esc(s.label)}${todo(s.todo)}</span>
       <div class="stat__track"><div class="stat__bar" data-bar="100"></div></div>
     </div>`).join('');
   return `<section id="about" class="about" data-scene="" data-sector-label="S02 / Who we are">
-    <div class="about__bigtext" data-hx="-1.1" aria-hidden="true">Freedom for failure — Freedom for failure</div>
+    <div class="about__bigtext" data-hx="-0.8" data-bigtext="" aria-hidden="true">Freedom for failure — Freedom for failure</div>
     <div class="about__top" data-reveal="">
       <span class="eyebrow eyebrow--inv"><span class="eyebrow__line"></span>Who we are</span>
       <span class="micro micro--inv about__since">RIT Rajaramnagar · Since 2008</span>
     </div>
     <div class="about__grid">
-      <div data-reveal="">${headline({ as: 'h2', size: 'l', inverse: true, text: 'Every crash teaches us something.', accent: 'teaches us something.' })}</div>
+      <div data-lines="">${headline({ as: 'h2', size: 'l', inverse: true, text: 'Every crash teaches us something.', accent: 'teaches us something.' })}</div>
       <div class="about__col">
         <p class="about__lead" data-reveal="">Galactus Racing is the official Baja team of Rajarambapu Institute of Technology. Since 2008 we have designed, fabricated and raced single-seat off-road cars against the best college teams in India.</p>
         <div class="about__baja" data-reveal="">
@@ -80,9 +107,9 @@ export function about({ stats }) {
 }
 
 export function journey({ journey: chapters }) {
-  const items = chapters.map((c, i) => `<li class="jr__item" data-reveal="" data-delay="${(i % 3) * 90}">
+  const items = chapters.map((c, i) => `<li class="jr__item" data-reveal="" data-delay="${(i % 3) * 90}" data-jitem="">
       <span class="jr__dot" data-jdot="" aria-hidden="true"></span>
-      <span class="jr__year">${esc(c.date)}</span>
+      <span class="jr__year">${flap(c.date)}</span>
       <div class="jr__body"><strong class="jr__title">${esc(c.title)}</strong><span class="jr__story">${t(c.story)}</span></div>
     </li>`).join('');
   return `<section id="journey" class="jr" data-scene="" data-sector-label="S02 / Journey">
@@ -92,10 +119,10 @@ export function journey({ journey: chapters }) {
         <span class="eyebrow" data-reveal=""><span class="eyebrow__line"></span>Our journey</span>
         <div data-reveal="">${headline({ as: 'h2', size: 'l', text: 'Built crash by crash.', accent: 'crash by crash.' })}</div>
         <p class="jr__lead" data-reveal="">Every car we build carries the scars of the one before it. Six chapters, from one borrowed welding machine to the podium.</p>
-        <div class="jr__counter" data-reveal=""><span class="jr__count" data-jcount="">01</span><span class="micro jr__of">/ ${pad2(chapters.length)} chapters</span></div>
+        <div class="jr__counter" data-reveal=""><span class="jr__count" aria-hidden="true"><span class="jr__count-strip" data-jcount="">${chapters.map((_, k) => `<span>${pad2(k + 1)}</span>`).join('')}</span></span><span class="micro jr__of">/ ${pad2(chapters.length)} chapters</span></div>
       </div>
       <ol class="jr__list" data-jlist="">
-        <span class="jr__rail" aria-hidden="true"><span class="jr__fill" data-jfill=""></span></span>
+        <span class="jr__rail" aria-hidden="true"><span class="jr__fill" data-jfill=""></span><span class="jr__tip" data-jtip=""></span></span>
         ${items}
       </ol>
     </div>
@@ -246,9 +273,9 @@ export function specTable(a, b) {
 }
 
 export function achievements({ achievements: a }) {
-  const cards = a.podiums.map((p) => `<div data-reveal="">${card({ eyebrow: `${p.place} · ${p.year}`, title: p.title, body: t(p.detail), tone: p.featured ? 'ink' : 'paper', interactive: true })}</div>`).join('');
+  const cards = a.podiums.map((p, i) => `<div class="ach__slot" data-grid="${i}">${card({ eyebrow: `${p.place} · ${p.year}`, title: p.title, body: t(p.detail), tone: p.featured ? 'ink' : 'paper', interactive: true })}</div>`).join('');
   const ms = a.milestones.map((m) => `<li class="ach__ms" data-reveal=""><span class="ach__ms-year">${m.year}</span><div class="ach__ms-body"><strong class="ach__ms-title">${esc(m.title)}</strong><span class="ach__ms-note">${t(m.detail)}</span></div></li>`).join('');
-  const totals = a.totals.map((c) => `<div class="ach__total"><span class="ach__total-n" data-count="${c.n}">0</span><span class="ach__total-label">${esc(c.label)}${todo(c.todo)}</span></div>`).join('');
+  const totals = a.totals.map((c, i) => `<div class="ach__total"><span class="ach__total-n" data-count="${c.n}" data-delay="${i * 80}">0</span><span class="ach__total-label">${esc(c.label)}${todo(c.todo)}</span></div>`).join('');
   return `<section id="achievements" class="ach" data-scene="" data-sector-label="S04 / Results">
     <span class="ach__p1" data-speed="0.4" aria-hidden="true">P1</span>
     <div class="ach__wrap">
@@ -259,7 +286,7 @@ export function achievements({ achievements: a }) {
         <div class="ach__side">
           <div class="ach__totals">${totals}</div>
           <span class="eyebrow eyebrow--plain">Awards &amp; recognition</span>
-          <div class="ach__awards">${a.awards.map((x) => tag(x.title)).join('')}</div>
+          <div class="ach__awards" data-awards="">${a.awards.map((x) => tag(x.title)).join('')}</div>
         </div>
       </div>
     </div>

@@ -96,6 +96,11 @@
 /* ---------- S02 About + stats ---------- */
 .about { position: relative; box-sizing: border-box; padding: clamp(88px, 13vh, 150px) var(--gutter) clamp(64px, 9vh, 104px); background: var(--ink-1000); color: var(--text-inverse); overflow: hidden; display: flex; flex-direction: column; gap: clamp(48px, 7vh, 88px); }
 .about__bigtext { position: absolute; left: 0; top: 46%; white-space: nowrap; font-family: var(--font-display); font-size: 24vw; line-height: .8; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--paper-100) 8%, transparent); pointer-events: none; translate: 0 -50%; }
+/* Phones: the outline text leaves the body copy and becomes a closing band under the stats. */
+@media (max-width: 899px) {
+  .about__bigtext { position: relative; top: auto; left: auto; order: 9; translate: none; font-size: 34vw; margin: 0 calc(-1 * var(--gutter)); -webkit-text-stroke-color: color-mix(in srgb, var(--paper-100) 14%, transparent); }
+}
+
 .about__top { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-inverse); }
 .about__since { font-size: 11px; }
 .about__grid { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: clamp(40px, 6vw, 96px); align-items: start; }
@@ -115,8 +120,8 @@
 .about__stats { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); border-top: 1px solid var(--border-inverse); border-left: 1px solid var(--border-inverse); }
 .stat { position: relative; display: flex; flex-direction: column; gap: 14px; padding: clamp(20px, 2.4vw, 28px); border-right: 1px solid var(--border-inverse); border-bottom: 1px solid var(--border-inverse); background: var(--ink-1000); transition: background var(--dur-base) var(--ease-out); }
 .stat:hover { background: var(--ink-800); }
-.stat__num { font-family: var(--font-display); font-size: clamp(64px, 7vw, 112px); line-height: var(--lh-display); }
-.stat__suffix { color: var(--accent); }
+.stat__num { display: flex; align-items: flex-start; font-family: var(--font-mono); font-weight: 500; font-size: clamp(56px, 6vw, 96px); letter-spacing: -.04em; line-height: 1; }
+.stat__suffix { display: inline-block; height: 1em; line-height: 1; color: var(--accent); }
 .stat__label { font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--red-200); }
 .stat__track { height: 2px; background: var(--border-inverse); }
 .stat__bar { height: 100%; width: 100%; background: var(--accent); transform-origin: left; }
@@ -129,15 +134,20 @@
 @media (min-width: 1000px) { .jr__side { position: sticky; top: 110px; } } /* sticky only in the two-column layout */
 .jr__lead { margin: 0; max-width: 40ch; font-size: var(--fs-body-l); line-height: var(--lh-body); color: var(--text-secondary); text-wrap: pretty; }
 .jr__counter { display: flex; align-items: baseline; gap: 14px; padding-top: 18px; border-top: 1px solid var(--border-strong); }
-.jr__count { font-family: var(--font-display); font-size: clamp(56px, 6vw, 88px); line-height: var(--lh-display); color: var(--text-accent); }
+.jr__count { display: inline-block; height: 1em; overflow: clip; font-family: var(--font-display); font-size: clamp(56px, 6vw, 88px); line-height: 1; color: var(--text-accent); }
+.jr__count-strip { display: block; }
+.jr__count-strip > span { display: block; height: 1em; }
 .jr__of { font-size: 11px; }
 .jr__list { position: relative; list-style: none; margin: 0; padding: 0; }
 .jr__rail { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--border-hairline); }
 .jr__fill { position: absolute; inset: 0; background: var(--accent); transform: scaleY(0); transform-origin: top; will-change: transform; }
+/* Timing tick riding the tip of the red fill (hidden under reduced motion, where the rail is simply full). */
+.jr__tip { position: absolute; left: 50%; top: 0; width: 16px; height: 3px; margin: -1px 0 0 -8px; background: var(--accent); will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .jr__tip { display: none; } }
 .jr__item { position: relative; display: grid; grid-template-columns: clamp(84px, 10vw, 136px) minmax(0, 1fr); gap: clamp(14px, 2.4vw, 32px); align-items: baseline; padding: clamp(18px, 3vh, 30px) 0 clamp(18px, 3vh, 30px) clamp(28px, 3vw, 44px); border-bottom: 1px solid var(--border-hairline); }
 .jr__dot.is-on { background: var(--accent); border-color: var(--accent); }
 .jr__dot { position: absolute; left: 1px; top: calc(clamp(18px, 3vh, 30px) + 16px); width: 14px; height: 14px; margin-left: -7px; rotate: 45deg; box-sizing: border-box; background: var(--surface-page); border: 2px solid var(--ink-900); transition: background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); }
-.jr__year { font-family: var(--font-display); font-size: clamp(40px, 4.6vw, 64px); line-height: var(--lh-display); }
+.jr__year { font-family: var(--font-display); font-size: clamp(40px, 4.6vw, 64px); line-height: 1; }
 .jr__body { display: flex; flex-direction: column; gap: 6px; }
 .jr__title { font-weight: 800; font-size: 13px; letter-spacing: var(--tracking-label); text-transform: uppercase; }
 .jr__story { line-height: var(--lh-body); color: var(--text-secondary); text-wrap: pretty; }
@@ -276,6 +286,8 @@
 .ach__total-n { font-family: var(--font-display); font-size: clamp(56px, 6vw, 88px); line-height: var(--lh-display); }
 .ach__total-label { font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-muted); }
 .ach__awards { display: flex; flex-wrap: wrap; gap: 8px; }
+.ach__slot { display: flex; flex-direction: column; }
+.ach__slot > .card { flex: 1; }
 
 /* ---------- S05 Gallery ---------- */
 .gal { position: relative; min-height: 100vh; box-sizing: border-box; padding: clamp(96px, 14vh, 160px) var(--gutter) 96px; background: var(--ink-1000); color: var(--text-inverse); overflow: hidden; }
@@ -380,3 +392,15 @@
 .contact__title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(96px, 18vw, 320px); line-height: var(--lh-display); letter-spacing: var(--tracking-display); text-transform: uppercase; white-space: nowrap; }
 .contact__title span { display: inline-block; }
 .sheet__vs { color: var(--text-muted); }
+
+/* ---------- Digit strips: lap-timer roll (stats) and split-flap (journey years) ----------
+   Each column clips a strip of digits (the strip's first cell sits in the visible slot). The resting transform shows the real value (final state for
+   no-JS and reduced motion); motion animates the strip from its first digit. */
+.roll, .flap { display: inline-flex; }
+.roll__col, .flap__col { position: relative; display: inline-flex; flex-direction: column; height: 1em; overflow: clip; } /* inline-flex: baseline comes from the strip's first digit, not the clipped box's bottom edge */
+.roll__strip, .flap__strip { display: block; flex: none; transform: translateY(calc(var(--i) * -100% / var(--n))); }
+.roll__strip > span, .flap__strip > span, .flap__static { display: block; height: 1em; line-height: 1; }
+/* Anton digits have different widths: only the final digit sizes the column; the flicking ones may
+   overhang sideways for their 50ms (vertical clip only). */
+.flap__col { overflow: visible clip; }
+.flap__strip > span:not(:last-child) { width: 0; white-space: nowrap; }

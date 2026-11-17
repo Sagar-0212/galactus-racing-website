@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens 
 import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } from './hero.js';
 import { createDust } from './dust.js';
 import { teardown, teardownCards, evoIn } from './cars.js';
+import { headlineLines, bigDrift, rolls, flaps, startingGrid, awardTags } from './sections.js';
 import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl };
@@ -37,7 +38,12 @@ export function initHomeMotion(root, { onActive } = {}) {
     if (reduce) { finalCounts(root); journey(root, true); ctx = null; return; }
     reveals([...root.querySelectorAll('[data-reveal]')], !desktop);
     counts(root);
+    headlineLines(root);
+    rolls(root);
     journey(root, false);
+    flaps(root);
+    startingGrid(root, desktop);
+    awardTags(root);
     heroScroll(H, dust);
     wedgeRise(root);
     const stopMarq = marquee(root);
@@ -51,6 +57,7 @@ export function initHomeMotion(root, { onActive } = {}) {
     } else {
       teardownCards(root);
       evoIn(root, null);
+      bigDrift(root);
     }
     return () => { if (stopMarq) stopMarq(); if (stopTilt) stopTilt(); galTweens = []; };
   });
