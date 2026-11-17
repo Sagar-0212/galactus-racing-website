@@ -36,7 +36,7 @@ export function header({ page }) {
       <span></span><span></span><span class="is-red"></span>
     </button>
   </header>
-  <div id="gr-menu" class="menu${page === 'team' ? ' menu--team' : ''}" data-menu="" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
+  <div id="gr-menu" class="menu${page === 'team' ? ' menu--team' : ''}" data-menu="" data-lenis-prevent="" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
     <button type="button" class="menu__close" data-menu-close="" aria-label="Close menu">Close ✕</button>
     ${links.map((l) => `<a class="menu__link${l.current && page === 'team' ? ' is-current' : ''}" href="${esc(l.href)}"${l.current ? ` aria-current="${l.current}"` : ''}>${esc(l.label)}</a>`).join('')}
   </div>`;

@@ -16,7 +16,7 @@ Visitors: company sponsors on laptops, students on mid-range Android phones, jud
 | `src/data/*.json` | **All content** (stats, cars, evolution, journey, achievements, gallery, team, subteams, sponsors, packages, fundraising, contact). Unverified facts carry `[TODO]` |
 | `src/render/*.js` | Turns the JSON into HTML. `ui.js` = design-system components (Button, Card, Headline…), `layout.js` = header/menu/footer, `home.js`, `team.js`. Run at build time by the plugin in `vite.config.js`; the gallery grid is also re-rendered at runtime |
 | `src/home.js`, `src/team.js` | Page behaviour: menu, gallery filter, lightbox, enquiry form |
-| `src/motion/legacy.js` | The original `frame()` animation loop, ported as-is. Replaced by GSAP/ScrollTrigger/Lenis in Prompt 3 |
+| `src/motion/` | GSAP + ScrollTrigger + Lenis (Prompt 3). `core.js` = plugins, token durations/easings, Lenis, `reveal()`; `hero.js`, `effects.js` (chrome, counts, bars, journey, parallax, cars pin, marquee, wedge), `gallery.js` (hover, lightbox), `index.js` = `initHomeMotion` / `initTeamMotion` with `gsap.matchMedia` |
 | `src/styles/*.css` | `base.css` (tokens import, header, menu, footer), `components.css` (design-system components), `home.css`, `team.css` |
 | `public/assets/` | Images shipped as-is: logo, favicon, hero layers, car cut-out `hero-car-clean.png` (= Abhimanyu, M04), `photos/abhimanyu-real-01.jpg`, `gallery/g8.webp` |
 | `_ds/mtvna-design-system-*/` | **Our design system** (tokens, fonts, rules in `readme.md`) |

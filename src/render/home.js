@@ -1,5 +1,5 @@
 // Home page sections, rendered from src/data/*.json at build time.
-// Markup mirrors archive/claude-design/Galactus Racing.dc.html; data-* hooks are used by src/motion/legacy.js.
+// Markup mirrors archive/claude-design/Galactus Racing.dc.html; data-* hooks are used by src/motion/.
 import { esc, t, todo, pad2, inr, button, iconButton, headline, card, tag, tabs, input, select, slot } from './ui.js';
 import { header, contactDetails, footerBar } from './layout.js';
 
@@ -189,7 +189,7 @@ export function gallery({ gallery: items }) {
 }
 
 export function lightbox() {
-  return `<div class="lb" data-lb="" role="dialog" aria-modal="true" aria-label="Gallery viewer" hidden>
+  return `<div class="lb" data-lb="" data-lenis-prevent="" role="dialog" aria-modal="true" aria-label="Gallery viewer" hidden>
     <div class="lb__top">
       <span class="lb__pos"><span class="lb__pos-n" data-lb-pos="">01</span> / <span data-lb-total="">01</span> · <span data-lb-cat=""></span></span>
       <button type="button" class="lb__close" data-lb-close="">Close ✕</button>
@@ -232,7 +232,7 @@ export function invest({ fundraising: f, packages, contact }) {
   const total = f.budget.reduce((s, b) => s + b.amount, 0);
   const budget = f.budget.map((b) => {
     const pct = Math.round((b.amount / total) * 100);
-    return `<li class="inv__b"><span class="inv__b-pct">${pct}%</span><div class="inv__b-track"><div class="inv__b-bar" data-bar="${pct}" style="width:${pct}%"></div></div><span class="inv__b-label">${esc(b.label)}</span><span class="inv__b-amt">${inr(b.amount)}${todo(f.todo)}</span></li>`;
+    return `<li class="inv__b"><span class="inv__b-pct">${pct}%</span><div class="inv__b-track"><div class="inv__b-bar" data-bar="${pct}" style="--p:${pct / 100}"></div></div><span class="inv__b-label">${esc(b.label)}</span><span class="inv__b-amt">${inr(b.amount)}${todo(f.todo)}</span></li>`;
   }).join('');
   const pk = packages.map((p) => {
     const price = inr(p.price) + (p.plus ? '+' : '') + (p.featured ? ' · Most popular' : '') + (p.todo ? ' [TODO]' : '');

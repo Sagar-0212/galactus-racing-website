@@ -101,7 +101,7 @@
 .toast__close { background: none; border: 0; color: inherit; cursor: pointer; font-size: 13px; padding: 0; }
 
 /* Photo slot (replaces Claude Design's <image-slot>) */
-.slot { display: block; position: relative; font: 13px/1.3 system-ui, -apple-system, sans-serif; width: 100%; height: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: rgba(127, 127, 127, .08); }
+.slot { display: block; position: relative; font: 13px/1.3 system-ui, -apple-system, sans-serif; width: 100%; height: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: color-mix(in srgb, var(--ink-500) 8%, transparent); }
 .slot__empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 12px; box-sizing: border-box; user-select: none; }
 .slot__empty svg { opacity: .45; }
 .slot__cap { max-width: 90%; font-weight: 500; letter-spacing: .01em; opacity: .75; }

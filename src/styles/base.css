@@ -1,16 +1,13 @@
 /* Global base + shared chrome (header, menu, contact block, footer).
-   Values ported 1:1 from the Claude Design export. Design-system clean-up (hard-coded colours,
-   gradients, glow) is a later step, not part of the conversion. */
+   Smooth scrolling is Lenis (src/motion/core.js); no CSS scroll-behavior, so there is only one smoother. */
 @import '../../_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css';
 
 @keyframes gr-load { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
-html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--surface-page); }
 a { color: inherit; }
 a:hover { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 ::selection { background: var(--accent); color: var(--paper-100); }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 [hidden] { display: none !important; }
 
 .root { position: relative; background: var(--surface-page); color: var(--text-primary); font-family: var(--font-body); overflow-x: clip; }
@@ -30,13 +27,14 @@ a:hover { color: var(--accent); }
 
 /* ---------- Header ---------- */
 .hdr { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 68px; box-sizing: border-box; padding: 0 var(--gutter); background: var(--surface-page); border-bottom: 1px solid var(--border-hairline); }
+.hdr.is-top { border-bottom-color: transparent; }
 .hdr__left { flex: none; display: flex; align-items: center; gap: 20px; }
 .hdr__home { flex: none; display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
 .hdr__logo { height: 30px; width: auto; display: block; }
 .hdr__sector { display: none; font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); color: var(--text-muted); text-transform: uppercase; white-space: nowrap; }
 @media (min-width: 1440px) { .hdr__sector { display: inline; } }
 .hdr__nav { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 28px); }
-.hdr__link { display: inline-flex; align-items: center; height: 68px; text-decoration: none; font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; white-space: nowrap; color: inherit; background-image: linear-gradient(var(--accent), var(--accent)); background-repeat: no-repeat; background-position: left calc(50% + 13px); background-size: 0% 2px; transition: background-size 220ms var(--ease-out), color 120ms; }
+.hdr__link { display: inline-flex; align-items: center; height: 68px; text-decoration: none; font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; white-space: nowrap; color: inherit; background-image: linear-gradient(var(--accent), var(--accent)); background-repeat: no-repeat; background-position: left calc(50% + 13px); background-size: 0% 2px; transition: background-size var(--dur-base) var(--ease-out), color var(--dur-fast); }
 .hdr__link.is-current, .hdr__link:hover { color: var(--accent); background-size: 100% 2px; }
 .hdr__burger { display: none; width: 44px; height: 44px; margin-right: -10px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; background: none; border: 0; cursor: pointer; }
 .hdr__burger span { display: block; width: 24px; height: 2px; background: var(--ink-900); }

@@ -3,18 +3,16 @@ import './styles/base.css';
 import './styles/components.css';
 import './styles/home.css';
 import galleryData from './data/gallery.json';
-import { LegacyMotion } from './motion/legacy.js';
+import { initHomeMotion, scrollToEl, bindCard, animateLb } from './motion/index.js';
 import { initMenu } from './ui/menu.js';
 import { galleryGrid, galColCount, GAL_CATS } from './render/home.js';
 import { slot, toast, pad2 } from './render/ui.js';
 
 const root = document.querySelector('[data-gr-root]');
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const touch = matchMedia('(hover: none)').matches;
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-// ---------- Active nav link (driven by the motion loop) ----------
+// ---------- Active nav link (driven by ScrollTrigger in src/motion) ----------
 const NAV_FOR = { home: 'home', about: 'home', journey: 'journey', cars: 'cars', gallery: 'gallery', sponsors: 'sponsors', contact: 'contact' };
 function setActive(id) {
   const act = NAV_FOR[id];
@@ -25,16 +23,18 @@ function setActive(id) {
   });
 }
 
-const motion = new LegacyMotion(root, { onActive: setActive });
 
 // ---------- Scrolling to sections ----------
-function go(id) {
+// Anchors scroll through Lenis, landing just under the fixed header. Pinned sections (hero, cars)
+// land exactly at their top so the pin is engaged.
+function go(id, immediate = false) {
   const el = document.getElementById(id); if (!el) return;
   const hdr = $('[data-hdr]');
-  const off = el.tagName === 'SECTION' ? 0 : (hdr ? hdr.offsetHeight : 0) + 16;
-  scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + scrollY - off), behavior: reduce ? 'auto' : 'smooth' });
+  const pinned = el.hasAttribute('data-pin') || el.hasAttribute('data-hero');
+  scrollToEl(el, pinned ? 0 : (hdr ? hdr.offsetHeight : 0) + (el.tagName === 'SECTION' ? 0 : 16), { immediate });
 }
 
+let motion = null; // set at start, after the gallery is laid out
 let lb = null; // open lightbox index, or null
 const menu = initMenu({ isOtherOverlayOpen: () => lb != null });
 
@@ -60,18 +60,14 @@ const galGrid = $('[data-gal-grid]');
 const galItems = () => galleryData.filter((g) => galFilter === 'all' || g.category === galFilter);
 
 function bindGalleryCards() {
-  $$('[data-gcard]', galGrid).forEach((c) => {
-    c.addEventListener('pointerenter', () => motion.galFx(c, true, touch));
-    c.addEventListener('pointermove', (e) => motion.galTilt(e));
-    c.addEventListener('pointerleave', () => { c.style.transform = ''; motion.galFx(c, false, touch); });
-  });
+  $$('[data-gcard]', galGrid).forEach(bindCard);
   $$('[data-open]', galGrid).forEach((b) => b.addEventListener('click', () => openLb(+b.dataset.open)));
 }
 function renderGallery({ refresh = true } = {}) {
   galGrid.style.setProperty('--cols', galCols);
   galGrid.innerHTML = galleryGrid(galItems(), galCols);
   bindGalleryCards();
-  if (refresh) motion.refresh();
+  if (refresh && motion) motion.refreshGallery(galGrid);
 }
 $$('[data-gal-tabs] [role="tab"]').forEach((tab) => tab.addEventListener('click', () => {
   galFilter = tab.dataset.value;
@@ -110,7 +106,7 @@ function setLb(i) {
   if (closed) { lbEl.hidden = true; if (lbReturn && lbReturn.focus) lbReturn.focus({ preventScroll: true }); return; }
   renderLb();
   if (opened) { lbEl.hidden = false; $('[data-lb-close]', lbEl).focus({ preventScroll: true }); }
-  motion.animateLb(lbEl, opened, lbDir);
+  animateLb(lbEl, opened, lbDir);
 }
 function openLb(i) { lbReturn = document.activeElement; lbDir = 1; setLb(i); }
 const closeLb = () => setLb(null);
@@ -173,7 +169,7 @@ form.addEventListener('submit', (e) => {
   if (!(d.message || '').trim()) errors.message = 'Add a short message.';
   ['name', 'email', 'message'].forEach((k) => setFieldError(k, errors[k]));
   if (Object.keys(errors).length) return;
-  // BACKEND: POST formData to Formspree / EmailJS / the admin API here. [TODO]
+  // BACKEND: save the enquiry to Supabase here, once the frontend is done. [TODO]
   const label = $('[data-submit] .btn__label', form);
   label.textContent = 'Sending…';
   setTimeout(() => { label.textContent = 'Send enquiry'; showToast(); }, 700);
@@ -185,7 +181,6 @@ if (heroImg) heroImg.addEventListener('error', () => { heroImg.style.visibility 
 
 // ---------- Resize ----------
 addEventListener('resize', () => {
-  motion.onResize();
   const n = galColCount(innerWidth);
   if (n !== galCols) { galCols = n; renderGallery(); }
   if (lb != null) renderLb();
@@ -194,7 +189,7 @@ addEventListener('resize', () => {
 // ---------- Start ----------
 // The build renders 3 gallery columns; re-lay them out for this screen before the motion loop starts.
 if (galCols !== 3) renderGallery({ refresh: false }); else bindGalleryCards();
-motion.start();
+motion = initHomeMotion(root, { onActive: setActive });
 
 // Reveal the page once fonts and the hero image are ready (loader covers it until then).
 let shown = false;
@@ -202,9 +197,10 @@ function show() {
   if (shown) return; shown = true;
   const ld = $('[data-loader]');
   if (ld) { ld.style.opacity = 0; ld.style.visibility = 'hidden'; ld.style.pointerEvents = 'none'; }
-  motion.heroIntro();
+  motion.intro();
+  motion.refresh();
   const id = decodeURIComponent((location.hash || '').slice(1));
-  if (id && document.getElementById(id)) setTimeout(() => { motion.sizePin(); go(id); }, 60);
+  if (id && document.getElementById(id)) setTimeout(() => go(id, true), 60);
 }
 const imgReady = !heroImg ? Promise.resolve() : heroImg.decode ? heroImg.decode().catch(() => {}) : new Promise((res) => { heroImg.onload = heroImg.onerror = res; });
 Promise.all([document.fonts ? document.fonts.ready : Promise.resolve(), imgReady]).then(() => requestAnimationFrame(show));
