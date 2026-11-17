@@ -25,7 +25,17 @@ The name **Abhimanyu (M04)** is confirmed. Everything else is unverified.
 | Steering | Rack & pinion, 1.6 turns | |
 | Safety | 5-pt harness, kill switches, firewall | |
 | Description | "Our lightest and stiffest car yet. Redesigned chromoly frame, in-house tuned CVT and a four-wheel independent setup built to finish the four-hour endurance." | |
-| Cut-out photo for the cars section | none (placeholder) | |
+| Cut-out photo for the cars section | done: `public/assets/cars/abhimanyu-teardown.webp` (same render as the hero) | ✓ |
+
+**Teardown stops** (`teardown[]` in the same car). Each stop's line and spec are unverified:
+
+| Stop | Line on the site | Spec shown | Real value |
+|---|---|---|---|
+| S1 Chassis | "Roll cage and frame in AISI 4130 chromoly tube." | Tube OD 25.4 mm | |
+| S2 Suspension | "FOX shocks front and rear. Double wishbone front, trailing arm rear." | Wheel travel `[TODO]` mm (no value yet) | |
+| S3 Steering & cockpit | "Rack & pinion steering, 5-point harness, kill switches." | Lock to lock 1.6 turns | |
+| S4 Wheels & brakes | "Hydraulic disc brakes, inboard at the rear. 23×7–10 front tyres." | Rim Ø 10 in | |
+| Close-up photos | none: each stop zooms into the cut-out. Add a photo path to that stop's `closeup` to replace it | |
 
 ## 2. Older cars  `[src/data/cars.json, src/data/evolution.json]`
 

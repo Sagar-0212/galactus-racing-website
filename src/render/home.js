@@ -102,30 +102,118 @@ export function journey({ journey: chapters }) {
   </section>`;
 }
 
-export function cars({ cars: list, evolution }) {
-  const carsHtml = list.map((car) => `<article class="car" data-scene="">
+// ---------- S03 Cars: Abhimanyu teardown, previous cars, evolution ----------
+// Teardown stops live in cars.json (current car → teardown[]): `box` = the part's bounding box and
+// `anchors` = points on the part, both as fractions of the cut-out image; `closeup` = optional photo
+// that replaces the zoomed crop for that stop. Desktop camera maths: src/motion/cars.js.
+const numTxt = (sp) => (sp.n == null ? null : Number(sp.n).toFixed(sp.dp || 0));
+
+function tdSpec(sp) {
+  const n = numTxt(sp);
+  const val = n == null
+    ? '<span class="todo">[TODO]</span>'
+    : `<b class="td__n" data-tdn="${n}" data-dp="${sp.dp || 0}">${n}</b>`;
+  return `<div class="td__spec"><span class="td__spec-k">${esc(sp.k)}</span><span class="td__spec-v">${val}<span class="td__unit">${esc(sp.unit)}</span>${n != null ? todo(sp.todo) : ''}</span></div>`;
+}
+
+function tdCallout(st, i, total, extra = '') {
+  return `<div class="td__call${extra}" data-td-call="${i}">
+      <span class="td__sec"><span class="td__tick" aria-hidden="true"></span>S${i + 1} / ${pad2(total)}</span>
+      <h3 class="td__title">${t(st.title)}</h3>
+      <p class="td__line">${t(st.line)}</p>
+      ${tdSpec(st.spec)}
+    </div>`;
+}
+
+// Mobile / reduced-motion crop: the cut-out scaled so the part's box fills a 4:3 frame.
+// Positions are % of the frame, so they hold at any card width.
+function tdCrop(st, car) {
+  const [W, H] = car.photoSize, ar = W / H, FH = 0.75; // frame height / width
+  const [x0, y0, x1, y1] = st.box, bx = (x0 + x1) / 2, by = (y0 + y1) / 2;
+  const s = Math.min(st.zoom || 2, 0.9 / (x1 - x0), (0.9 * FH * ar) / (y1 - y0));
+  const pct = (v) => (v * 100).toFixed(2) + '%';
+  const left = 0.5 - bx * s, top = FH / 2 - (by * s) / ar;
+  const at = (a) => ({ x: 0.5 + (a[0] - bx) * s, y: (FH / 2 + ((a[1] - by) * s) / ar) / FH });
+  const pts = st.closeup ? [{ x: 0.5, y: 0.5 }] : st.anchors.map(at);
+  const dot = pts[0];
+  const img = st.closeup
+    ? `<img class="tdm__close" src="${esc(st.closeup)}" alt="${esc(st.title)} close-up" loading="lazy" decoding="async">`
+    : `<img class="tdm__img" src="${esc(car.photo)}" alt="" width="${W}" height="${H}" loading="lazy" decoding="async" style="width:${pct(s)};left:${pct(left)};top:${pct(top / FH)}">`;
+  return `<div class="tdm__frame">${img}
+      <span class="tdm__ln" data-tdm-ln="" style="left:${pct(dot.x)};top:${pct(dot.y)}" aria-hidden="true"></span>
+      ${pts.map((q) => `<span class="tdm__dot" data-tdm-dot="" style="left:${pct(q.x)};top:${pct(q.y)}" aria-hidden="true"></span>`).join('')}
+    </div>`;
+}
+
+function carCard(car) {
+  return `<article class="car" data-scene="">
       <div class="car__media">
         <span class="car__code" data-px="0.25" aria-hidden="true">${esc(car.code)}</span>
         <div class="car__photo" data-px="-0.12">${slot({ src: car.photo, alt: car.name, placeholder: 'Cut-out photo of ' + car.name.replace(' [TODO]', ''), fit: 'contain' })}</div>
-        <span class="car__tag${car.current ? ' car__tag--current' : ''}">${t(car.tag)}</span>
+        <span class="car__tag">${t(car.tag)}</span>
       </div>
       <div class="car__info">
         <h3 class="car__name">${t(car.name)}</h3>
         <p class="car__desc">${t(car.desc)}</p>
-        <dl class="car__specs">${car.specs.map((sp) => `<dt>${esc(sp.k)}</dt><dd>${t(sp.v)}</dd>`).join('')}</dl>
+        <div class="car__btns">${button({ label: 'View specs', variant: 'outline', size: 'sm', iconRight: '↗', attr: { 'data-specs': car.id, 'aria-haspopup': 'dialog' } })}</div>
       </div>
-    </article>`).join('');
-  const evo = evolution.map((e) => `<li class="evo__item"><span class="evo__year">${esc(e.year)}</span><strong class="evo__name">${esc(e.name)}</strong><span class="evo__note">${t(e.note)}</span></li>`).join('');
+    </article>`;
+}
+
+export function cars({ cars: list, evolution }) {
+  const car = list.find((c) => c.current) || list[0];
+  const prev = list.filter((c) => c !== car);
+  const stops = car.teardown || [];
+  const [W, H] = car.photoSize || [1513, 1035];
+  const n = stops.length;
+  const short = (c) => c.name.replace(' [TODO]', '');
+
+  const lines = stops.map((st, i) => (st.closeup ? [0] : st.anchors).map((_, j) => `<span class="td__ln" data-td-ln="${i}" data-j="${j}"></span><span class="td__dot" data-td-dot="${i}" data-j="${j}"></span>`).join('')).join('');
+  const closes = stops.map((st, i) => (st.closeup ? `<div class="td__close" data-td-close="${i}"><img src="${esc(st.closeup)}" alt="${esc(st.title)} close-up" loading="lazy" decoding="async"></div>` : '')).join('');
+  const sectors = stops.map((st, i) => `<li class="td__s" data-td-s="${i}"><span class="td__s-label"><b>S${i + 1}</b> ${esc(st.title)}</span><span class="td__s-track"><span class="td__s-fill" data-td-fill="${i}"></span></span></li>`).join('');
+  const btns = button({ label: 'View specs', variant: 'primary', size: 'md', iconRight: '↗', attr: { 'data-specs': car.id, 'aria-haspopup': 'dialog' } })
+    + (prev[0] ? button({ label: 'Compare with ' + short(prev[0]), variant: 'outline', size: 'md', iconRight: '→', attr: { 'data-specs': car.id, 'data-compare': '', 'aria-haspopup': 'dialog' } }) : '');
+  const intro = (attr) => `<div class="td__intro"${attr}>
+        ${headline({ as: 'h2', size: 'l', text: 'Our cars.', accent: 'cars.' })}
+        <span class="td__tag">${t(car.tag)}</span>
+        <p class="td__name">${t(car.name)}</p>
+        <p class="td__desc">${t(car.desc)}</p>
+        <div class="td__btns">${btns}</div>
+      </div>`;
+
+  const cards = stops.map((st, i) => `<li class="tdm__card" data-tdm="">${tdCrop(st, car)}${tdCallout(st, i, n, ' td__call--static')}</li>`).join('');
+
+  const evo = evolution.map((e) => {
+    const cur = String(e.year) === String(car.season);
+    return `<li class="evo__item${cur ? ' evo__item--current' : ''}"><span class="evo__ym"><span class="evo__year" data-evo-year="">${esc(e.year)}</span></span><strong class="evo__name">${esc(e.name)}</strong><span class="evo__note">${t(e.note)}</span></li>`;
+  }).join('');
+
+  // Desktop camera data (box / anchors / zoom / side per stop), read by src/motion/cars.js.
+  const camData = JSON.stringify(stops.map(({ box, anchors, zoom, side, closeup }) => ({ box, anchors, zoom, side, closeup: !!closeup })));
+
   return `<section id="cars" class="cars" data-pin="" data-sector-label="S03 / Cars">
-    <div class="cars__sticky">
-      <div class="cars__top micro"><span>The machines</span><span>Scroll to drive →</span></div>
+    <div class="td" data-td="" data-stops="${esc(camData)}">
+      <div class="td__top micro"><span>${esc(car.name)} · teardown</span><span>Scroll ↓</span></div>
+      <img class="td__img" data-td-cam="" src="${esc(car.photo)}" alt="${esc(car.name)}, our current car" width="${W}" height="${H}" loading="lazy" decoding="async" draggable="false">
+      ${closes}
+      <div class="td__lines" aria-hidden="true">${lines}</div>
+      ${stops.map((st, i) => tdCallout(st, i, n, st.side === 'left' ? ' td__call--left' : '')).join('')}
+      ${intro(' data-td-intro=""')}
+      <ol class="td__sectors" aria-label="Teardown sectors">${sectors}</ol>
+    </div>
+    <div class="tdm">
+      ${intro('')}
+      <ol class="tdm__list">${cards}</ol>
+    </div>
+    <div class="cars__rail" data-rail="">
+      <div class="cars__top micro"><span>Previous cars</span><span>Scroll to drive →</span></div>
       <div class="cars__track" data-track="">
         <div class="cars__intro">
-          ${headline({ as: 'h2', size: 'xl', text: 'Our cars.', accent: 'cars.' })}
-          <p class="cars__lead">Seventeen seasons, one rule: lighter, stiffer, faster than last year. Current car first.<span class="todo"> [TODO]</span></p>
+          ${headline({ as: 'h2', size: 'm', text: 'Before Abhimanyu.', accent: 'Abhimanyu.' })}
+          <p class="cars__lead">Seventeen seasons, one rule: lighter, stiffer, faster than last year.<span class="todo"> [TODO]</span></p>
         </div>
-        ${carsHtml}
-        <div class="evo">
+        <div class="prev" data-prev="">${prev.map(carCard).join('')}</div>
+        <div class="evo" data-evo="">
           <span class="eyebrow eyebrow--plain">Evolution</span>
           <ol class="evo__list">${evo}</ol>
         </div>
@@ -133,6 +221,28 @@ export function cars({ cars: list, evolution }) {
       <div class="cars__progress"><div class="cars__bar" data-pinbar=""></div></div>
     </div>
   </section>`;
+}
+
+// Spec panel (dialog), filled at runtime with specTable().
+export function specSheet() {
+  return `<div class="sheet" data-sheet="" data-lenis-prevent="" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+    <div class="sheet__scrim" data-sheet-close=""></div>
+    <div class="sheet__panel" data-sheet-panel="">
+      <div class="sheet__top"><span class="micro">Spec sheet</span><button type="button" class="sheet__close" data-sheet-close="">Close ✕</button></div>
+      <h2 class="sheet__title" id="sheet-title" data-sheet-title=""></h2>
+      <button type="button" class="sheet__toggle" role="switch" aria-checked="false" data-sheet-cmp=""><span class="sheet__sw" aria-hidden="true"><i></i></span><span data-sheet-cmp-label=""></span></button>
+      <div class="sheet__body" data-sheet-body=""></div>
+    </div>
+  </div>`;
+}
+
+// Full spec table for one car, or two cars side by side.
+export function specTable(a, b) {
+  const keys = [...new Set([...a.specs.map((s) => s.k), ...(b ? b.specs.map((s) => s.k) : [])])];
+  const v = (c, k) => (c.specs.find((s) => s.k === k) || {}).v || '[TODO]';
+  const head = b ? `<thead><tr><th scope="col"><span class="sr-only">Spec</span></th><th scope="col">${t(a.name)}</th><th scope="col">${t(b.name)}</th></tr></thead>` : '';
+  const rows = keys.map((k) => `<tr><th scope="row">${esc(k)}</th><td>${t(v(a, k))}</td>${b ? `<td>${t(v(b, k))}</td>` : ''}</tr>`).join('');
+  return `<table class="sheet__table${b ? ' sheet__table--cmp' : ''}">${head}<tbody>${rows}</tbody></table>`;
 }
 
 export function achievements({ achievements: a }) {
@@ -301,6 +411,6 @@ export function renderHome(d) {
   return {
     'home-chrome': loader() + '<div class="progress" data-progress=""></div>' + header({ page: 'home' }),
     'home-main': [hero(d), about(d), journey(d), cars(d), achievements(d), gallery(d), sponsors(d), invest(d), contactSection(d)].join('\n'),
-    'home-overlays': lightbox() + '<div class="toast-wrap" data-toast="" hidden></div>',
+    'home-overlays': lightbox() + specSheet() + '<div class="toast-wrap" data-toast="" hidden></div>',
   };
 }

@@ -78,16 +78,17 @@ export function parallax(els) {
   }).filter(Boolean);
 }
 
-// ---------- Cars: pinned horizontal track (desktop only; under 900px the CSS stacks the cars) ----------
+// ---------- Cars: previous cars + evolution on a pinned horizontal track (desktop only; under 900px
+// the CSS turns it into a scroll-snap row). Returns the track tween for containerAnimation triggers. ----------
 export function carsPin(root) {
-  const sec = root.querySelector('[data-pin]'); if (!sec) return;
+  const sec = root.querySelector('[data-rail]'); if (!sec) return null;
   const track = sec.querySelector('[data-track]'), pb = sec.querySelector('[data-pinbar]');
-  if (!track) return;
+  if (!track) return null;
   const dist = () => Math.max(0, track.scrollWidth - innerWidth);
   const setPb = pb ? gsap.quickSetter(pb, 'scaleX') : null;
   const move = gsap.to(track, {
     x: () => -dist(), ease: 'none',
-    scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: true, invalidateOnRefresh: true,
+    scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: true, invalidateOnRefresh: true, refreshPriority: 1,
       onUpdate: (s) => setPb && setPb(s.progress), onRefresh: (s) => setPb && setPb(s.progress) },
   });
   // Horizontal parallax inside each car (code numeral and photo drift against the track).
@@ -97,6 +98,7 @@ export function carsPin(root) {
     gsap.fromTo(el, { x: () => -A() * px }, { x: () => A() * px, ease: 'none',
       scrollTrigger: { trigger: scene, containerAnimation: move, start: 'left right', end: 'right left', scrub: true, invalidateOnRefresh: true } });
   });
+  return move;
 }
 
 // ---------- Contact: the paper wedge rises as the section scrolls in ----------

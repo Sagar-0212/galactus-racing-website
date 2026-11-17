@@ -1,8 +1,22 @@
 [
   {
-    "id": "m04", "code": "M04", "name": "Abhimanyu (M04)", "season": 2026, "current": true, "photo": "",
+    "id": "m04", "code": "M04", "name": "Abhimanyu (M04)", "season": 2026, "current": true, "photo": "/assets/cars/abhimanyu-teardown.webp", "photoSize": [1513, 1035],
     "tag": "Current car · 2026 [TODO]",
     "desc": "Our lightest and stiffest car yet. Redesigned chromoly frame, in-house tuned CVT and a four-wheel independent setup built to finish the four-hour endurance. [TODO]",
+    "teardown": [
+      { "id": "chassis", "title": "Chassis", "line": "Roll cage and frame in AISI 4130 chromoly tube. [TODO]",
+        "spec": { "k": "Tube OD", "n": 25.4, "dp": 1, "unit": "mm", "todo": true },
+        "box": [0.29, 0.0, 0.79, 0.40], "anchors": [[0.334, 0.20]], "zoom": 2.0, "side": "right", "closeup": "" },
+      { "id": "suspension", "title": "Suspension", "line": "FOX shocks front and rear. Double wishbone front, trailing arm rear. [TODO]",
+        "spec": { "k": "Wheel travel", "n": null, "dp": 0, "unit": "mm", "todo": true },
+        "box": [0.40, 0.34, 0.84, 0.68], "anchors": [[0.437, 0.52], [0.80, 0.545]], "zoom": 2.0, "side": "left", "closeup": "" },
+      { "id": "cockpit", "title": "Steering & cockpit", "line": "Rack & pinion steering, 5-point harness, kill switches. [TODO]",
+        "spec": { "k": "Lock to lock", "n": 1.6, "dp": 1, "unit": "turns", "todo": true },
+        "box": [0.42, 0.20, 0.68, 0.50], "anchors": [[0.455, 0.40]], "zoom": 2.2, "side": "right", "closeup": "" },
+      { "id": "wheels", "title": "Wheels & brakes", "line": "Hydraulic disc brakes, inboard at the rear. 23×7–10 front tyres. [TODO]",
+        "spec": { "k": "Rim Ø", "n": 10, "dp": 0, "unit": "in", "todo": true },
+        "box": [0.0, 0.57, 0.24, 0.93], "anchors": [[0.135, 0.745]], "zoom": 2.2, "side": "right", "closeup": "" }
+    ],
     "specs": [
       { "k": "Engine", "v": "B&S 10 HP Vanguard, 305 cc [TODO]" },
       { "k": "Transmission", "v": "CVT + 2-stage gearbox, 9.2:1 [TODO]" },

@@ -3,9 +3,10 @@ import './styles/base.css';
 import './styles/components.css';
 import './styles/home.css';
 import galleryData from './data/gallery.json';
-import { initHomeMotion, scrollToEl, bindCard, animateLb } from './motion/index.js';
+import carsData from './data/cars.json';
+import { initHomeMotion, scrollToEl, bindCard, animateLb, animateSheet } from './motion/index.js';
 import { initMenu } from './ui/menu.js';
-import { galleryGrid, galColCount, GAL_CATS } from './render/home.js';
+import { galleryGrid, galColCount, GAL_CATS, specTable } from './render/home.js';
 import { slot, toast, pad2 } from './render/ui.js';
 
 const root = document.querySelector('[data-gr-root]');
@@ -36,7 +37,8 @@ function go(id, immediate = false) {
 
 let motion = null; // set at start, after the gallery is laid out
 let lb = null; // open lightbox index, or null
-const menu = initMenu({ isOtherOverlayOpen: () => lb != null });
+let sheetOpen = false; // spec panel open
+const menu = initMenu({ isOtherOverlayOpen: () => lb != null || sheetOpen });
 
 document.addEventListener('click', (e) => {
   const a = e.target.closest && e.target.closest('a[href^="#"]');
@@ -130,6 +132,62 @@ document.addEventListener('keydown', (e) => {
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     else if (!lbEl.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+  }
+});
+
+// ---------- Cars: spec panel + compare toggle ----------
+// Any [data-specs="<car id>"] button opens the panel; [data-compare] opens it already comparing.
+// Compare = the current car (Abhimanyu) next to the previous car, current car first.
+const sheetEl = $('[data-sheet]');
+const curCar = carsData.find((c) => c.current) || carsData[0];
+const prevCar = carsData.find((c) => c !== curCar);
+const shortName = (c) => c.name.replace(' [TODO]', '');
+let sheetCar = null, sheetCmp = false, sheetReturn = null;
+function renderSheet() {
+  const other = sheetCar === curCar ? prevCar : curCar;
+  $('[data-sheet-title]', sheetEl).innerHTML = sheetCmp && other
+    ? specTitle(curCar) + ' <span class="sheet__vs">vs</span> ' + specTitle(sheetCar === curCar ? prevCar : sheetCar)
+    : specTitle(sheetCar);
+  const tog = $('[data-sheet-cmp]', sheetEl);
+  tog.hidden = !other;
+  tog.setAttribute('aria-checked', String(sheetCmp));
+  $('[data-sheet-cmp-label]', sheetEl).textContent = 'Compare with ' + (other ? shortName(other) : '');
+  const a = sheetCmp && other ? curCar : sheetCar, b = sheetCmp && other ? (sheetCar === curCar ? prevCar : sheetCar) : null;
+  $('[data-sheet-body]', sheetEl).innerHTML = specTable(a, b);
+}
+function specTitle(c) { return c.name.replace(/\[TODO\]/g, '<span class="todo">[TODO]</span>'); }
+function openSheet(id, cmp) {
+  sheetCar = carsData.find((c) => c.id === id) || curCar; sheetCmp = !!cmp;
+  sheetReturn = document.activeElement;
+  renderSheet();
+  sheetOpen = true; sheetEl.hidden = false;
+  document.documentElement.style.overflow = 'hidden';
+  if (motion && motion.lenis) motion.lenis.stop();
+  animateSheet(sheetEl, true);
+  $('.sheet__close', sheetEl).focus({ preventScroll: true });
+}
+function closeSheet() {
+  if (!sheetOpen) return;
+  sheetOpen = false;
+  animateSheet(sheetEl, false, () => {
+    sheetEl.hidden = true;
+    document.documentElement.style.overflow = menu.isOpen() || lb != null ? 'hidden' : '';
+    if (motion && motion.lenis) motion.lenis.start();
+    if (sheetReturn && sheetReturn.focus) sheetReturn.focus({ preventScroll: true });
+  });
+}
+$$('[data-specs]').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.specs, b.hasAttribute('data-compare'))));
+$$('[data-sheet-close]', sheetEl).forEach((b) => b.addEventListener('click', closeSheet));
+$('[data-sheet-cmp]', sheetEl).addEventListener('click', () => { sheetCmp = !sheetCmp; renderSheet(); });
+document.addEventListener('keydown', (e) => {
+  if (!sheetOpen) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeSheet(); }
+  else if (e.key === 'Tab') {
+    const els = $$('button:not([hidden])', sheetEl); if (!els.length) return;
+    const first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    else if (!sheetEl.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
   }
 });
 

@@ -142,43 +142,121 @@
 .jr__title { font-weight: 800; font-size: 13px; letter-spacing: var(--tracking-label); text-transform: uppercase; }
 .jr__story { line-height: var(--lh-body); color: var(--text-secondary); text-wrap: pretty; }
 
-/* ---------- S03 Cars (pinned horizontal) ---------- */
+/* ---------- S03 Cars ---------- */
 .cars { position: relative; background: var(--surface-page) var(--grain); }
-.cars__sticky { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+/* Teardown (desktop, pinned). Layout of the image, lines, dots and callouts is set in px by
+   src/motion/cars.js on refresh; scrolling only changes transform / opacity / clip-path. */
+.td { position: relative; height: 100vh; overflow: hidden; }
+.td__top { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; justify-content: space-between; padding: 84px var(--gutter) 12px; background: var(--surface-page) var(--grain); border-bottom: 1px solid var(--border-hairline); font-size: var(--fs-micro); pointer-events: none; }
+.td__img { position: absolute; left: 0; top: 0; width: 1px; height: auto; max-width: none; transform-origin: 50% 50%; user-select: none; }
+.td.is-live .td__img { will-change: transform; }
+.td__close { position: absolute; z-index: 1; overflow: hidden; background: var(--surface-sunken); opacity: 0; }
+.td__close img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.td__lines { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.td__ln { position: absolute; left: 0; top: 0; height: 2px; margin-top: -1px; background: var(--accent); box-shadow: 0 0 0 1px var(--paper-100); transform-origin: 0 50%; transform: scaleX(0); }
+.td__dot { position: absolute; left: 0; top: 0; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: var(--radius-pill); background: var(--accent); box-shadow: 0 0 0 3px var(--paper-100); transform: scale(0); }
+.td__call { position: absolute; left: 0; top: 0; z-index: 2; width: min(30vw, 400px); box-sizing: border-box; padding: 18px 22px 20px; display: flex; flex-direction: column; gap: 10px; background: var(--surface-raised); border: 1px solid var(--border-hairline); border-top: 2px solid var(--accent); opacity: 0; }
+.td__sec { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-accent); }
+.td__tick { width: 18px; height: 1px; background: var(--accent); }
+.td__title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(40px, 3.6vw, var(--fs-display-m)); line-height: var(--lh-display); text-transform: uppercase; }
+.td__line { margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-secondary); }
+.td__spec { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-top: 10px; border-top: 1px solid var(--border-hairline); font-family: var(--font-mono); }
+.td__spec-k { font-size: var(--fs-label); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-muted); }
+.td__spec-v { display: flex; align-items: baseline; gap: 6px; font-size: var(--fs-h3); font-weight: var(--fw-medium); white-space: nowrap; }
+.td__n { font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; }
+.td__unit { font-size: var(--fs-body-s); color: var(--text-muted); }
+.td__intro { position: absolute; left: var(--gutter); top: 124px; z-index: 2; width: min(34vw, 540px); display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.td__tag { padding: 6px 10px; background: var(--accent); color: var(--paper-100); font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; }
+.td__tag .todo { color: var(--red-200); }
+.td__name { margin: 0; font-family: var(--font-display); font-size: var(--fs-display-s); line-height: var(--lh-display); text-transform: uppercase; }
+.td__desc { margin: 0; max-width: 44ch; line-height: var(--lh-body); color: var(--text-secondary); }
+.td__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.td__sectors { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; margin: 0; padding: 14px var(--gutter) 24px; list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; background: var(--surface-page) var(--grain); border-top: 1px solid var(--border-hairline); }
+.td__s { display: flex; flex-direction: column; gap: 8px; }
+.td__s-label { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-muted); transition: color var(--dur-fast) var(--ease-out); }
+.td__s-label b { font-weight: var(--fw-medium); color: var(--text-primary); }
+.td__s.is-on .td__s-label, .td__s.is-on .td__s-label b { color: var(--text-accent); }
+.td__s-track { height: 2px; background: var(--border-hairline); overflow: hidden; }
+.td__s-fill { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* Teardown as stacked cards (under 900px and with reduced motion). */
+.tdm { display: none; padding: 104px var(--gutter) 24px; }
+.tdm .td__intro { position: static; width: auto; margin-bottom: 40px; }
+.tdm__list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 40px 24px; }
+.tdm__card { display: flex; flex-direction: column; }
+.tdm__frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--surface-sunken); }
+.tdm__img { position: absolute; max-width: none; height: auto; }
+.tdm__close { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tdm__dot { position: absolute; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: var(--radius-pill); background: var(--accent); box-shadow: 0 0 0 3px var(--paper-100); }
+.tdm__ln { position: absolute; bottom: 0; width: 1px; background: var(--accent); transform-origin: 50% 0; }
+.td__call--static { position: static; width: auto; opacity: 1; border-top-width: 2px; }
+
+/* Previous cars + evolution: the pinned horizontal track (desktop). */
+.cars__rail { position: relative; height: 100vh; overflow: hidden; display: flex; flex-direction: column; border-top: 1px solid var(--border-hairline); }
 .cars__top { display: flex; justify-content: space-between; align-items: center; padding: 84px var(--gutter) 0; font-size: var(--fs-micro); }
 .cars__track { flex: 1; min-height: 0; display: flex; align-items: stretch; gap: clamp(24px, 4vw, 64px); padding: 24px var(--gutter) 40px; will-change: transform; }
-.cars__intro { flex: none; width: min(80vw, 520px); display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+.cars__intro { flex: none; width: min(80vw, 440px); display: flex; flex-direction: column; justify-content: center; gap: 24px; }
 .cars__lead { margin: 0; max-width: 36ch; font-size: var(--fs-body-l); line-height: var(--lh-body); color: var(--text-secondary); }
-.car { flex: none; width: min(88vw, 1180px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(20px, 3vw, 48px); align-content: center; align-items: center; border-left: 1px solid var(--border-hairline); padding-left: clamp(20px, 3vw, 48px); box-sizing: border-box; }
-.car__media { position: relative; height: min(50vh, 460px); background: var(--surface-sunken); overflow: hidden; }
-.car__code { position: absolute; left: 4%; top: -4%; font-family: var(--font-display); font-size: clamp(140px, 20vw, 300px); line-height: .86; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--ink-900) 22%, transparent); pointer-events: none; white-space: nowrap; }
+.prev { display: contents; }
+.car { flex: none; width: min(64vw, 820px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(20px, 2.4vw, 40px); align-content: center; align-items: center; border-left: 1px solid var(--border-hairline); padding-left: clamp(20px, 3vw, 48px); box-sizing: border-box; }
+.car__media { position: relative; height: min(40vh, 340px); background: var(--surface-sunken); overflow: hidden; }
+.car__code { position: absolute; left: 4%; top: -4%; font-family: var(--font-display); font-size: clamp(120px, 16vw, 240px); line-height: .86; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--ink-900) 22%, transparent); pointer-events: none; white-space: nowrap; }
 .car__photo { position: absolute; inset: 6%; }
 .car__tag { position: absolute; left: 0; top: 0; padding: 8px 12px; background: var(--ink-900); color: var(--paper-100); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; }
-.car__tag--current { background: var(--accent); }
-.car__info { display: flex; flex-direction: column; gap: 16px; }
-.car__name { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(48px, 5vw, 80px); line-height: var(--lh-display); text-transform: uppercase; }
-.car__desc { margin: 0; max-width: 48ch; line-height: var(--lh-body); color: var(--text-secondary); }
-.car__specs { margin: 0; display: grid; grid-template-columns: auto 1fr; border-top: 1px solid var(--border-strong); }
-.car__specs dt { padding: 7px 16px 7px 0; border-bottom: 1px solid var(--border-hairline); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-muted); }
-.car__specs dd { margin: 0; padding: 7px 0; border-bottom: 1px solid var(--border-hairline); font-size: var(--fs-body-s); font-weight: 600; }
-/* Under 700px the original showed only the first 6 specs */
-@media (max-width: 699px) { .car__specs dt:nth-of-type(n+7), .car__specs dd:nth-of-type(n+7) { display: none; } }
+.car__info { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.car__name { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(40px, 4vw, var(--fs-display-m)); line-height: var(--lh-display); text-transform: uppercase; }
+.car__desc { margin: 0; max-width: 44ch; line-height: var(--lh-body); color: var(--text-secondary); }
 .evo { flex: none; width: min(88vw, 760px); display: flex; flex-direction: column; justify-content: center; gap: 28px; border-left: 1px solid var(--border-hairline); padding-left: clamp(20px, 3vw, 48px); }
 .evo__list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 24px 20px; }
 .evo__item { display: flex; flex-direction: column; gap: 4px; border-top: 2px solid var(--ink-900); padding-top: 10px; }
-.evo__year { font-family: var(--font-display); font-size: 44px; line-height: var(--lh-display); }
+.evo__ym { display: block; overflow: hidden; }
+.evo__year { display: block; font-family: var(--font-display); font-size: 44px; line-height: var(--lh-display); }
+.evo__item--current { border-top-color: var(--accent); }
+.evo__item--current .evo__year { color: var(--text-accent); }
 .evo__name { font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-accent); }
 .evo__note { font-size: var(--fs-body-s); color: var(--text-secondary); line-height: 1.4; }
 .cars__progress { height: 2px; background: var(--border-hairline); margin: 0 var(--gutter) 28px; }
 .cars__bar { height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); }
-/* Under 900px (and with reduced motion) there is no pin: the cars stack vertically. */
+
+/* Under 900px (and with reduced motion) nothing is pinned: teardown = stacked cards,
+   previous cars = a swipeable scroll-snap row, evolution below. */
 @media (max-width: 899px), (prefers-reduced-motion: reduce) {
-  .cars__sticky { height: auto; overflow: visible; }
+  .td { display: none; }
+  .tdm { display: block; }
+  .cars__rail { height: auto; overflow: visible; }
   .cars__top span:last-child, .cars__progress { display: none; }
-  .cars__track { flex-direction: column; gap: 56px; padding-bottom: 72px; }
-  .cars__intro, .car, .evo { width: 100%; }
-  .car, .evo { box-sizing: border-box; border-left: 0; padding-left: 0; border-top: 1px solid var(--border-hairline); padding-top: 32px; }
+  .cars__track { flex-direction: column; gap: 48px; padding-bottom: 72px; will-change: auto; }
+  .cars__intro, .evo { width: 100%; }
+  .prev { display: flex; gap: 16px; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--gutter); overscroll-behavior-x: contain; scrollbar-width: thin; }
+  .car { width: min(84vw, 520px); scroll-snap-align: start; border-left: 0; padding-left: 0; grid-template-columns: 1fr; align-content: start; }
+  .car__media { height: auto; aspect-ratio: 4 / 3; }
+  .evo { box-sizing: border-box; border-left: 0; padding-left: 0; border-top: 1px solid var(--border-hairline); padding-top: 32px; }
 }
+
+/* Spec panel: a sheet from the right (full screen on phones). */
+.sheet { position: fixed; inset: 0; z-index: 96; display: flex; justify-content: flex-end; }
+.sheet[hidden] { display: none; }
+.sheet__scrim { position: absolute; inset: 0; background: var(--scrim); }
+.sheet__panel { position: relative; width: min(100%, 640px); height: 100%; box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: 20px var(--gutter) 40px; background: var(--surface-raised) var(--grain); display: flex; flex-direction: column; gap: 20px; border-left: 2px solid var(--accent); }
+.sheet__top { display: flex; justify-content: space-between; align-items: center; }
+.sheet__close { height: 44px; padding: 0 14px; background: none; color: var(--text-primary); border: 1px solid var(--border-strong); font-family: var(--font-body); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; cursor: pointer; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast); }
+.sheet__close:hover { background: var(--ink-900); color: var(--text-inverse); }
+.sheet__title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-display-m); line-height: var(--lh-display); text-transform: uppercase; }
+.sheet__toggle { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0; background: none; border: 0; color: var(--text-primary); font-family: var(--font-body); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; cursor: pointer; }
+.sheet__toggle[hidden] { display: none; }
+.sheet__sw { position: relative; width: 40px; height: 20px; box-sizing: border-box; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--surface-page); transition: background var(--dur-fast) var(--ease-out); }
+.sheet__sw i { position: absolute; left: 3px; top: 3px; width: 12px; height: 12px; border-radius: var(--radius-pill); background: var(--ink-900); transition: transform var(--dur-base) var(--ease-out), background var(--dur-fast); }
+.sheet__toggle[aria-checked="true"] .sheet__sw { background: var(--accent); border-color: var(--accent); }
+.sheet__toggle[aria-checked="true"] .sheet__sw i { transform: translateX(20px); background: var(--paper-100); }
+.sheet__table { width: 100%; border-collapse: collapse; border-top: 1px solid var(--border-strong); }
+.sheet__table th, .sheet__table td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--border-hairline); text-align: left; vertical-align: top; }
+.sheet__table tbody th { width: 34%; font-family: var(--font-mono); font-size: var(--fs-label); font-weight: var(--fw-regular); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-muted); }
+.sheet__table td { font-size: var(--fs-body-s); font-weight: 600; }
+.sheet__table thead th { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h3); line-height: var(--lh-tight); text-transform: uppercase; vertical-align: bottom; }
+.sheet__table--cmp tbody th { width: 26%; }
+.sheet__table--cmp td:nth-child(2) { border-left: 2px solid var(--accent); padding-left: 10px; }
+.sheet__table--cmp thead th:nth-child(2) { padding-left: 12px; color: var(--text-accent); }
 
 /* ---------- S04 Achievements ---------- */
 .ach { position: relative; min-height: 100vh; box-sizing: border-box; padding: clamp(96px, 14vh, 160px) var(--gutter) 96px; background: var(--surface-raised); overflow: hidden; }
@@ -301,3 +379,4 @@
 .contact__inner { position: relative; padding: clamp(140px, 24vh, 240px) var(--gutter) 0; display: flex; flex-direction: column; gap: 48px; }
 .contact__title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(96px, 18vw, 320px); line-height: var(--lh-display); letter-spacing: var(--tracking-display); text-transform: uppercase; white-space: nowrap; }
 .contact__title span { display: inline-block; }
+.sheet__vs { color: var(--text-muted); }

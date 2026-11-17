@@ -4,10 +4,12 @@
 import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens } from './core.js';
 import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } from './hero.js';
 import { createDust } from './dust.js';
+import { teardown, teardownCards, evoIn } from './cars.js';
 import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl };
 export { bindCard, animateLb } from './gallery.js';
+export { animateSheet } from './cars.js';
 
 export function initHomeMotion(root, { onActive } = {}) {
   tokens();
@@ -42,9 +44,13 @@ export function initHomeMotion(root, { onActive } = {}) {
     let stopTilt = null;
     if (desktop) {
       stopTilt = carTilt(H);
-      carsPin(root);
+      teardown(root);
+      evoIn(root, carsPin(root));
       parallax([...root.querySelectorAll('[data-speed],[data-hx]')].filter((el) => !el.matches('.gal__col')));
       galTweens = parallax(galCols());
+    } else {
+      teardownCards(root);
+      evoIn(root, null);
     }
     return () => { if (stopMarq) stopMarq(); if (stopTilt) stopTilt(); galTweens = []; };
   });
