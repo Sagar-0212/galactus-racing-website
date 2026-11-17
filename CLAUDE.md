@@ -42,6 +42,7 @@ Don't build anything inside `.dc.html` any more; the archive is reference only.
 - Animation: **GSAP + ScrollTrigger**, **Lenis** smooth scroll driven from the GSAP ticker (`lenis.on('scroll', ScrollTrigger.update)`, `gsap.ticker.add(t => lenis.raf(t*1000))`, `gsap.ticker.lagSmoothing(0)`).
 - 3D: **Three.js** (plain, ES modules via npm). Only in the Cars section, and only if it beats the photo.
 - Before using any GSAP, ScrollTrigger, Lenis or Three.js API, check the current docs (Context7 MCP). Their APIs change.
+- **Backend (decided): Supabase** — database + email login + image storage. It is wired into the admin panel only **after the frontend is done**. Until then: keep `admin.html` working in dev on its current runtime (mock API), keep `src/data/*.json` shaped like `SEED` in `src/admin/admin-api.js`, and don't add any other backend (no Formspree/EmailJS/Firebase etc.).
 - Deploy target: **Vercel** (`vercel.json`: build `npm run build`, output `dist`). Not deployed yet. Repo: `Sagar-0212/G` (empty right now).
 
 ## Design system (MTVNA) — follow it
