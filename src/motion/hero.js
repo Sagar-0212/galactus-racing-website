@@ -21,25 +21,75 @@ export function heroEls(root) {
 const W = (H) => H.sticky.clientWidth;
 const Ht = (H) => H.sticky.clientHeight;
 
-// Scroll (scrub, linear): GALACTUS exits left, RACING right, Abhimanyu drives forward (toward the
-// viewer = left and a little bigger, anchored at its bottom edge so it never leaves the frame),
-// the wedge lags behind (sinks), details fade and lift.
-export function heroScroll(H, desktop, dust) {
+// Leftmost visible car pixel for each 1% band of the image height, in 1/1000 of the image width
+// (alpha > 24, measured from public/assets/hero-car.webp). Lets the headline grow into the empty paper
+// above the roll cage and left of the helmet. Re-measure if the car image changes.
+const CONTOUR = [478, 425, 394, 386, 380, 376, 372, 368, 364, 361, 357, 352, 349, 345, 341, 338, 333, 330, 326, 322,
+  318, 314, 311, 307, 303, 300, 267, 261, 261, 262, 275, 263, 254, 252, 250, 250, 248, 246, 242, 240,
+  238, 236, 235, 231, 228, 223, 219, 214, 210, 199, 197, 198, 208, 209, 209, 210, 210, 88, 64, 52,
+  42, 37, 31, 25, 21, 19, 18, 11, 8, 8, 8, 3, 2, 1, 1, 3, 0, 0, 0, 2,
+  4, 4, 5, 8, 13, 13, 16, 20, 28, 31, 12, 8, 8, 14, 527, 511, 509, 509, 517, 1000];
+const GAP = 16;
+export const STACKED = '(max-width: 899px), (max-aspect-ratio: 13/10)';
+
+// Wide layout: the biggest headline that keeps every word (and the buttons) >= 16px from any car pixel
+// and the buttons >= 16px above the spec strip. Binary search on the font size; runs on load and resize
+// only (it reads layout). Uses offset* values, which ignore the scroll/intro transforms.
+export function fitHeadline(H) {
+  if (!H) return;
+  const st = H.sticky;
+  if (matchMedia(STACKED).matches) { st.style.removeProperty('--fs-head'); return; }
+  const title = H.hero.querySelector('.hero__title'), spec = H.hero.querySelector('[data-hero-spec]'), car = H.carL;
+  const edge = (y) => {
+    const i = Math.floor(((y - car.offsetTop) / car.offsetHeight) * 100);
+    return i < 0 || i > 99 ? Infinity : car.offsetLeft + (CONTOUR[i] / 1000) * car.offsetWidth;
+  };
+  const clear = (l, t, r, b) => { for (let y = t - GAP; y <= b + GAP; y += 2) if (edge(y) < r + GAP) return false; return true; };
+  const fits = () => {
+    for (const el of [H.g, H.r]) {
+      const l = title.offsetLeft + el.offsetLeft, t = title.offsetTop + el.offsetTop;
+      if (!clear(l, t, l + el.offsetWidth, t + el.offsetHeight)) return false;
+    }
+    const u = H.ui, ub = u.offsetTop + u.offsetHeight;
+    if (!clear(u.offsetLeft, u.offsetTop, u.offsetLeft + u.offsetWidth, ub)) return false;
+    return ub + GAP <= H.details.offsetTop + spec.offsetTop;
+  };
+  const sw = st.clientWidth, sh = st.clientHeight;
+  let lo = Math.min(sw * 0.06, sh * 0.09), hi = sw * 0.154;   // hi = the c984f85 width; height is limited by fits()
+  const set = (fs) => st.style.setProperty('--fs-head', fs.toFixed(1) + 'px');
+  set(hi); if (fits()) return;
+  for (let i = 0; i < 10; i++) { const m = (lo + hi) / 2; set(m); if (fits()) lo = m; else hi = m; }
+  set(lo);
+}
+
+// Scroll exit (scrub, linear in scroll, so scrolling back up retraces it exactly).
+// Wide screens (hero is 180vh with a sticky inner = pinned): badge/buttons/spec fade and rise first,
+// the headline stays whole for the first 10%, then GALACTUS slides out left growing to 1.1x and fading,
+// RACING slides out right, Abhimanyu drives toward the viewer and a little left (dust kicks up with
+// scroll speed), the wedge lags behind.
+// Phones (stacked, no pin): the hero scrolls away normally with a light fade/slide of the words.
+export function heroScroll(H, dust) {
   if (!H) return null;
+  const stacked = matchMedia(STACKED).matches;
+  const kick = dust ? (st) => { const v = st.getVelocity(); if (v > 40 && st.progress < 0.98) dust.kick(Math.min(320, v * 0.15)); } : undefined;
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
-    scrollTrigger: {
-      trigger: H.hero, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true,
-      // scrolling down = the car drives forward: kick dust in proportion to scroll speed
-      onUpdate: dust ? (st) => { const v = st.getVelocity(); if (v > 40 && st.progress < 0.98) dust.kick(Math.min(320, v * 0.15)); } : undefined,
-    },
+    scrollTrigger: { trigger: H.hero, start: 'top top', end: stacked ? 'bottom top' : 'bottom bottom', scrub: true, invalidateOnRefresh: true, onUpdate: kick },
   });
-  tl.to(H.gL, { x: () => -W(H) * 0.62, y: () => -Ht(H) * 0.03, scale: 1.16, duration: 1 }, 0).to(H.gL, { opacity: 0, duration: 0.74 }, 0)
-    .to(H.rL, { x: () => W(H) * 0.62, y: () => Ht(H) * 0.03, scale: 1.16, duration: 1 }, 0).to(H.rL, { opacity: 0, duration: 0.74 }, 0)
-    .to(H.carL, desktop ? { x: () => -W(H) * 0.06, scale: 1.08, duration: 1 } : { scale: 1.03, duration: 1 }, 0)
-    .to(H.wedgeL, { y: () => Ht(H) * 0.07, duration: 1 }, 0);
-  const fade = [H.details, H.badge, H.ui].filter(Boolean);
-  tl.to(fade, { y: -40, duration: 1 }, 0).to(fade, { autoAlpha: 0, duration: 1 / 3.2 }, 0);
+  const fade = [H.badge, H.ui, H.details].filter(Boolean);
+  if (stacked) {
+    tl.to(fade, { y: -24, autoAlpha: 0, duration: 0.4 }, 0)
+      .to(H.gL, { x: () => -W(H) * 0.3, opacity: 0, duration: 0.6 }, 0)
+      .to(H.rL, { x: () => W(H) * 0.3, opacity: 0, duration: 0.6 }, 0)
+      .to(H.carL, { scale: 1.03, duration: 1 }, 0)
+      .to(H.wedgeL, { y: () => Ht(H) * 0.05, duration: 1 }, 0);
+    return tl;
+  }
+  tl.to(fade, { y: -40, autoAlpha: 0, duration: 0.3 }, 0)
+    .to(H.gL, { x: () => -W(H) * 0.62, scale: 1.1, duration: 0.9 }, 0.1).to(H.gL, { opacity: 0, duration: 0.65 }, 0.1)
+    .to(H.rL, { x: () => W(H) * 0.62, duration: 0.9 }, 0.1).to(H.rL, { opacity: 0, duration: 0.65 }, 0.1)
+    .to(H.carL, { x: () => -W(H) * 0.08, y: () => Ht(H) * 0.05, scale: 1.16, duration: 1 }, 0)
+    .to(H.wedgeL, { y: () => Ht(H) * 0.08, duration: 1 }, 0);
   return tl;
 }
 

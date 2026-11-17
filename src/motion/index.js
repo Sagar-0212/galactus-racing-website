@@ -2,7 +2,7 @@
 // gsap.matchMedia: desktop (>= 900px) gets pins + parallax; under 900px no pinning and lighter reveals;
 // prefers-reduced-motion skips every animation and shows final states.
 import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens } from './core.js';
-import { heroEls, heroScroll, heroIntro, startLights, carTilt } from './hero.js';
+import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } from './hero.js';
 import { createDust } from './dust.js';
 import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
 
@@ -18,6 +18,13 @@ export function initHomeMotion(root, { onActive } = {}) {
   const dust = H && createDust(H.dustCanvas, { reduce: matchMedia(REDUCE).matches, max: phone ? 60 : 150, haze: phone ? 10 : 22, dprMax: phone ? 1 : 1.5 });
   chrome(root, onActive);
 
+  // Headline size depends on the car's outline and the font: fit after fonts load and on every refresh.
+  if (H) {
+    ScrollTrigger.addEventListener('refreshInit', () => fitHeadline(H));
+    fitHeadline(H);
+    if (document.fonts) document.fonts.ready.then(() => { fitHeadline(H); ScrollTrigger.refresh(); });
+  }
+
   const mm = gsap.matchMedia();
   let ctx = null, desktop = false, galTweens = [];
   const galCols = () => [...root.querySelectorAll('.gal__col[data-speed]')];
@@ -29,7 +36,7 @@ export function initHomeMotion(root, { onActive } = {}) {
     reveals([...root.querySelectorAll('[data-reveal]')], !desktop);
     counts(root);
     journey(root, false);
-    heroScroll(H, desktop, dust);
+    heroScroll(H, dust);
     wedgeRise(root);
     const stopMarq = marquee(root);
     let stopTilt = null;

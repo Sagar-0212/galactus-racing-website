@@ -31,6 +31,7 @@ Don't build anything inside `.dc.html` any more; the archive is reference only.
 - **Abhimanyu (M04) is our current car and THE car the landing page showcases.** The old placeholder name "GR-26 Valkyrie" is gone everywhere (hero spec strip, cars section, evolution row, gallery captions, data, admin seed).
 - Hero: Abhimanyu is the main visual. Cut-out: `public/assets/hero-car.webp` (srcset with `hero-car-640.webp`). Real photo: `public/assets/photos/abhimanyu-real-01.jpg`.
 - Cars section: Abhimanyu comes first and gets the big scroll-driven showcase (Prompt 5). Older cars become a smaller "previous cars" row after it.
+- Hero headline size is fitted in JS (`fitHeadline` in `src/motion/hero.js`) to the car's alpha outline (`CONTOUR`, 16px gap). **If the car image changes, re-measure `CONTOUR`.** The car's own size uses the fixed `--fs-car` reference, not the headline.
 - The hero spec strip reads its values from the current car in `src/data/cars.json` (single source).
 - Abhimanyu's specs are **not verified**: every value is marked `[TODO]`; top speed shows `[TODO] km/h` until confirmed (the old site said 38 in the hero and 58 in the table).
 - Older cars (GR-25 Raptor, GR-24 Titan, GR-01/05/09/12): names, years and specs are AI placeholders, all `[TODO]`.
