@@ -1,0 +1,10 @@
+:root{
+--space-0:0;--space-1:2px;--space-2:4px;--space-3:8px;--space-4:12px;--space-5:16px;--space-6:24px;--space-7:32px;--space-8:48px;--space-9:64px;--space-10:96px;--space-11:128px;
+--gutter:clamp(20px,5vw,72px); /* @kind spacing */
+--container:1360px; /* @kind spacing */
+
+--radius-0:0;--radius-1:2px;--radius-pill:999px;
+--border-1:1px; /* @kind other */
+--border-2:2px; /* @kind other */
+--rule-length:180px; /* @kind spacing */
+}

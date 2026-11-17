@@ -1,0 +1,22 @@
+:root{
+--font-display:"Anton","Bebas Neue","Impact",sans-serif;
+--font-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+--font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display-xl:clamp(88px,12vw,200px); /* @kind font */
+--fs-display-l:clamp(64px,8vw,128px); /* @kind font */
+--fs-display-m:56px;--fs-display-s:36px;
+--fs-h3:24px;--fs-body-l:18px;--fs-body:15px;--fs-body-s:13px;--fs-label:11px;--fs-micro:9px;
+--lh-display:.86; /* @kind font */
+--lh-tight:1.1; /* @kind font */
+--lh-body:1.5; /* @kind font */
+
+--tracking-display:-0.005em; /* @kind font */
+--tracking-label:.06em; /* @kind font */
+--tracking-micro:.08em; /* @kind font */
+
+--fw-regular:400; /* @kind font */
+--fw-medium:500; /* @kind font */
+--fw-bold:700; /* @kind font */
+--fw-black:800; /* @kind font */
+
+}

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galactus Racing | Baja SAE Team, RIT Rajaramnagar</title>
+  <meta name="description" content="Galactus Racing is the off-road Baja team of Rajarambapu Institute of Technology, designing and racing all-terrain vehicles since 2008 for SAE BAJA, MEGA ATV and the ATV Championship.">
+  <meta name="theme-color" content="#0b0b0d">
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Galactus Racing | Freedom for Failure">
+  <meta property="og:description" content="Student-built off-road race cars from RIT Rajaramnagar. Meet the cars, the crew and our partners.">
+  <meta property="og:image" content="https://placehold.co/1200x630/0b0b0d/ff4d00?text=GALACTUS+RACING&font=oswald"><!-- REPLACE: social share image -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Galactus Racing | Freedom for Failure">
+  <meta name="twitter:description" content="Student-built off-road race cars from RIT Rajaramnagar.">
+  <!-- REPLACE: favicon (assets/icons/favicon.svg) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0b0d'/%3E%3Cpath d='M14 46 L32 14 L50 46 Z' fill='none' stroke='%23ff4d00' stroke-width='6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ===== PRELOADER: 5 start lights then GO ===== -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="lights">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p class="preloader-go">GO!</p>
+  </div>
+
+  <!-- Custom cursor (desktop only, hidden on touch via CSS) -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <!-- Scroll progress ("lap") bar -->
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#home" class="brand" aria-label="Galactus Racing home">
+        <!-- REPLACE: logo (assets/images/logo.svg) -->
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">GALACTUS<em>RACING</em></span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#cars">Cars</a></li>
+          <li><a href="#achievements">Achievements</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#sponsors">Sponsors</a></li>
+          <li><a href="#invest">Invest in Us</a></li>
+          <li><a href="#contact" class="btn btn-sm">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="home">
+      <div class="hero-bg" data-parallax="0.35">
+        <!-- REPLACE: hero video/image. For video, swap the img for:
+             <video autoplay muted loop playsinline poster="assets/images/hero.jpg"><source src="assets/videos/hero.mp4" type="video/mp4"></video> -->
+        <img src="https://placehold.co/1920x1080/141416/2a2a30?text=HERO+%E2%80%93+CAR+IN+MUD&font=oswald" alt="Galactus Racing Baja car launching over a dirt jump at night" fetchpriority="high">
+      </div>
+      <div class="hero-dust" data-parallax="0.6" aria-hidden="true"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="container hero-content">
+        <p class="eyebrow reveal">RIT Rajaramnagar · Est. 2008 · SAE BAJA</p>
+        <h1 class="hero-title reveal">
+          <span>Galactus</span>
+          <span class="skew accent">Racing</span>
+        </h1>
+        <p class="hero-tag reveal">“Freedom for failure”</p>
+        <p class="hero-sub reveal">We design, build and race off-road vehicles from a bare steel tube to the finish line. Every crash teaches us something. Every season we come back faster.</p>
+        <div class="hero-ctas reveal">
+          <a href="#cars" class="btn">Meet Our Cars</a>
+          <a href="#invest" class="btn btn-ghost">Invest in Us</a>
+        </div>
+      </div>
+      <a href="#stats" class="scroll-down" aria-label="Scroll to next section"><span></span></a>
+    </section>
+
+    <!-- ===== STATS STRIP ===== -->
+    <section class="stats" id="stats" aria-label="Team in numbers">
+      <div class="hazard" aria-hidden="true"></div>
+      <div class="container stats-grid">
+        <!-- REPLACE: real numbers -->
+        <div class="stat"><span class="num" data-count="18">0</span><span class="lbl">Years Active</span></div>
+        <div class="stat"><span class="num" data-count="35" data-suffix="+">0</span><span class="lbl">Competitions</span></div>
+        <div class="stat"><span class="num" data-count="14">0</span><span class="lbl">Podium Finishes</span></div>
+        <div class="stat"><span class="num" data-count="42">0</span><span class="lbl">Team Members</span></div>
+        <div class="stat"><span class="num" data-count="20" data-suffix="+">0</span><span class="lbl">Sponsors</span></div>
+      </div>
+    </section>
+
+    <!-- ===== WHO WE ARE ===== -->
+    <section class="section about" aria-labelledby="about-title">
+      <div class="container about-grid">
+        <div>
+          <p class="eyebrow reveal">Who We Are</p>
+          <h2 id="about-title" class="h2 reveal">Built by students.<br><span class="skew accent">Proven in the dirt.</span></h2>
+        </div>
+        <div class="about-copy">
+          <!-- REPLACE: about text -->
+          <p class="reveal">Galactus Racing is the official Baja team of Rajarambapu Institute of Technology. Since 2008, our engineers have designed, fabricated and raced single-seat off-road vehicles that compete against the best college teams in India.</p>
+          <p class="reveal"><strong>Our mission:</strong> turn classroom engineering into machines that survive rocks, mud and four-hour endurance races, and turn students into engineers industry wants to hire.</p>
+          <div class="info-card reveal">
+            <h3>What is Baja SAE?</h3>
+            <p>A student engineering competition where teams build a rugged off-road car around a standard engine. Cars are judged on design, cost and sales presentations, then pushed through acceleration, hill climb, suspension and a punishing endurance race.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="speed-edge" aria-hidden="true"></div>
+
+    <!-- ===== CARS ===== -->
+    <section class="section cars carbon" id="cars" aria-labelledby="cars-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">The Machines</p>
+          <h2 id="cars-title" class="h2 reveal">Our <span class="skew accent">Cars</span></h2>
+        </div>
+
+        <!-- Cars rendered from CARS data in js/main.js -->
+        <div class="car-grid" id="carGrid"></div>
+
+        <!-- Spec comparison -->
+        <div class="compare reveal">
+          <div class="compare-head">
+            <h3 class="h3">Spec Comparison</h3>
+            <div class="toggle" role="group" aria-label="Choose cars to compare">
+              <button class="toggle-btn is-active" data-compare="0,1" aria-pressed="true">GR-26 vs GR-25</button>
+              <button class="toggle-btn" data-compare="1,2" aria-pressed="false">GR-25 vs GR-24</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="compare-table" id="compareTable"></table>
+          </div>
+        </div>
+
+        <!-- Evolution timeline (horizontal scroll) -->
+        <h3 class="h3 reveal">Evolution</h3>
+        <ol class="evo" id="evo" tabindex="0" aria-label="Car evolution timeline, scroll horizontally"></ol>
+      </div>
+    </section>
+
+    <!-- Spec modal -->
+    <dialog class="modal" id="specModal" aria-labelledby="specTitle">
+      <button class="modal-close" data-close aria-label="Close specs"><i data-lucide="x"></i></button>
+      <p class="eyebrow" id="specYear"></p>
+      <h3 class="h2" id="specTitle"></h3>
+      <dl class="spec-list" id="specList"></dl>
+    </dialog>
+
+    <div class="tread" aria-hidden="true"></div>
+
+    <!-- ===== ACHIEVEMENTS ===== -->
+    <section class="section achievements" id="achievements" aria-labelledby="ach-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Results</p>
+          <h2 id="ach-title" class="h2 reveal">Achieve<span class="skew accent">ments</span></h2>
+        </div>
+
+        <!-- REPLACE: real results -->
+        <div class="wins">
+          <article class="win reveal">
+            <i data-lucide="trophy" aria-hidden="true"></i>
+            <span class="win-rank">P1</span>
+            <h3>Endurance Race</h3>
+            <p>MEGA ATV Championship · Indore · 2025</p>
+          </article>
+          <article class="win reveal">
+            <i data-lucide="medal" aria-hidden="true"></i>
+            <span class="win-rank">P2</span>
+            <h3>Overall</h3>
+            <p>ATV Championship · Pune · 2024</p>
+          </article>
+          <article class="win reveal">
+            <i data-lucide="award" aria-hidden="true"></i>
+            <span class="win-rank">P3</span>
+            <h3>Hill Climb</h3>
+            <p>SAE BAJA India · Pithampur · 2023</p>
+          </article>
+        </div>
+
+        <div class="ach-grid">
+          <ol class="vtimeline" aria-label="Milestones">
+            <!-- REPLACE: milestones -->
+            <li class="reveal"><span class="vt-year">2008</span><div><h3>Team founded</h3><p>Twelve students and one welding machine. First chassis drawn on paper.</p></div></li>
+            <li class="reveal"><span class="vt-year">2011</span><div><h3>First SAE BAJA finish</h3><p>Completed the full endurance race for the first time.</p></div></li>
+            <li class="reveal"><span class="vt-year">2016</span><div><h3>Top 10 overall</h3><p>SAE BAJA India, out of 100+ teams.</p></div></li>
+            <li class="reveal"><span class="vt-year">2021</span><div><h3>In-house CVT tuning rig</h3><p>Built our own test bench for drivetrain development.</p></div></li>
+            <li class="reveal"><span class="vt-year">2025</span><div><h3>Endurance champions</h3><p>P1 at MEGA ATV with zero DNFs all season.</p></div></li>
+          </ol>
+
+          <div>
+            <div class="ach-counters">
+              <div class="stat"><span class="num" data-count="14">0</span><span class="lbl">Podiums</span></div>
+              <div class="stat"><span class="num" data-count="6">0</span><span class="lbl">Event Wins</span></div>
+              <div class="stat"><span class="num" data-count="9">0</span><span class="lbl">Design Awards</span></div>
+            </div>
+            <h3 class="h3 reveal">Awards &amp; Recognition</h3>
+            <ul class="awards">
+              <!-- REPLACE: awards -->
+              <li class="reveal"><i data-lucide="pencil-ruler" aria-hidden="true"></i><div><strong>Best Design Report</strong><span>SAE BAJA India 2024</span></div></li>
+              <li class="reveal"><i data-lucide="calculator" aria-hidden="true"></i><div><strong>Best Cost Report</strong><span>ATV Championship 2023</span></div></li>
+              <li class="reveal"><i data-lucide="timer" aria-hidden="true"></i><div><strong>Endurance Rank 4</strong><span>SAE BAJA India 2022</span></div></li>
+              <li class="reveal"><i data-lucide="shield-check" aria-hidden="true"></i><div><strong>Best Safety Innovation</strong><span>MEGA ATV 2021</span></div></li>
+            </ul>
+            <a href="#" class="link-arrow reveal">Read event coverage <i data-lucide="arrow-up-right" aria-hidden="true"></i></a><!-- REPLACE: news link -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="checker" aria-hidden="true"></div>
+
+    <!-- ===== GALLERY ===== -->
+    <section class="section gallery" id="gallery" aria-labelledby="gal-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Paddock Diaries</p>
+          <h2 id="gal-title" class="h2 reveal">Gal<span class="skew accent">lery</span></h2>
+        </div>
+        <div class="filters" role="group" aria-label="Filter gallery">
+          <button class="filter is-active" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter" data-filter="race" aria-pressed="false">Race Day</button>
+          <button class="filter" data-filter="workshop" aria-pressed="false">Workshop</button>
+          <button class="filter" data-filter="team" aria-pressed="false">Team</button>
+          <button class="filter" data-filter="testing" aria-pressed="false">Testing</button>
+        </div>
+        <!-- Gallery rendered from GALLERY data in js/main.js -->
+        <div class="masonry" id="masonry"></div>
+
+        <h3 class="h3 reveal">Video Highlights</h3>
+        <div class="videos">
+          <!-- REPLACE: YouTube video IDs (data-yt). Loads the iframe only on click. -->
+          <button class="video reveal" data-yt="VIDEO_ID_1" aria-label="Play: Endurance race onboard 2025"><img loading="lazy" src="https://placehold.co/800x450/16161a/8a8f98?text=ENDURANCE+ONBOARD&font=oswald" alt=""><span class="play"><i data-lucide="play"></i></span><span class="video-cap">Endurance onboard · 2025</span></button>
+          <button class="video reveal" data-yt="VIDEO_ID_2" aria-label="Play: Building GR-26"><img loading="lazy" src="https://placehold.co/800x450/16161a/8a8f98?text=BUILD+TIMELAPSE&font=oswald" alt=""><span class="play"><i data-lucide="play"></i></span><span class="video-cap">Building GR-26</span></button>
+          <button class="video reveal" data-yt="VIDEO_ID_3" aria-label="Play: Hill climb run"><img loading="lazy" src="https://placehold.co/800x450/16161a/8a8f98?text=HILL+CLIMB&font=oswald" alt=""><span class="play"><i data-lucide="play"></i></span><span class="video-cap">Hill climb run</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+      <button class="lb-btn lb-close" data-lb="close" aria-label="Close"><i data-lucide="x"></i></button>
+      <button class="lb-btn lb-prev" data-lb="prev" aria-label="Previous image"><i data-lucide="chevron-left"></i></button>
+      <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+      <button class="lb-btn lb-next" data-lb="next" aria-label="Next image"><i data-lucide="chevron-right"></i></button>
+    </div>
+
+    <div class="speed-edge flip" aria-hidden="true"></div>
+
+    <!-- ===== TEAM ===== -->
+    <section class="section team carbon" id="team" aria-labelledby="team-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Pit Crew</p>
+          <h2 id="team-title" class="h2 reveal">The <span class="skew accent">Team</span></h2>
+        </div>
+
+        <h3 class="h3 reveal">Faculty Advisor &amp; Leads</h3>
+        <div class="member-grid" id="leadGrid"></div>
+
+        <h3 class="h3 reveal">Sub-teams</h3>
+        <div class="tabs" role="tablist" aria-label="Sub-teams" id="subTabs"></div>
+        <p class="sub-desc" id="subDesc" aria-live="polite"></p>
+        <div class="member-grid" id="subGrid" role="tabpanel"></div>
+
+        <!-- Join Us -->
+        <div class="join reveal">
+          <div>
+            <p class="eyebrow">Recruitment 2026–27</p>
+            <h3 class="h2">Want to build a race car?</h3>
+            <p>No experience needed. If you can stay late in the workshop and learn from mistakes, there's a seat for you. FE and SE students from every branch can apply.</p>
+          </div>
+          <a href="#" class="btn">Apply to Join</a><!-- REPLACE: recruitment form link -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SPONSORS ===== -->
+    <section class="section sponsors" id="sponsors" aria-labelledby="sp-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Sponsors</p>
+          <h2 id="sp-title" class="h2 reveal">Powered By Our <span class="skew accent">Partners</span></h2>
+        </div>
+        <!-- REPLACE: sponsor logos (assets/images/sponsors/) -->
+        <div class="tier reveal"><h3 class="tier-name">Title Sponsor</h3>
+          <div class="logos logos-1"><img loading="lazy" src="https://placehold.co/480x160/f5f5f5/ff4d00?text=TITLE+SPONSOR&font=oswald" alt="Title sponsor logo"></div></div>
+        <div class="tier reveal"><h3 class="tier-name">Gold</h3>
+          <div class="logos logos-3">
+            <img loading="lazy" src="https://placehold.co/320x120/f5f5f5/c8a23a?text=GOLD+1&font=oswald" alt="Gold sponsor 1 logo">
+            <img loading="lazy" src="https://placehold.co/320x120/f5f5f5/c8a23a?text=GOLD+2&font=oswald" alt="Gold sponsor 2 logo">
+            <img loading="lazy" src="https://placehold.co/320x120/f5f5f5/c8a23a?text=GOLD+3&font=oswald" alt="Gold sponsor 3 logo">
+          </div></div>
+        <div class="tier reveal"><h3 class="tier-name">Silver</h3>
+          <div class="logos logos-4">
+            <img loading="lazy" src="https://placehold.co/260x100/f5f5f5/6b7079?text=SILVER+1&font=oswald" alt="Silver sponsor 1 logo">
+            <img loading="lazy" src="https://placehold.co/260x100/f5f5f5/6b7079?text=SILVER+2&font=oswald" alt="Silver sponsor 2 logo">
+            <img loading="lazy" src="https://placehold.co/260x100/f5f5f5/6b7079?text=SILVER+3&font=oswald" alt="Silver sponsor 3 logo">
+            <img loading="lazy" src="https://placehold.co/260x100/f5f5f5/6b7079?text=SILVER+4&font=oswald" alt="Silver sponsor 4 logo">
+          </div></div>
+        <div class="tier reveal"><h3 class="tier-name">Bronze &amp; Supporters</h3>
+          <div class="logos logos-6">
+            <img loading="lazy" src="https://placehold.co/200x80/f5f5f5/8c5a3c?text=BRONZE+1&font=oswald" alt="Supporter 1 logo">
+            <img loading="lazy" src="https://placehold.co/200x80/f5f5f5/8c5a3c?text=BRONZE+2&font=oswald" alt="Supporter 2 logo">
+            <img loading="lazy" src="https://placehold.co/200x80/f5f5f5/8c5a3c?text=BRONZE+3&font=oswald" alt="Supporter 3 logo">
+            <img loading="lazy" src="https://placehold.co/200x80/f5f5f5/8c5a3c?text=BRONZE+4&font=oswald" alt="Supporter 4 logo">
+            <img loading="lazy" src="https://placehold.co/200x80/f5f5f5/8c5a3c?text=BRONZE+5&font=oswald" alt="Supporter 5 logo">
+            <img loading="lazy" src="https://placehold.co/200x80/f5f5f5/8c5a3c?text=BRONZE+6&font=oswald" alt="Supporter 6 logo">
+          </div></div>
+      </div>
+
+      <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+      <div class="container sp-benefits">
+        <p class="reveal">Partnering with Galactus Racing puts your brand on a race car in front of thousands of engineers, judges and industry leaders. Sponsors get <strong>brand visibility</strong> on the car, pit gear and our channels, <strong>networking</strong> at national events, early <strong>recruitment access</strong> to engineering talent, and measurable <strong>CSR value</strong> in technical education.</p>
+        <a href="#invest" class="btn reveal">Become a Sponsor</a>
+      </div>
+    </section>
+
+    <div class="hazard" aria-hidden="true"></div>
+
+    <!-- ===== INVEST IN US ===== -->
+    <section class="section invest" id="invest" aria-labelledby="inv-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Fuel the Season</p>
+          <h2 id="inv-title" class="h2 reveal">Invest <span class="skew accent">in Us</span></h2>
+          <p class="lead reveal">Every rupee goes into the car and the crew. Here is exactly where your support goes this season.</p>
+        </div>
+
+        <div class="fund">
+          <!-- REPLACE: budget values (also in BUDGET in js/main.js) -->
+          <div class="donut-wrap reveal">
+            <svg class="donut" viewBox="0 0 200 200" id="donut" role="img" aria-label="Season budget split"></svg>
+            <div class="donut-center">
+              <span class="donut-raised" id="raised">₹0</span>
+              <span class="donut-goal">raised of ₹12,00,000</span>
+            </div>
+          </div>
+          <ul class="bars" id="bars"></ul>
+        </div>
+
+        <!-- Packages -->
+        <div class="packages">
+          <!-- REPLACE: package amounts and benefits -->
+          <article class="pkg reveal">
+            <h3>Bronze</h3><p class="price">₹25,000</p>
+            <ul><li>Logo on team website</li><li>Social media thank-you post</li><li>Certificate of partnership</li></ul>
+            <a href="#enquiry" class="btn btn-ghost" data-pkg="Bronze">Choose Bronze</a>
+          </article>
+          <article class="pkg reveal">
+            <h3>Silver</h3><p class="price">₹75,000</p>
+            <ul><li>Everything in Bronze</li><li>Small logo on car side panel</li><li>Logo on pit shirts</li><li>Quarterly social shoutouts</li></ul>
+            <a href="#enquiry" class="btn btn-ghost" data-pkg="Silver">Choose Silver</a>
+          </article>
+          <article class="pkg pkg-featured reveal">
+            <span class="pkg-badge">Most Popular</span>
+            <h3>Gold</h3><p class="price">₹2,00,000</p>
+            <ul><li>Everything in Silver</li><li>Large logo on car body</li><li>Banner at every event</li><li>Campus recruitment session</li></ul>
+            <a href="#enquiry" class="btn" data-pkg="Gold">Choose Gold</a>
+          </article>
+          <article class="pkg reveal">
+            <h3>Title</h3><p class="price">₹5,00,000+</p>
+            <ul><li>Team name co-branding</li><li>Hood and nose logo placement</li><li>Car display at your office</li><li>Dedicated content series</li></ul>
+            <a href="#enquiry" class="btn btn-ghost" data-pkg="Title">Choose Title</a>
+          </article>
+        </div>
+
+        <div class="brochure reveal">
+          <a href="assets/sponsorship-brochure.pdf" class="btn btn-ghost" download><i data-lucide="download" aria-hidden="true"></i> Download Sponsorship Brochure</a><!-- REPLACE: brochure PDF -->
+        </div>
+
+        <!-- Enquiry form -->
+        <div class="enquiry" id="enquiry">
+          <form class="form reveal" id="enquiryForm" novalidate>
+            <!--
+              CONNECT A FORM SERVICE HERE:
+              - Formspree: set action="https://formspree.io/f/YOUR_ID" method="POST" and set FORM_ENDPOINT in js/main.js
+              - EmailJS / Google Forms: see README.md
+            -->
+            <h3 class="h3">Sponsorship Enquiry</h3>
+            <div class="form-grid">
+              <label>Name*<input type="text" name="name" autocomplete="name" required></label>
+              <label>Company<input type="text" name="company" autocomplete="organization"></label>
+              <label>Email*<input type="email" name="email" autocomplete="email" required></label>
+              <label>Phone<input type="tel" name="phone" autocomplete="tel" pattern="[0-9+\s\-]{8,15}"></label>
+              <label class="full">Sponsorship interest
+                <select name="interest" id="interest">
+                  <option value="">Select a package</option>
+                  <option>Bronze</option><option>Silver</option><option>Gold</option><option>Title</option>
+                  <option>In-kind (parts / services)</option><option>Individual donation</option>
+                </select>
+              </label>
+              <label class="full">Message*<textarea name="message" rows="4" required></textarea></label>
+            </div>
+            <p class="form-error" id="formError" role="alert"></p>
+            <button type="submit" class="btn">Send Enquiry</button>
+            <p class="form-success" id="formSuccess" role="status" hidden>Thanks! Our sponsorship lead will reply within 48 hours.</p>
+          </form>
+
+          <aside class="pay reveal" aria-label="Direct support details">
+            <h3 class="h3">Direct Support</h3>
+            <!-- REPLACE: placeholder only. Never hard-code real account numbers without verification. -->
+            <dl>
+              <dt>Sponsorship lead</dt><dd>[Name], Business Head</dd>
+              <dt>Phone</dt><dd>+91 XXXXX XXXXX</dd>
+              <dt>UPI</dt><dd>[team-upi-id]@bank</dd>
+              <dt>Bank</dt><dd>Details shared on request via official college account</dd>
+            </dl>
+            <p class="muted">All contributions are routed through RIT's official accounts and receipted.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="section contact carbon" id="contact" aria-labelledby="ct-title">
+      <div class="container contact-grid">
+        <div>
+          <p class="eyebrow reveal">Pit Lane</p>
+          <h2 id="ct-title" class="h2 reveal">Get in <span class="skew accent">Touch</span></h2>
+          <ul class="contact-list">
+            <li class="reveal"><i data-lucide="map-pin" aria-hidden="true"></i><span>Galactus Racing Workshop, Rajarambapu Institute of Technology, Rajaramnagar, Islampur, Sangli, Maharashtra 415414</span></li>
+            <li class="reveal"><i data-lucide="mail" aria-hidden="true"></i><a href="mailto:team@galactusracing.in">team@galactusracing.in</a></li><!-- REPLACE: email -->
+            <li class="reveal"><i data-lucide="phone" aria-hidden="true"></i><a href="tel:+910000000000">+91 XXXXX XXXXX</a></li><!-- REPLACE: phone -->
+          </ul>
+          <div class="socials reveal">
+            <!-- REPLACE: social links -->
+            <a href="#" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
+            <a href="#" aria-label="YouTube"><i data-lucide="youtube"></i></a>
+          </div>
+        </div>
+        <div class="map reveal">
+          <!-- REPLACE: Google Maps embed (Share > Embed a map) -->
+          <iframe title="Map to RIT Rajaramnagar" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Rajarambapu+Institute+of+Technology+Islampur&output=embed"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="checker" aria-hidden="true"></div>
+    <div class="container footer-grid">
+      <div>
+        <a href="#home" class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-text">GALACTUS<em>RACING</em></span></a>
+        <p class="muted">Freedom for failure. Off-road racing from RIT Rajaramnagar since 2008.</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="foot-links">
+          <li><a href="#cars">Cars</a></li><li><a href="#achievements">Achievements</a></li>
+          <li><a href="#gallery">Gallery</a></li><li><a href="#team">Team</a></li>
+          <li><a href="#sponsors">Sponsors</a></li><li><a href="#invest">Invest in Us</a></li>
+        </ul>
+      </nav>
+      <div class="foot-meta">
+        <p>© <span id="year">2026</span> Galactus Racing, RIT. All rights reserved.</p>
+        <p class="muted">Made by Galactus Racing Web Team</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== FLOATING WIDGETS ===== -->
+  <div class="rev" id="rev" aria-hidden="true">
+    <svg viewBox="0 0 120 70">
+      <path class="rev-track" d="M10 65 A50 50 0 0 1 110 65"/>
+      <path class="rev-red" d="M95.4 29.6 A50 50 0 0 1 110 65"/>
+      <path class="rev-fill" id="revFill" d="M10 65 A50 50 0 0 1 110 65"/>
+      <line class="rev-needle" id="revNeedle" x1="60" y1="65" x2="60" y2="22"/>
+      <circle cx="60" cy="65" r="4" fill="#ff4d00"/>
+    </svg>
+    <span class="rev-num"><b id="revNum">0</b> RPM ×1000</span>
+  </div>
+
+  <button class="sound" id="sound" aria-pressed="false" aria-label="Play engine rev sound"><i data-lucide="volume-x"></i><span>Rev it</span></button>
+  <button class="to-top" id="toTop" aria-label="Back to top"><span class="gear" aria-hidden="true">▲</span></button>
+</body>
+</html>

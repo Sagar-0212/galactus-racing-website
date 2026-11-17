@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Team | Galactus Racing</title>
+  <meta name="description" content="Meet the pit crew behind Galactus Racing, the Baja SAE team of Rajarambapu Institute of Technology.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/base.css">
+  <link rel="stylesheet" href="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css">
+  <script src="_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--surface-page); }
+    a { color: inherit; }
+    a:hover { color: var(--accent); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    ::selection { background: var(--accent); color: var(--paper-100); }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</helmet>
+
+<div data-gr-root="" style="position:relative;background:var(--surface-page);color:var(--text-primary);font-family:var(--font-body);overflow-x:clip">
+
+  <header data-hdr="" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px;box-sizing:border-box;padding:0 var(--gutter);background:var(--surface-page);border-bottom:1px solid var(--border-hairline)">
+    <a href="{{ homeHref }}" aria-label="Galactus Racing, home" style="flex:none;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text-primary)">
+      <img src="assets/logo-gr.png" width="640" height="446" alt="" style="height:30px;width:auto;display:block">
+      <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS RACING" rule="{{ false }}" hint-size="140px,14px"></x-import>
+    </a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="Primary" style="display:flex;align-items:center;gap:clamp(14px,1.8vw,28px)">
+        <sc-for list="{{ navLinks }}" as="l" hint-placeholder-count="8">
+          <a href="{{ l.href }}" aria-current="{{ l.current }}" style="display:inline-flex;align-items:center;height:68px;text-decoration:none;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;white-space:nowrap;color:{{ l.color }};background-image:linear-gradient(var(--accent),var(--accent));background-repeat:no-repeat;background-position:left calc(50% + 13px);background-size:{{ l.line }} 2px;transition:background-size 220ms var(--ease-out), color 120ms" style-hover="background-size:100% 2px;color:var(--accent)">{{ l.label }}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button type="button" data-menu-btn="" aria-label="Open menu" aria-expanded="{{ menuExpanded }}" aria-controls="gr-menu" onClick="{{ openMenu }}" style="width:44px;height:44px;margin-right:-10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;background:none;border:0;cursor:pointer">
+        <span style="display:block;width:24px;height:2px;background:var(--ink-900)"></span>
+        <span style="display:block;width:24px;height:2px;background:var(--ink-900)"></span>
+        <span style="display:block;width:24px;height:2px;background:var(--accent)"></span>
+      </button>
+    </sc-if>
+  </header>
+
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div data-menu="" role="dialog" aria-modal="true" aria-label="Site menu" style="position:fixed;inset:0;z-index:70;background:var(--ink-1000);color:var(--paper-100);display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 var(--gutter);overflow:auto">
+      <button aria-label="Close menu" onClick="{{ closeMenu }}" style="position:absolute;top:18px;right:var(--gutter);height:44px;padding:0 14px;background:none;color:var(--paper-100);border:1px solid var(--border-inverse);font-family:var(--font-body);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;cursor:pointer">Close ✕</button>
+      <sc-for list="{{ allLinks }}" as="l" hint-placeholder-count="9">
+        <a href="{{ l.href }}" aria-current="{{ l.current }}" style="text-decoration:none;font-family:var(--font-display);font-size:clamp(40px,10vw,68px);line-height:var(--lh-display);text-transform:uppercase;color:{{ l.menuColor }}">{{ l.label }}</a>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <main>
+    <section data-screen-label="T1 Team intro" style="position:relative;box-sizing:border-box;padding:clamp(120px,18vh,180px) var(--gutter) clamp(48px,7vh,80px);background:var(--surface-page) var(--grain);overflow:hidden;display:flex;flex-direction:column;gap:36px">
+      <div data-hx="" aria-hidden="true" style="position:absolute;left:-6vw;top:12vh;white-space:nowrap;font-family:var(--font-display);font-size:20vw;line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(14,13,11,.1);pointer-events:none;will-change:transform">Pit crew · Pit crew · Pit crew</div>
+      <div style="position:relative;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px">
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" on-click="{{ goHome }}" hint-size="170px,44px">← Back to home</x-import>
+        <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ crewCount }} members · 7 sub-teams</span>
+      </div>
+      <div data-in="" style="position:relative">
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Headline" as="h1" size="xl" text="The pit crew." accent="crew." hint-size="100%,200px"></x-import>
+      </div>
+      <nav aria-label="Jump to sub-team" style="position:relative;display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ jump }}" as="j" hint-placeholder-count="8">
+          <a href="{{ j.href }}" style="display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border:1px solid var(--border-strong);text-decoration:none;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;transition:background 120ms, color 120ms" style-hover="background:var(--ink-900);color:var(--paper-100)"><span style="font-family:var(--font-mono);font-weight:500;color:var(--text-accent)">{{ j.n }}</span>{{ j.label }}</a>
+        </sc-for>
+      </nav>
+    </section>
+
+    <section id="leadership" data-screen-label="T2 Leadership" style="padding:clamp(40px,6vh,72px) var(--gutter);background:var(--surface-page);display:flex;flex-direction:column;gap:28px;scroll-margin-top:80px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;border-top:2px solid var(--ink-900);padding-top:14px">
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px,4vw,56px);line-height:var(--lh-display);text-transform:uppercase">Leadership</h2>
+        <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">01</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:20px">
+        <sc-for list="{{ leads }}" as="p" hint-placeholder-count="4">
+          <article data-card="" data-delay="{{ p.delay }}" style="display:flex;flex-direction:column;background:var(--surface-raised);border:1px solid var(--border-strong);transition:box-shadow 220ms var(--ease-out), translate 220ms var(--ease-out)" style-hover="box-shadow:var(--shadow-hard);translate:-3px -3px">
+            <div style="position:relative;aspect-ratio:4/5;border-bottom:1px solid var(--border-strong)">
+              <image-slot id="lead-{{ p.id }}" shape="rect" placeholder="Portrait: {{ p.role }}"></image-slot>
+            </div>
+            <div style="padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px">
+              <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-accent)">{{ p.role }}</span>
+              <span style="font-family:var(--font-display);font-size:30px;line-height:var(--lh-display);text-transform:uppercase">{{ p.name }}</span>
+              <span style="font-size:var(--fs-body-s);color:var(--text-secondary);line-height:1.4">{{ p.bio }}</span>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <sc-for list="{{ subs }}" as="sb" hint-placeholder-count="3">
+      <section id="{{ sb.value }}" data-screen-label="{{ sb.screen }}" style="padding:clamp(40px,6vh,72px) var(--gutter);background:var(--surface-page);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:28px clamp(32px,5vw,72px);align-items:start;scroll-margin-top:80px">
+        <div style="display:flex;flex-direction:column;gap:14px;border-top:2px solid var(--ink-900);padding-top:14px">
+          <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ sb.n }} · Sub-team</span>
+          <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px,4vw,56px);line-height:var(--lh-display);text-transform:uppercase">{{ sb.label }}</h2>
+          <p style="margin:0;max-width:46ch;font-size:var(--fs-body-l);line-height:var(--lh-body);color:var(--text-secondary)">{{ sb.desc }}</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:16px">
+          <sc-for list="{{ sb.members }}" as="m" hint-placeholder-count="3">
+            <article data-card="" data-delay="{{ m.delay }}" style="display:flex;flex-direction:column;background:var(--surface-raised);border:1px solid var(--border-strong);transition:box-shadow 220ms var(--ease-out), translate 220ms var(--ease-out)" style-hover="box-shadow:var(--shadow-hard);translate:-3px -3px">
+              <div style="position:relative;aspect-ratio:1/1;border-bottom:1px solid var(--border-strong)">
+                <image-slot id="{{ m.slot }}" shape="rect" placeholder="Photo: {{ m.role }}"></image-slot>
+              </div>
+              <div style="padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px">
+                <span style="font-family:var(--font-display);font-size:24px;line-height:1;text-transform:uppercase">{{ m.name }}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                  <span style="font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ m.role }}</span>
+                  <a href="#" aria-label="LinkedIn" style="display:grid;place-items:center;min-width:32px;min-height:32px;text-decoration:none;font-weight:700;font-size:var(--fs-label);color:var(--text-primary)">in ↗</a>
+                </div>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+
+    <section data-screen-label="T3 Recruitment" style="padding:clamp(40px,6vh,72px) var(--gutter) clamp(72px,10vh,120px);background:var(--surface-page)">
+      <div data-in="" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:28px;padding:clamp(28px,4vw,48px);background:var(--ink-1000);color:var(--text-inverse)">
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:56ch">
+          <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--red-200)">Recruitment 2026–27</span>
+          <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Headline" as="h2" size="m" inverse="{{ true }}" text="Want to build a race car?" accent="race car?" hint-size="100%,56px"></x-import>
+          <p style="margin:0;color:var(--text-inverse-muted);line-height:var(--lh-body)">No experience needed. If you can stay late in the workshop and learn from mistakes, there is a seat for you. FE and SE students from every branch can apply.</p>
+        </div>
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="inverse" size="lg" icon-right="↗" hint-size="180px,56px">Apply to join</x-import>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact" data-screen-label="T9 Footer" style="position:relative;background:var(--ink-1000);color:var(--text-inverse);overflow:hidden">
+    <div style="padding:clamp(72px,12vh,120px) var(--gutter) 0;display:flex;flex-direction:column;gap:48px">
+      <p style="margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(72px,14vw,240px);line-height:var(--lh-display);text-transform:uppercase;white-space:nowrap">Let's <span style="color:var(--accent)">race.</span></p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:48px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <img src="assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" style="height:clamp(48px,5vw,64px);width:auto;align-self:flex-start;display:block">
+          <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS RACING" inverse="{{ true }}" tagline="We reply within 48 hours." hint-size="300px,32px"></x-import>
+          <p style="margin:0;max-width:40ch;color:var(--text-inverse-muted);line-height:var(--lh-body)">Galactus Racing Workshop, Rajarambapu Institute of Technology, Rajaramnagar, Islampur, Sangli, Maharashtra 415414</p>
+          <a href="mailto:team@galactusracing.in" style="font-family:var(--font-display);font-size:clamp(32px,4vw,56px);line-height:1;text-transform:uppercase;text-decoration:none;overflow-wrap:anywhere">team@galactusracing.in</a>
+          <div style="display:flex;flex-wrap:wrap;gap:24px;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">
+            <a href="#" style="text-decoration:none">Instagram ↗</a><a href="#" style="text-decoration:none">LinkedIn ↗</a><a href="#" style="text-decoration:none">YouTube ↗</a><a href="tel:+910000000000" style="text-decoration:none">+91 XXXXX XXXXX</a>
+          </div>
+        </div>
+        <div style="aspect-ratio:16/10;border:1px solid var(--border-inverse)">
+          <iframe title="Map to RIT Rajaramnagar" loading="lazy" src="https://www.google.com/maps?q=Rajarambapu+Institute+of+Technology+Islampur&amp;output=embed" style="width:100%;height:100%;border:0;filter:grayscale(1) invert(.9) contrast(.9)"></iframe>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:80px">
+      <div aria-hidden="true" style="height:16px;background:conic-gradient(var(--paper-100) 25%, var(--ink-1000) 0 50%, var(--paper-100) 0 75%, var(--ink-1000) 0) 0 0 / 16px 16px"></div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;padding:24px var(--gutter);font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-inverse-muted)">
+        <span>© 2026 Galactus Racing, RIT Rajaramnagar</span>
+        <nav aria-label="Pages" style="display:flex;flex-wrap:wrap;gap:20px"><a href="Galactus Racing.dc.html" style="text-decoration:none">Home</a><a href="Galactus Racing.dc.html#journey" style="text-decoration:none">Our journey</a></nav>
+        <span>Freedom for failure.</span>
+        <span>Made by Galactus Racing Web Team</span>
+        <a href="Galactus Admin.dc.html" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;text-decoration:none;color:var(--paper-100)">Admin <span style="color:var(--accent)">→</span></a>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const HOME = 'Galactus Racing.dc.html';
+const NAV = [[HOME, 'Home'], [HOME + '#journey', 'Journey'], [HOME + '#cars', 'Cars'], [HOME + '#gallery', 'Gallery'], ['Team.dc.html', 'Team'], [HOME + '#sponsors', 'Sponsors'], [HOME + '#contact', 'Contact'], ['Galactus Admin.dc.html', 'Admin']];
+const SUB = [
+  { value: 'chassis', label: 'Chassis', desc: 'Designs and fabricates the roll cage: tube selection, FEA, jigs and welding. Every other system bolts onto their work.', m: [['[Name]', 'Chassis lead'], ['[Name]', 'Design engineer'], ['[Name]', 'Fabrication']] },
+  { value: 'power', label: 'Powertrain', desc: 'Engine mounting, CVT tuning and gearbox design. They turn 10 HP into acceleration and hill-climb pace.', m: [['[Name]', 'Powertrain lead'], ['[Name]', 'CVT tuning'], ['[Name]', 'Gearbox design']] },
+  { value: 'susp', label: 'Suspension', desc: 'Geometry, shocks and knuckles. They decide how the car lands jumps, ruts and rocks.', m: [['[Name]', 'Suspension lead'], ['[Name]', 'Kinematics'], ['[Name]', 'Knuckle design']] },
+  { value: 'brakes', label: 'Brakes', desc: 'Hydraulic system, rotors and calipers. The car must lock all four wheels at inspection, every time.', m: [['[Name]', 'Brakes lead'], ['[Name]', 'Rotor design']] },
+  { value: 'elec', label: 'Electrical', desc: 'Kill switches, brake lights, wiring harness and the data-logging sensors we test with.', m: [['[Name]', 'Electrical lead'], ['[Name]', 'DAQ & sensors']] },
+  { value: 'mfg', label: 'Manufacturing', desc: 'Machining, CNC, process planning and quality checks. They turn CAD into parts on time.', m: [['[Name]', 'Manufacturing lead'], ['[Name]', 'CNC & machining'], ['[Name]', 'Quality']] },
+  { value: 'biz', label: 'Business & Marketing', desc: 'Sponsorship, cost report, business presentation, social media and this website.', m: [['[Name]', 'Business head'], ['[Name]', 'Marketing'], ['[Name]', 'Cost report']] },
+];
+const LEADS = [['adv', 'Prof. [Name]', 'Faculty advisor', 'Mechanical Engineering. Guiding the team since 2015.'], ['cap', '[Captain]', 'Team captain', 'Driver and overall vehicle integration.'], ['vc', '[Vice captain]', 'Vice captain', 'Leads testing and validation.'], ['tech', '[Tech head]', 'Technical head', 'Owns design review and FEA sign-off.']];
+const pad = (n) => String(n).padStart(2, '0');
+
+class Component extends DCLogic {
+  state = { w: typeof window !== 'undefined' ? innerWidth : 1280, menuOpen: false, sector: 'Team / Leadership' };
+  componentDidMount() {
+    this.reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.onResize = () => this.setState((s) => ({ w: innerWidth, menuOpen: innerWidth >= 900 ? false : s.menuOpen }));
+    this.onKey = (e) => { if (e.key === 'Escape' && this.state.menuOpen) this.setState({ menuOpen: false }); };
+    addEventListener('resize', this.onResize); addEventListener('keydown', this.onKey);
+    this.io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { this.show(en.target); this.io.unobserve(en.target); } }), { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+    const loop = () => { this.frame(); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); this.io && this.io.disconnect(); removeEventListener('resize', this.onResize); removeEventListener('keydown', this.onKey); document.documentElement.style.overflow = ''; }
+  show(el) { el.style.opacity = 1; el.style.transform = 'none'; }
+  frame() {
+    const n = (this.n = (this.n || 0) + 1);
+    if (n % 30 === 1) {
+      document.querySelectorAll('[data-card]:not([data-rv]), [data-in]:not([data-rv])').forEach((el) => {
+        el.setAttribute('data-rv', '');
+        if (this.reduce) return;
+        el.style.opacity = 0; el.style.transform = 'translateY(48px)';
+        el.style.transition = 'opacity .7s var(--ease-out), transform .7s var(--ease-out), box-shadow 220ms var(--ease-out), translate 220ms var(--ease-out)';
+        el.style.transitionDelay = (+el.dataset.delay || 0) + 'ms, ' + (+el.dataset.delay || 0) + 'ms, 0ms, 0ms';
+        this.io.observe(el);
+      });
+      this.hx = document.querySelector('[data-hx]');
+      const secs = [...document.querySelectorAll('main section[id]')];
+      let lab = 'Team / Leadership';
+      secs.forEach((s) => { if (s.getBoundingClientRect().top < innerHeight * 0.4) lab = 'Team / ' + (s.id === 'leadership' ? 'Leadership' : (SUB.find((x) => x.value === s.id) || {}).label); });
+      if (lab !== this.state.sector) this.setState({ sector: lab });
+    }
+    if (this.hx && !this.reduce) { const y = scrollY; if (y !== this.lastY) { this.lastY = y; this.hx.style.transform = 'translate3d(' + (-y * 0.35).toFixed(1) + 'px,0,0)'; } }
+    const open = !!this.state.menuOpen;
+    if (open !== this.menuWas) { this.menuWas = open; document.documentElement.style.overflow = open ? 'hidden' : ''; }
+  }
+  renderVals() {
+    const w = this.state.w, wide = w >= 900;
+    const link = ([href, label]) => { const cur = href === 'Team.dc.html'; return { href, label, current: cur ? 'page' : undefined, color: cur ? 'var(--accent)' : 'inherit', menuColor: cur ? 'var(--accent)' : 'inherit', line: cur ? '100%' : '0%' }; };
+    let k = 0;
+    const subs = SUB.map((s, i) => ({ ...s, n: pad(i + 2), screen: 'T' + (i + 3) + ' ' + s.label,
+      members: s.m.map(([name, role], j) => ({ name, role, slot: 'member-' + s.value + '-' + (j + 1), delay: (j % 4) * 90 })) }));
+    SUB.forEach((s) => { k += s.m.length; });
+    return {
+      wide, narrow: !wide, showSector: w >= 1440, sectorLabel: this.state.sector,
+      navLinks: NAV.map(link), allLinks: NAV.map(link), homeHref: HOME,
+      menuOpen: this.state.menuOpen, menuExpanded: this.state.menuOpen ? 'true' : 'false',
+      openMenu: () => this.setState({ menuOpen: true }), closeMenu: () => this.setState({ menuOpen: false }),
+      goContact: () => { location.href = HOME + '#contact'; }, goHome: () => { location.href = HOME; },
+      crewCount: LEADS.length + k,
+      jump: [{ href: '#leadership', label: 'Leadership', n: '01' }, ...subs.map((s) => ({ href: '#' + s.value, label: s.label, n: s.n }))],
+      leads: LEADS.map(([id, name, role, bio], i) => ({ id, name, role, bio, delay: i * 110 })),
+      subs,
+    };
+  }
+}
+</script>
+</body>
+</html>
