@@ -316,7 +316,8 @@
 /* Hover state (class set by src/motion/gallery.js). Hard red shadow instead of the old glow. */
 .gal__card.is-hover { box-shadow: 3px 3px 0 var(--accent); }
 .gal__card.is-hover .gal__img { transform: scale(1.08); transition-duration: calc(var(--dur-wipe) * 2.5); }
-.gal__card.is-hover .gal__ov, .gal__card.is-hover .gal__cap, .gal__card.is-hover .gal__btn { opacity: 1; }
+.gal__card.is-hover .gal__ov, .gal__card.is-hover .gal__cap, .gal__card.is-hover .gal__btn,
+.gal__card:focus-within .gal__ov, .gal__card:focus-within .gal__cap, .gal__card:focus-within .gal__btn { opacity: 1; } /* keyboard focus shows it too */
 .gal__card.is-hover .gal__cap { transform: none; }
 .gal__card.is-hover .gal__cap-line { transform: scaleX(1); transition-duration: var(--dur-slow); transition-delay: var(--dur-fast); }
 @media (hover: none) { .gal__btn { opacity: 1; } }

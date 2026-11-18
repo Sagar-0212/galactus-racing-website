@@ -49,17 +49,19 @@ export function tabs({ items, value, inverse = false, attr = {} }) {
     .map((it) => {
       const on = it.value === value;
       const count = it.count != null ? `<sup class="tabs__count">${it.count}</sup>` : '';
-      return `<button role="tab" class="tabs__tab" aria-selected="${on}" data-value="${esc(it.value)}">${esc(it.label)}${count}<span class="tabs__bar"></span></button>`;
+      return `<button role="tab" class="tabs__tab" aria-selected="${on}" tabindex="${on ? 0 : -1}" data-value="${esc(it.value)}">${esc(it.label)}${count}<span class="tabs__bar"></span></button>`;
     })
     .join('');
   return `<div${attrs({ role: 'tablist', class: `tabs${inverse ? ' tabs--inverse' : ''}`, ...attr })}>${tabsHtml}</div>`;
 }
 
 export function input({ label, name, type = 'text', multiline = false, attr = {} }) {
+  // The error message is linked to the field (aria-describedby), so screen readers read it with the field.
+  const msgId = `err-${name}`;
   const field = multiline
-    ? `<textarea${attrs({ class: 'field__input field__input--multi', name, rows: 4, ...attr })}></textarea>`
-    : `<input${attrs({ class: 'field__input', type, name, ...attr })}>`;
-  return `<label class="field" data-field="${esc(name)}"><span class="field__label">${esc(label)}</span>${field}<span class="field__msg" hidden></span></label>`;
+    ? `<textarea${attrs({ class: 'field__input field__input--multi', name, rows: 4, 'aria-describedby': msgId, ...attr })}></textarea>`
+    : `<input${attrs({ class: 'field__input', type, name, 'aria-describedby': msgId, ...attr })}>`;
+  return `<label class="field" data-field="${esc(name)}"><span class="field__label">${esc(label)}</span>${field}<span class="field__msg" id="${esc(msgId)}" hidden></span></label>`;
 }
 
 export function select({ label, name, options = [], placeholder, attr = {} }) {

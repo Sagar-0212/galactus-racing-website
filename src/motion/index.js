@@ -1,7 +1,7 @@
 // Motion entry points for the home and team pages (replaces the old requestAnimationFrame loop).
 // gsap.matchMedia: desktop (>= 900px) gets pins + parallax; under 900px no pinning and lighter reveals;
 // prefers-reduced-motion skips every animation and shows final states.
-import { gsap, ScrollTrigger, DESKTOP, REDUCE, smoothScroll, scrollToEl, tokens, loadFlip } from './core.js';
+import { gsap, ScrollTrigger, DESKTOP, REDUCE, BOT, smoothScroll, scrollToEl, tokens, loadFlip } from './core.js';
 import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } from './hero.js';
 import { createDust } from './dust.js';
 import { teardown, teardownCards, evoIn } from './cars.js';
@@ -25,7 +25,7 @@ export function initHomeMotion(root, { onActive } = {}) {
   const H = heroEls(root);
   // Dust: lighter on phones, one static haze frame under reduced motion.
   const phone = !matchMedia(DESKTOP).matches;
-  const dust = H && createDust(H.dustCanvas, { reduce: matchMedia(REDUCE).matches, max: phone ? 60 : 150, haze: phone ? 10 : 22, dprMax: phone ? 1 : 1.5, hold: true });
+  const dust = H && createDust(H.dustCanvas, { reduce: matchMedia(REDUCE).matches || BOT, max: phone ? 60 : 150, haze: phone ? 10 : 22, dprMax: phone ? 1 : 1.5, hold: true });
   chrome(root, onActive);
 
   // Headline size depends on the car's outline and the font: fit after fonts load and on every refresh.

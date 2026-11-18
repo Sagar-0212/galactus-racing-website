@@ -82,11 +82,18 @@ function layoutGallery() {
   galleryData.filter((g) => !vis.includes(g)).forEach((g) => { const f = byId.get(g.id); f.hidden = true; cols[0].appendChild(f); });
 }
 const galTabs = $('[data-gal-tabs]');
+// Tab pattern keys: arrows / Home / End move to a filter and apply it (one Tab stop for the row).
+if (galTabs) galTabs.addEventListener('keydown', (e) => {
+  const list = $$('[role="tab"]', galTabs), i = list.indexOf(document.activeElement); if (i < 0) return;
+  const j = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: list.length - 1 }[e.key]; if (j == null) return;
+  e.preventDefault();
+  const t = list[(j + list.length) % list.length]; t.focus(); t.click();
+});
 if (galTabs) ['pointerover', 'focusin', 'touchstart'].forEach((ev) => galTabs.addEventListener(ev, () => loadFlip(), { once: true, passive: true }));
 $$('[data-gal-tabs] [role="tab"]').forEach((tab) => tab.addEventListener('click', () => {
   if (tab.dataset.value === galFilter) return;
   galFilter = tab.dataset.value;
-  $$('[data-gal-tabs] [role="tab"]').forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+  $$('[data-gal-tabs] [role="tab"]').forEach((t) => { t.setAttribute('aria-selected', String(t === tab)); t.tabIndex = t === tab ? 0 : -1; });
   flipGallery(galGrid, layoutGallery);
 }));
 
@@ -212,6 +219,7 @@ const interestSel = $('select[name="interest"]', form);
 function setFieldError(name, msg) {
   const f = $(`[data-field="${name}"]`, form); if (!f) return;
   f.classList.toggle('is-error', !!msg);
+  const el = $(`[name="${name}"]`, f); if (el) el.setAttribute('aria-invalid', msg ? 'true' : 'false');
   const m = $('.field__msg', f), was = !m.hidden;
   m.textContent = msg || ''; m.hidden = !msg;
   if (msg && !was) slideMsg(m);

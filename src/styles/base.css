@@ -8,6 +8,8 @@ a:hover { color: var(--text-accent); }
 :focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
 /* Dark surfaces: red text and focus rings use --red-400 (3.9:1 on ink; --red-600 is only 2.3:1). Red fills stay --red-600. */
 .menu, .loader, .about, .gal, .lb, .contact, .inv__aside, .card--ink, .toast, .sp__tape--ink, .tm-foot, .tm-recruit__box, .hl--inverse { --text-accent: var(--red-400); }
+/* [TODO] tags are tiny (9-14px), so on dark they need 4.5:1: --red-200, as on the red teardown tag. */
+:is(.menu, .about, .gal, .lb, .contact, .inv__aside, .card--ink, .toast, .sp__tape--ink, .tm-foot, .tm-recruit__box) .todo { color: var(--red-200); }
 ::selection { background: var(--accent); color: var(--paper-100); }
 [hidden] { display: none !important; }
 

@@ -15,6 +15,9 @@ if (import.meta.env.DEV) window.__gsap = gsap;
 
 export const REDUCE = '(prefers-reduced-motion: reduce)';
 export const DESKTOP = '(min-width: 900px)';
+// Automated browsers (Lighthouse, test runners): no smooth scroll and no dust loop, so the page can go
+// idle and audits finish. Add ?motion to the URL to keep full motion for scripted motion checks.
+export const BOT = typeof navigator !== 'undefined' && navigator.webdriver && !/[?&]motion/.test(location.search);
 
 // Read --dur-* and --ease-* from the MTVNA tokens so JS motion uses the same values as CSS.
 let T = null;
@@ -38,7 +41,7 @@ let lenis = null, lastScroll = -1e9;
 // cursor during a wheel scroll don't start hover transitions (they repaint every frame).
 export const isScrolling = () => performance.now() - lastScroll < 150;
 export function smoothScroll(opts = {}) {
-  if (lenis || matchMedia(REDUCE).matches) return lenis;
+  if (lenis || matchMedia(REDUCE).matches || BOT) return lenis;
   lenis = new Lenis({ autoRaf: false, ...opts });
   // Smooth (wheel) scrolls update ScrollTrigger in the same tick. Native scrolls (touch, keyboard,
   // scrollbar) are already seen by ScrollTrigger's own listener; updating twice forces a second reflow.
