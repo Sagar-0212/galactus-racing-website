@@ -71,7 +71,8 @@
 @media (max-width: 899px), (max-aspect-ratio: 13/10) {
   .hero { height: 100vh; height: 100svh; --hero-wedge: polygon(0 46%, 100% 22%, 100% 100%, 0 100%); }
   .hero__sticky {
-    --fs: min((100cqw - 2 * var(--gutter)) * .335, 15cqh);
+    /* cqw is the padded content box. GALACTUS is 3.62em wide in Anton, so .275 fills the width between gutters. */
+    --fs: min(100cqw * .275, 15cqh);
     --pad-b: max(24px, 3cqh);
     /* height left for the car: screen - header - headline - spec - buttons - gaps - bottom space */
     --car-h: calc(100cqh - 84px - var(--fs) * 1.76 - 30px - 44px - 3 * 14px - var(--pad-b) - 8px);
@@ -121,7 +122,7 @@
 .stat { position: relative; display: flex; flex-direction: column; gap: 14px; padding: clamp(20px, 2.4vw, 28px); border-right: 1px solid var(--border-inverse); border-bottom: 1px solid var(--border-inverse); background: var(--ink-1000); transition: background var(--dur-base) var(--ease-out); }
 .stat:hover { background: var(--ink-800); }
 .stat__num { display: flex; align-items: flex-start; font-family: var(--font-mono); font-weight: 500; font-size: clamp(56px, 6vw, 96px); letter-spacing: -.04em; line-height: 1; }
-.stat__suffix { display: inline-block; height: 1em; line-height: 1; color: var(--accent); }
+.stat__suffix { display: inline-block; height: 1em; line-height: 1; color: var(--text-accent); }
 .stat__label { font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--red-200); }
 .stat__track { height: 2px; background: var(--border-inverse); }
 .stat__bar { height: 100%; width: 100%; background: var(--accent); transform-origin: left; }
@@ -157,7 +158,10 @@
 
 /* Teardown (desktop, pinned). Layout of the image, lines, dots and callouts is set in px by
    src/motion/cars.js on refresh; scrolling only changes transform / opacity / clip-path. */
-.td { position: relative; height: 100vh; overflow: hidden; }
+/* Pins are CSS sticky (like the hero), not GSAP pins: position: fixed pins logged a full-screen
+   layout shift (CLS ~1) every time they engaged. The wrapper's height is the scroll length. */
+.td-wrap { position: relative; height: calc((var(--td-len, 6) + 1) * 100vh); }
+.td { position: sticky; top: 0; height: 100vh; overflow: hidden; }
 .td__top { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; justify-content: space-between; padding: 84px var(--gutter) 12px; background: var(--surface-page) var(--grain); border-bottom: 1px solid var(--border-hairline); font-size: var(--fs-micro); pointer-events: none; }
 .td__img { position: absolute; left: 0; top: 0; width: 1px; height: auto; max-width: none; transform-origin: 50% 50%; user-select: none; }
 .td.is-live .td__img { will-change: transform; }
@@ -203,7 +207,8 @@
 .td__call--static { position: static; width: auto; opacity: 1; border-top-width: 2px; }
 
 /* Previous cars + evolution: the pinned horizontal track (desktop). */
-.cars__rail { position: relative; height: 100vh; overflow: hidden; display: flex; flex-direction: column; border-top: 1px solid var(--border-hairline); }
+.rail-wrap { position: relative; } /* height = 100vh + track overflow, set by carsPin() on refresh */
+.cars__rail { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; border-top: 1px solid var(--border-hairline); }
 .cars__top { display: flex; justify-content: space-between; align-items: center; padding: 84px var(--gutter) 0; font-size: var(--fs-micro); }
 .cars__track { flex: 1; min-height: 0; display: flex; align-items: stretch; gap: clamp(24px, 4vw, 64px); padding: 24px var(--gutter) 40px; will-change: transform; }
 .cars__intro { flex: none; width: min(80vw, 440px); display: flex; flex-direction: column; justify-content: center; gap: 24px; }
@@ -232,9 +237,10 @@
 /* Under 900px (and with reduced motion) nothing is pinned: teardown = stacked cards,
    previous cars = a swipeable scroll-snap row, evolution below. */
 @media (max-width: 899px), (prefers-reduced-motion: reduce) {
-  .td { display: none; }
+  .td-wrap { display: none; }
   .tdm { display: block; }
-  .cars__rail { height: auto; overflow: visible; }
+  .rail-wrap { height: auto !important; }
+  .cars__rail { position: relative; height: auto; overflow: visible; }
   .cars__top span:last-child, .cars__progress { display: none; }
   .cars__track { flex-direction: column; gap: 48px; padding-bottom: 72px; will-change: auto; }
   .cars__intro, .evo { width: 100%; }
@@ -321,7 +327,7 @@
 .lb { position: fixed; inset: 0; z-index: 95; background: var(--ink-1000); color: var(--paper-100); display: flex; flex-direction: column; }
 .lb__top { flex: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px var(--gutter); }
 .lb__pos { font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-micro); text-transform: uppercase; }
-.lb__pos-n { color: var(--accent); }
+.lb__pos-n { color: var(--text-accent); }
 .lb__close { height: 44px; padding: 0 14px; background: none; color: var(--paper-100); border: 1px solid var(--border-inverse); font-family: var(--font-body); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; cursor: pointer; }
 .lb__close:hover { background: var(--accent); border-color: var(--accent); }
 .lb__mid { flex: 1; min-height: 0; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -349,7 +355,7 @@
 .sp__m1-item { display: flex; gap: 48px; align-items: center; }
 .sp__m2 { display: flex; gap: 40px; width: max-content; font-family: var(--font-body); font-weight: 800; font-size: clamp(14px, 1.6vw, 20px); letter-spacing: var(--tracking-label); text-transform: uppercase; white-space: nowrap; }
 .sp__m2-item { display: flex; gap: 40px; }
-.sp__accent { color: var(--accent); }
+.sp__accent { color: var(--text-accent); }
 .sp__tiers { padding: 0 var(--gutter); display: flex; flex-direction: column; gap: 32px; }
 .sp__tier { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 12px; align-items: stretch; }
 .sp__tier-name { display: flex; flex-direction: column; justify-content: center; gap: 4px; border-top: 2px solid var(--ink-900); padding-top: 10px; }
@@ -368,7 +374,7 @@
 .sp__brand { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; border: 2px dashed var(--accent); text-decoration: none; color: var(--text-primary); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
 .sp__brand:hover, .sp__brand:focus-visible { transform: translate(-3px, -3px); box-shadow: var(--shadow-hard); }
 .sp__brand-ring { position: absolute; inset: -2px; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
-.sp__brand-title { font-family: var(--font-display); font-size: clamp(28px, 3vw, 40px); line-height: var(--lh-display); text-transform: uppercase; color: var(--accent); }
+.sp__brand-title { font-family: var(--font-display); font-size: clamp(28px, 3vw, 40px); line-height: var(--lh-display); text-transform: uppercase; color: var(--text-accent); }
 .sp__brand-cta { font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-secondary); }
 .sp__cta { padding: 0 var(--gutter); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 28px; }
 .sp__text { margin: 0; max-width: 68ch; font-size: var(--fs-body-l); line-height: var(--lh-body); color: var(--text-secondary); }
@@ -392,7 +398,7 @@
 .inv__pk { display: flex; }
 .inv__perks { margin: 0 0 20px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
 .inv__perks li { display: flex; gap: 10px; }
-.inv__perk-arrow { color: var(--accent); }
+.inv__perk-arrow { color: var(--text-accent); }
 .inv__enq { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 48px; padding: 40px 0 64px; border-top: 1px solid var(--border-strong); }
 .inv__form { display: flex; flex-direction: column; gap: 28px; }
 .inv__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 28px 24px; }

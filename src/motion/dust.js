@@ -25,11 +25,12 @@ function sprite([r, g, b]) {
   x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return c;
 }
 
-export function createDust(canvas, { max = 150, haze = 22, reduce = false, dprMax = 1.5 } = {}) {
+// hold: don't run until go() (the loader covers the hero until then, so frames there are wasted).
+export function createDust(canvas, { max = 150, haze = 22, reduce = false, dprMax = 1.5, hold = false } = {}) {
   if (!canvas || !canvas.getContext) return null;
   const ctx = canvas.getContext('2d'), sprites = TONES.map(sprite);
   const P = [];
-  let w = 0, h = 0, k = 1, rate = 0, acc = 0, visible = false, running = false, seed = 7;
+  let w = 0, h = 0, k = 1, rate = 0, acc = 0, visible = false, running = false, held = hold, seed = 7;
   const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
   const pick = () => { let r = rnd() * WSUM; for (const e of EMIT) { if ((r -= e.w) <= 0) return e; } return EMIT[0]; };
 
@@ -72,7 +73,7 @@ export function createDust(canvas, { max = 150, haze = 22, reduce = false, dprMa
     draw();
   }
 
-  const start = () => { if (!running && visible && !reduce) { running = true; gsap.ticker.add(tick); } };
+  const start = () => { if (!running && visible && !reduce && !held) { running = true; gsap.ticker.add(tick); } };
   const stop = () => { if (running) { running = false; gsap.ticker.remove(tick); } };
 
   function resize() {
@@ -87,6 +88,7 @@ export function createDust(canvas, { max = 150, haze = 22, reduce = false, dprMa
   resize();
 
   return {
+    go() { held = false; start(); },
     kick(r) { if (!reduce) rate = Math.max(rate, r); },
     // fill the resting haze at once (used when there is no intro)
     settle() { if (!reduce) for (let i = P.length; i < haze; i++) spawn('haze', rnd() * 2); },

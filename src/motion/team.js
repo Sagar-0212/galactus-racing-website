@@ -1,9 +1,6 @@
 // Team page motion (Prompt 7): intro wedge wipe and the sub-team tab switch (GSAP Flip).
 // The intro + recruitment headlines reuse headlineLines() from sections.js (red line lands last).
-import { gsap, ScrollTrigger, tokens, REDUCE, DESKTOP } from './core.js';
-import { Flip } from 'gsap/Flip';
-
-gsap.registerPlugin(Flip);
+import { gsap, ScrollTrigger, tokens, REDUCE, DESKTOP, getFlip, loadFlip } from './core.js';
 
 // Black -17° wedge wipes in from the right, a beat after the headline starts.
 export function wedgeWipe(root) {
@@ -30,6 +27,8 @@ export function switchTab(panel, ind, change) {
     ScrollTrigger.refresh();
     return;
   }
+  const Flip = getFlip();
+  if (!Flip) { loadFlip().then(() => switchTab(panel, ind, change), () => { change(); ScrollTrigger.refresh(); }); return; }
   const state = Flip.getState(els);
   change();
   flip = Flip.from(state, {

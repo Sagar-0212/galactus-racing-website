@@ -4,8 +4,10 @@
 
 body { margin: 0; background: var(--surface-page); }
 a { color: inherit; }
-a:hover { color: var(--accent); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+a:hover { color: var(--text-accent); }
+:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
+/* Dark surfaces: red text and focus rings use --red-400 (3.9:1 on ink; --red-600 is only 2.3:1). Red fills stay --red-600. */
+.menu, .loader, .about, .gal, .lb, .contact, .inv__aside, .card--ink, .toast, .sp__tape--ink, .tm-foot, .tm-recruit__box, .hl--inverse { --text-accent: var(--red-400); }
 ::selection { background: var(--accent); color: var(--paper-100); }
 [hidden] { display: none !important; }
 
@@ -13,7 +15,7 @@ a:hover { color: var(--accent); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
 
 /* Unverified facts. Remove the [TODO] from the data once a fact is confirmed. */
-.todo { font-family: var(--font-mono); font-size: clamp(9px, .45em, 14px); font-weight: 500; letter-spacing: .04em; text-transform: none; color: var(--accent); white-space: nowrap; vertical-align: middle; -webkit-text-stroke: 0; }
+.todo { font-family: var(--font-mono); font-size: clamp(9px, .45em, 14px); font-weight: 500; letter-spacing: .04em; text-transform: none; color: var(--text-accent); white-space: nowrap; vertical-align: middle; -webkit-text-stroke: 0; }
 .about .todo, .gal .todo, .inv__aside .todo, .contact .todo, .tm-foot .todo, .card--ink .todo, .hero__spec .todo, .car__tag .todo { color: var(--red-200); }
 
 /* Shared text styles */
@@ -49,10 +51,10 @@ a:hover { color: var(--accent); }
 .menu__close { position: absolute; top: 18px; right: var(--gutter); height: 44px; padding: 0 14px; background: none; color: var(--paper-100); border: 1px solid var(--border-inverse); font-family: var(--font-body); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; cursor: pointer; }
 .menu__link { text-decoration: none; font-family: var(--font-display); font-size: clamp(44px, 11vw, 72px); line-height: var(--lh-display); text-transform: uppercase; }
 .menu--team .menu__link { font-size: clamp(40px, 10vw, 68px); }
-.menu__link.is-current { color: var(--accent); }
+.menu__link.is-current { color: var(--text-accent); }
 
 /* ---------- Contact block + footer (home #contact and team footer) ---------- */
-.contact__race { color: var(--accent); }
+.contact__race { color: var(--text-accent); }
 .contact__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 48px; align-items: start; }
 .contact__info { display: flex; flex-direction: column; gap: 20px; }
 .contact__logo { height: clamp(48px, 5vw, 64px); width: auto; align-self: flex-start; display: block; }

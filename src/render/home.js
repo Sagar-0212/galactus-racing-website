@@ -23,7 +23,7 @@ export function hero({ cars }) {
           <div class="hero__car-in" data-in="car">
             <span class="hero__streak" data-streak="" aria-hidden="true"><i></i><i></i><i></i></span>
             <canvas class="hero__dust" data-dust="" aria-hidden="true"></canvas>
-            <img data-hero-main="" fetchpriority="high" src="/assets/hero-car.webp" srcset="/assets/hero-car-640.webp 640w, /assets/hero-car.webp 1200w" sizes="(min-width: 900px) 55vw, 100vw" width="1200" height="823" decoding="async" alt="Team Galactus Racing Baja car Abhimanyu, number M04" draggable="false">
+            <img data-hero-main="" fetchpriority="high" src="/assets/hero-car.webp" srcset="/assets/hero-car-640.webp 640w, /assets/hero-car-800.webp 800w, /assets/hero-car.webp 1200w" sizes="(min-width: 900px) 55vw, calc(100vw - 40px)" width="1200" height="823" decoding="async" alt="Team Galactus Racing Baja car Abhimanyu, number M04" draggable="false">
           </div>
         </div>
       </div>
@@ -223,6 +223,7 @@ export function cars({ cars: list, evolution }) {
   const camData = JSON.stringify(stops.map(({ box, anchors, zoom, side, closeup }) => ({ box, anchors, zoom, side, closeup: !!closeup })));
 
   return `<section id="cars" class="cars" data-pin="" data-sector-label="S03 / Cars">
+    <div class="td-wrap" data-td-wrap="" style="--td-len:${n * 1.25 + 1}">
     <div class="td" data-td="" data-stops="${esc(camData)}">
       <div class="td__top micro"><span>${esc(car.name)} · teardown</span><span>Scroll ↓</span></div>
       <img class="td__img" data-td-cam="" src="${esc(car.photo)}" alt="${esc(car.name)}, our current car" width="${W}" height="${H}" loading="lazy" decoding="async" draggable="false">
@@ -232,10 +233,12 @@ export function cars({ cars: list, evolution }) {
       ${intro(' data-td-intro=""')}
       <ol class="td__sectors" aria-label="Teardown sectors">${sectors}</ol>
     </div>
+    </div>
     <div class="tdm">
       ${intro('')}
       <ol class="tdm__list">${cards}</ol>
     </div>
+    <div class="rail-wrap" data-rail-wrap="">
     <div class="cars__rail" data-rail="">
       <div class="cars__top micro"><span>Previous cars</span><span>Scroll to drive →</span></div>
       <div class="cars__track" data-track="">
@@ -250,6 +253,7 @@ export function cars({ cars: list, evolution }) {
         </div>
       </div>
       <div class="cars__progress"><div class="cars__bar" data-pinbar=""></div></div>
+    </div>
     </div>
   </section>`;
 }

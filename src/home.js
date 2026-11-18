@@ -4,7 +4,7 @@ import './styles/components.css';
 import './styles/home.css';
 import galleryData from './data/gallery.json';
 import carsData from './data/cars.json';
-import { initHomeMotion, scrollToEl, bindCard, animateLb, animateSheet, flipGallery, slideMsg, toastIn, toastOut } from './motion/index.js';
+import { initHomeMotion, scrollToEl, bindCard, animateLb, animateSheet, flipGallery, slideMsg, toastIn, toastOut, loadFlip } from './motion/index.js';
 import { initMenu } from './ui/menu.js';
 import { initMaps } from './ui/map.js';
 import { submitEnquiry } from './api/enquiries.js';
@@ -81,6 +81,8 @@ function layoutGallery() {
   vis.forEach((g, k) => { const f = byId.get(g.id); f.hidden = false; cols[k % cols.length].appendChild(f); });
   galleryData.filter((g) => !vis.includes(g)).forEach((g) => { const f = byId.get(g.id); f.hidden = true; cols[0].appendChild(f); });
 }
+const galTabs = $('[data-gal-tabs]');
+if (galTabs) ['pointerover', 'focusin', 'touchstart'].forEach((ev) => galTabs.addEventListener(ev, () => loadFlip(), { once: true, passive: true }));
 $$('[data-gal-tabs] [role="tab"]').forEach((tab) => tab.addEventListener('click', () => {
   if (tab.dataset.value === galFilter) return;
   galFilter = tab.dataset.value;
@@ -299,9 +301,17 @@ function show() {
   const ld = $('[data-loader]');
   motion.intro(ld);
   motion.refresh();
-  const id = decodeURIComponent((location.hash || '').slice(1));
-  if (id && document.getElementById(id)) setTimeout(() => go(id, true), 60);
+  layoutH = document.documentElement.scrollHeight;
+  // Section motion builds in small steps behind the start lights; jump to a #hash once it's done
+  // (the car rail's height is set by one of those steps).
+  motion.start().then(() => {
+    const id = decodeURIComponent((location.hash || '').slice(1));
+    if (id && document.getElementById(id)) go(id, true);
+  });
 }
+let layoutH = 0;
 const imgReady = !heroImg ? Promise.resolve() : heroImg.decode ? heroImg.decode().catch(() => {}) : new Promise((res) => { heroImg.onload = heroImg.onerror = res; });
 Promise.all([document.fonts ? document.fonts.ready : Promise.resolve(), imgReady]).then(() => requestAnimationFrame(show));
 setTimeout(show, 3000);
+// Late layout changes (images that finish after show()) get one more refresh on window load.
+addEventListener('load', () => { if (shown && document.documentElement.scrollHeight !== layoutH) motion.refresh(); }, { once: true });

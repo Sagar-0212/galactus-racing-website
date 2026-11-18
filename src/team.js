@@ -2,7 +2,7 @@
 import './styles/base.css';
 import './styles/components.css';
 import './styles/team.css';
-import { initTeamMotion, switchTab, scrollToEl } from './motion/index.js';
+import { initTeamMotion, switchTab, scrollToEl, loadFlip } from './motion/index.js';
 import { initMenu } from './ui/menu.js';
 import { initMaps } from './ui/map.js';
 
@@ -36,6 +36,7 @@ function select(id, { focus = false } = {}) {
 }
 
 if (list) {
+  ['pointerover', 'focusin'].forEach((ev) => list.addEventListener(ev, () => { if (matchMedia('(min-width: 900px)').matches) loadFlip(); }, { once: true, passive: true }));
   tabs.forEach((tab) => tab.addEventListener('click', () => select(tab.dataset.tab)));
   list.addEventListener('keydown', (e) => {
     const i = tabs.indexOf(document.activeElement);

@@ -29,9 +29,9 @@ export function chrome(root, onActive) {
 }
 
 // ---------- Reveals ----------
-export function reveals(els, mobile) {
-  els.forEach((el, i) => {
-    const d = el.dataset.delay;
+export function reveals(els, mobile, offset = 0) {
+  els.forEach((el, k) => {
+    const d = el.dataset.delay, i = k + offset;
     reveal(el, { delay: (d != null && d !== '' ? +d : (i % 4) * 70) / 1000, y: mobile ? 28 : 56, skew: mobile ? 0 : 2 });
   });
 }
@@ -107,15 +107,22 @@ export function columnParallax(els) {
 
 // ---------- Cars: previous cars + evolution on a pinned horizontal track (desktop only; under 900px
 // the CSS turns it into a scroll-snap row). Returns the track tween for containerAnimation triggers. ----------
+let railWrap = null, railHooked = false;
 export function carsPin(root) {
   const sec = root.querySelector('[data-rail]'); if (!sec) return null;
   const track = sec.querySelector('[data-track]'), pb = sec.querySelector('[data-pinbar]');
   if (!track) return null;
   const dist = () => Math.max(0, track.scrollWidth - innerWidth);
   const setPb = pb ? gsap.quickSetter(pb, 'scaleX') : null;
+  // The rail is position: sticky inside .rail-wrap; the wrapper's height is the scroll length.
+  // Set before every refresh measures anything (CSS forces height: auto under 900px / reduced motion).
+  const wrap = sec.parentElement;
+  railWrap = () => { wrap.style.height = innerHeight + dist() + 'px'; };
+  if (!railHooked) { railHooked = true; ScrollTrigger.addEventListener('refreshInit', () => railWrap && railWrap()); }
+  railWrap();
   const move = gsap.to(track, {
     x: () => -dist(), ease: 'none',
-    scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: true, invalidateOnRefresh: true, refreshPriority: 1,
+    scrollTrigger: { trigger: wrap, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true,
       onUpdate: (s) => setPb && setPb(s.progress), onRefresh: (s) => setPb && setPb(s.progress) },
   });
   // Horizontal parallax inside each car (code numeral and photo drift against the track).

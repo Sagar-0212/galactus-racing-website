@@ -48,6 +48,14 @@ export function smoothScroll(opts = {}) {
   return lenis;
 }
 
+// GSAP Flip (gallery filter, team tabs) is loaded on first use, not at start-up: it is 25 KB of JS
+// that only runs after a click. Warm it with loadFlip() on hover/focus of the controls that need it.
+let flipP = null, FlipPlugin = null;
+export const getFlip = () => FlipPlugin;
+export function loadFlip() {
+  return flipP || (flipP = import('gsap/Flip').then(({ Flip }) => { gsap.registerPlugin(Flip); FlipPlugin = Flip; return Flip; }));
+}
+
 // Scroll to an element, `offset` px below the top of the viewport.
 // `immediate` jumps (used for #hash on page load, where Lenis may not have synced the browser's own jump).
 export function scrollToEl(el, offset = 0, { immediate = false } = {}) {

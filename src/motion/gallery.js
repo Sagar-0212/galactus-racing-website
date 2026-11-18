@@ -1,9 +1,6 @@
 // Gallery: filter re-layout (GSAP Flip), card hover (state via the .is-hover class in CSS: slow photo
 // zoom + red caption line; mouse tilt here) and lightbox transitions.
-import { gsap, ScrollTrigger, tokens, REDUCE, isScrolling } from './core.js';
-import { Flip } from 'gsap/Flip';
-
-gsap.registerPlugin(Flip);
+import { gsap, ScrollTrigger, tokens, REDUCE, isScrolling, getFlip, loadFlip } from './core.js';
 
 const reduced = () => matchMedia(REDUCE).matches;
 
@@ -28,6 +25,8 @@ export function flipGallery(grid, change) {
   const figs = [...grid.querySelectorAll('[data-flip-id]')];
   if (flip) flip.progress(1);
   if (reduced()) { change(); ScrollTrigger.refresh(); return; }
+  const Flip = getFlip();
+  if (!Flip) { loadFlip().then(() => flipGallery(grid, change), () => { change(); ScrollTrigger.refresh(); }); return; }
   // Photos still waiting for their scroll reveal: settle them first (and drop the trigger) so Flip
   // measures their real boxes and the reveal can't replay later.
   figs.forEach((f) => {

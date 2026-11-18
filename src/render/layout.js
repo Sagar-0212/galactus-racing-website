@@ -27,7 +27,7 @@ export function header({ page }) {
   return `<header class="hdr" data-hdr="">
     <div class="hdr__left">
       <a class="hdr__home" href="${homeHref}" aria-label="Galactus Racing, home">
-        <img src="/assets/logo-gr.png" width="640" height="446" alt="" class="hdr__logo">
+        <img src="/assets/logo-gr.webp" width="129" height="90" alt="" class="hdr__logo">
         ${wordmark({ name: 'GALACTUS RACING', rule: false })}
       </a>${sector}
     </div>
@@ -62,7 +62,7 @@ export function contactDetails({ contact, wrapEmail = false, copyEmail = false }
   const anyTodo = [email, phone].some((c) => c.todo) || ['Instagram', 'LinkedIn', 'YouTube'].some((k) => contactValue(contact, k).todo);
   return `<div class="contact__grid">
     <div class="contact__info">
-      <img src="/assets/logo-gr-light.png" width="640" height="446" alt="Galactus Racing logo" class="contact__logo" loading="lazy">
+      <img src="/assets/logo-gr-light.webp" width="276" height="192" alt="Galactus Racing logo" class="contact__logo" loading="lazy" decoding="async">
       ${wordmark({ name: 'GALACTUS RACING', inverse: true, tagline: 'We reply within 48 hours.' })}
       <p class="contact__addr">${t(addr.value)}</p>
       <a class="contact__email${wrapEmail ? ' contact__email--wrap' : ''}" href="mailto:${esc(email.value)}"${copyEmail ? ` data-copy-email="${esc(email.value)}" title="Click to copy"` : ''}>${esc(email.value)}</a>

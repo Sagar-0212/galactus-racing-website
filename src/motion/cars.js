@@ -116,8 +116,9 @@ export function teardown(root) {
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
-      trigger: td, start: 'top top', end: () => '+=' + Math.round(innerHeight * (n * 1.25 + 1)),
-      pin: true, scrub: true, invalidateOnRefresh: true, refreshPriority: 2,
+      // td is position: sticky inside .td-wrap (height = (n * 1.25 + 2) * 100vh, see home.css).
+      trigger: td.parentElement, start: 'top top', end: 'bottom bottom',
+      scrub: true, invalidateOnRefresh: true,
       onRefreshInit: measure,
       onToggle: (st) => td.classList.toggle('is-live', st.isActive),
       onUpdate: () => setActive(tl.time()),

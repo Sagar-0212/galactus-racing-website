@@ -77,13 +77,13 @@
 .tm-tabs::-webkit-scrollbar { display: none; }
 .tm-tab { position: relative; flex: none; display: inline-flex; align-items: baseline; gap: 8px; min-height: 44px; padding: 12px 0; background: none; border: 0; cursor: pointer; white-space: nowrap; font-family: var(--font-body); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-muted); transition: color var(--dur-fast); }
 .tm-tab:hover, .tm-tab[aria-selected="true"] { color: var(--text-primary); }
-.tm-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tm-tab:focus-visible { outline: 2px solid var(--text-accent); outline-offset: -2px; }
 .tm-tab__n { font-family: var(--font-mono); font-weight: 500; color: var(--text-accent); }
 .tm-tabs__ind { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--accent); }
 .tm-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 28px clamp(32px, 5vw, 72px); align-items: start; }
 .tm-panel__intros { position: relative; }
 .tm-panel [hidden] { display: none; }
-.tm-panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; }
+.tm-panel:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 8px; }
 .tm-panel__intro { display: flex; flex-direction: column; gap: 14px; }
 @media (max-width: 599px) { .tm-sub__grid { grid-template-columns: 1fr 1fr; gap: 12px; } }
 @media (max-width: 899px) {
