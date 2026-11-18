@@ -119,7 +119,14 @@ function driveMode(sec) {
     laneFill.style.left = L0 + 'px'; laneFill.style.width = laneLen - L0 + 'px'; // red line starts at START
     gates.forEach((g, i) => { g.style.left = gateX[i] + 'px'; });
     wedge.style.left = finish + 'px';
-    carWrap.style.left = finish + Math.round(gap * 0.22) + 'px'; // clear of the 2026 gate label
+    // Abhimanyu at the finish: just past the 2026 gate label, and never under the card (it shrinks to
+    // fit the room between the label and the card's left edge when the buggy stops at the gate).
+    const carX = gates[last].querySelector('.jr__gate-yr').offsetWidth + 16;
+    carWrap.style.height = '';
+    const list = $('[data-jlist]'), cardLeft = list.getBoundingClientRect().left - road.getBoundingClientRect().left;
+    const room = cardLeft - 16 - (ax + carX), cssH = carWrap.offsetHeight;
+    carWrap.style.left = finish + carX + 'px';
+    carWrap.style.height = Math.round(Math.max(90, Math.min(cssH, room * 439 / 640))) + 'px';
     buggy.style.left = ax - bw * 150 / 160 + 'px'; // nose (x = 150 in the 160-wide drawing) on the anchor
     // Timeline: drive (eased) then stop, per checkpoint, in scroll units.
     segs = []; let u = 0, prev = L0;

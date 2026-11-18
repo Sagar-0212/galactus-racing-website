@@ -133,15 +133,25 @@ export function journey({ journey: chapters }) {
   const n = chapters.length, last = n - 1;
   const of = (i) => `${pad2(i + 1)} / ${pad2(n)}`;
   const car = (cls, extra = '') => `<img class="${cls}" src="/assets/hero-car-640.webp" width="640" height="439" loading="lazy" decoding="async" alt="Abhimanyu (M04), our car today"${extra}>`;
+  // Photo frame (4:3): the chapter's photo, Abhimanyu at the last stop, otherwise an ink placeholder
+  // with the outlined year. The story is not shown on the card: it stays in the HTML for screen readers
+  // and is the photo's alt text (so the hidden copy is aria-hidden when a photo carries it).
+  const plain = (s) => String(s || '').replace(/\s*\[TODO\]/g, '').trim();
+  const frame = (c, i) => {
+    if (i === last) return `<div class="jr__frame jr__frame--car">${car('jr__car-static')}</div>`;
+    if (c.photo) return `<div class="jr__frame"><img class="jr__photo" src="${esc(c.photo)}" alt="${esc(plain(c.story) || c.title)}" loading="lazy" decoding="async"></div>`;
+    return `<div class="jr__frame jr__frame--empty" aria-hidden="true"><span class="jr__frame-yr">${esc(c.date)}</span><span class="jr__frame-note">Photo coming soon</span></div>`;
+  };
+  const hasPhoto = (c, i) => i !== last && !!c.photo;
+  // The story's [TODO] (unverified chapter) moves to the title, so the visible card stays marked.
   const items = chapters.map((c, i) => `<li class="jr__item" data-jitem="${i}">
       <span class="jr__dot" data-jdot="" aria-hidden="true"></span>
       <article class="jr__card">
         <header class="jr__card-h"><span>Tech inspection</span><span>CP ${of(i)}</span></header>
         <div class="jr__yrrow"><span class="jr__year">${flap(c.date)}</span><span class="jr__stamp" data-jstamp="">${i === last ? 'Today' : 'Passed'}</span></div>
-        ${c.photo ? `<img class="jr__photo" src="${esc(c.photo)}" alt="${esc(c.photoAlt || c.title)}" loading="lazy" decoding="async">` : ''}
-        ${i === last ? car('jr__car-static') : ''}
-        <h3 class="jr__title">${t(c.title)}</h3>
-        <p class="jr__story">${t(c.story)}</p>
+        ${frame(c, i)}
+        <h3 class="jr__title">${t(c.title)}${/\[TODO\]/.test(c.story) && !/\[TODO\]/.test(c.title) ? todo(true) : ''}</h3>
+        <p class="jr__story sr-only"${hasPhoto(c, i) ? ' aria-hidden="true"' : ''}>${t(c.story)}</p>
         ${i === last ? `<a class="btn btn--accent btn--md jr__join" href="team.html#join"><span class="btn__label">Join the crew</span><span class="btn__icon" aria-hidden="true">→</span></a>` : ''}
       </article>
     </li>`).join('');
