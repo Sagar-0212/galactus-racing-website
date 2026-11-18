@@ -158,7 +158,7 @@ export function journey({ journey: chapters }) {
   const gates = chapters.map((c, i) => `<div class="jr__gate${i === last ? ' jr__gate--fin' : ''}" data-jgate="${i}">
         <span class="jr__gate-yr">${esc(c.date)}</span><span class="jr__gate-cp">CP${pad2(i + 1)}</span><span class="jr__gate-post"></span>
       </div>`).join('');
-  return `<section id="journey" class="jr" data-scene="" data-sector-label="S02 / Journey" data-jr="" style="--jr-n:${n}">
+  return `<section id="journey" class="jr" data-scene="" data-sector-label="S03 / Journey" data-jr="" style="--jr-n:${n}">
     <div class="jr__stage" data-jstage="">
       <div class="jr__bigtext" data-jfar="" aria-hidden="true">${esc(chapters[0].date)} — ${esc(chapters[last].date)} — ${esc(chapters[0].date)} — ${esc(chapters[last].date)}</div>
       <div class="jr__side">
@@ -284,7 +284,7 @@ export function cars({ cars: list, evolution }) {
   // Desktop camera data (box / anchors / zoom / side per stop), read by src/motion/cars.js.
   const camData = JSON.stringify(stops.map(({ box, anchors, zoom, side, closeup }) => ({ box, anchors, zoom, side, closeup: !!closeup })));
 
-  return `<section id="cars" class="cars" data-pin="" data-sector-label="S03 / Cars">
+  return `<section id="cars" class="cars" data-pin="" data-sector-label="S04 / Cars">
     <div class="td-wrap" data-td-wrap="" style="--td-len:${n * 1.25 + 1}">
     <div class="td" data-td="" data-stops="${esc(camData)}">
       <div class="td__top micro"><span>${esc(car.name)} · teardown</span><span>Scroll ↓</span></div>
@@ -346,7 +346,7 @@ export function achievements({ achievements: a }) {
   const cards = a.podiums.map((p, i) => `<div class="ach__slot" data-grid="${i}">${card({ eyebrow: `${p.place} · ${p.year}`, title: p.title, body: t(p.detail), tone: p.featured ? 'ink' : 'paper', interactive: true })}</div>`).join('');
   const ms = a.milestones.map((m) => `<li class="ach__ms" data-reveal=""><span class="ach__ms-year">${m.year}</span><div class="ach__ms-body"><strong class="ach__ms-title">${esc(m.title)}</strong><span class="ach__ms-note">${t(m.detail)}</span></div></li>`).join('');
   const totals = a.totals.map((c, i) => `<div class="ach__total"><span class="ach__total-n" data-count="${c.n}" data-delay="${i * 80}">0</span><span class="ach__total-label">${esc(c.label)}${todo(c.todo)}</span></div>`).join('');
-  return `<section id="achievements" class="ach" data-scene="" data-sector-label="S04 / Results">
+  return `<section id="achievements" class="ach" data-scene="" data-sector-label="S05 / Results">
     <span class="ach__p1" data-speed="0.4" aria-hidden="true">P1</span>
     <div class="ach__wrap">
       <div data-reveal="">${headline({ as: 'h2', size: 'xl', text: 'Podiums. Plural.', accent: 'Plural.' })}</div>
@@ -392,7 +392,7 @@ export function galleryGrid(items, nCols, filter = 'all') {
 
 export function gallery({ gallery: items }) {
   const tabItems = [{ value: 'all', label: 'All', count: items.length }, ...Object.entries(GAL_CATS).map(([value, label]) => ({ value, label }))];
-  return `<section id="gallery" class="gal" data-scene="" data-sector-label="S05 / Gallery">
+  return `<section id="gallery" class="gal" data-scene="" data-sector-label="S06 / Gallery">
     <div class="gal__head">
       <div data-reveal="">${headline({ as: 'h2', size: 'l', inverse: true, text: 'Paddock diaries.', accent: 'diaries.' })}</div>
       ${tabs({ items: tabItems, value: 'all', inverse: true, attr: { 'data-gal-tabs': '' } })}
