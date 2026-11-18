@@ -6,12 +6,14 @@ import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } fro
 import { createDust } from './dust.js';
 import { teardown, teardownCards, evoIn } from './cars.js';
 import { headlineLines, bigDrift, rolls, flaps, startingGrid, awardTags, brandPulse, investRaised, contactWipe } from './sections.js';
-import { chrome, reveals, counts, finalCounts, journey, parallax, carsPin, wedgeRise, marquee } from './effects.js';
+import { chrome, reveals, counts, finalCounts, journey, parallax, columnParallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl };
 export { bindCard, animateLb, flipGallery } from './gallery.js';
 export { animateSheet } from './cars.js';
 export { slideMsg, toastIn, toastOut } from './sections.js';
+export { switchTab } from './team.js';
+import { wedgeWipe } from './team.js';
 
 export function initHomeMotion(root, { onActive } = {}) {
   tokens();
@@ -57,7 +59,7 @@ export function initHomeMotion(root, { onActive } = {}) {
       teardown(root);
       evoIn(root, carsPin(root));
       parallax([...root.querySelectorAll('[data-speed],[data-hx]')].filter((el) => !el.matches('.gal__col')));
-      galTweens = parallax(galCols());
+      galTweens = columnParallax(galCols());
     } else {
       teardownCards(root);
       evoIn(root, null);
@@ -77,7 +79,7 @@ export function initHomeMotion(root, { onActive } = {}) {
       galTweens = [];
       if (ctx) ctx.add(() => {
         reveals([...grid.querySelectorAll('[data-reveal]')], !desktop);
-        if (desktop) galTweens = parallax(galCols());
+        if (desktop) galTweens = columnParallax(galCols());
       });
       ScrollTrigger.refresh();
     },
@@ -89,9 +91,14 @@ export function initTeamMotion() {
   const hdr = document.querySelector('[data-hdr]');
   smoothScroll({ anchors: { offset: -((hdr && hdr.offsetHeight) || 68) } });
   const mm = gsap.matchMedia();
-  mm.add({ desktop: DESKTOP, reduce: REDUCE }, (c) => {
+  mm.add({ desktop: DESKTOP, mobile: '(max-width: 899px)', reduce: REDUCE }, (c) => {
     if (c.conditions.reduce) return;
-    // Cards and blocks rise in (no clip/skew on this page, as before).
+    // Intro + recruitment headlines: lines mask up, the red punchline line lands last. Wedge wipes in.
+    // Both are light (transform + clip-path), so phones get them too.
+    headlineLines(document);
+    wedgeWipe(document);
+    if (!c.conditions.desktop) return;
+    // Desktop: cards and blocks rise in (no clip/skew on this page, as before).
     document.querySelectorAll('[data-card], [data-in]').forEach((el) => {
       if (el.hasAttribute('data-done')) return;
       const t = tokens();

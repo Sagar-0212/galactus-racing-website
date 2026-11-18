@@ -24,6 +24,7 @@ export function headlineLines(root) {
       type: 'lines', linesClass: 'hl-line', autoSplit: true,
       onSplit(self) {
         // Plain lines first, then the accent lines after a short beat so the red punchline lands last.
+        hl.setAttribute('data-split', ''); // lets CSS un-hide a headline kept hidden until it is split
         const red = self.lines.filter((l) => l.querySelector('.hl__accent'));
         const plain = self.lines.filter((l) => !red.includes(l));
         const tl = gsap.timeline({

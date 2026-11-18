@@ -142,4 +142,6 @@ Never put bank account numbers on the page.
 - Faculty advisor: "Prof. [Name]", "Guiding the team since 2015" `[TODO]`
 - Captain, vice captain, technical head: names
 - 19 sub-team members (Chassis 3, Powertrain 3, Suspension 3, Brakes 2, Electrical 2, Manufacturing 3, Business & Marketing 3): names, roles, photos, LinkedIn links
-- Recruitment: "Apply to join" link, and whether "Recruitment 2026–27" is right
+- Recruitment: whether "Recruitment 2026–27" is right (shown with a red `[TODO]` on the team page)
+- Recruitment "Apply to join" **Google Form URL**: put it in `src/data/contact.json` → the `"kind": "Apply"` entry's `value` (and set `"todo": false`). Until then the button scrolls to the contact footer (`#contact`); once set it opens the form in a new tab
+- Portrait / member photos: every card shows a red `[TODO] photo` tag until `photo` is set in `team.json` (photos render as an ink + paper duotone that turns full colour on hover)

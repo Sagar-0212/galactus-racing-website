@@ -11,7 +11,7 @@ Visitors: company sponsors on laptops, students on mid-range Android phones, jud
 | Path | What it is |
 |---|---|
 | `index.html` | **Home page.** 10 sections: hero (pinned), about, journey, cars (pinned horizontal), achievements, gallery + lightbox, sponsors, invest (packages + enquiry form), contact, footer. Body is `<!-- @render … -->` markers filled at build time |
-| `team.html` | Team page: intro, leadership, sub-teams, recruitment |
+| `team.html` | Team page (Prompt 7): intro (headline line masks, red line last, wedge wipe), leadership (duotone portraits → colour on hover, name underline), sub-team **tabs** (one ARIA tabpanel, arrow/Home/End keys, GSAP Flip switch in `src/motion/team.js`, sideways-scrolling row on phones), recruitment (Apply → `contact.json` "Apply" URL, else `#contact`) |
 | `admin.html` | Admin panel, **dev only** (not in the production build). Still runs on the Claude Design runtime (`src/admin/support.js`, loads React from a CDN) with the **mock** API in `src/admin/admin-api.js`. Rebuild it when the real backend exists |
 | `src/data/*.json` | **All content** (stats, cars, evolution, journey, achievements, gallery, team, subteams, sponsors, packages, fundraising, contact). Unverified facts carry `[TODO]` |
 | `src/render/*.js` | Turns the JSON into HTML. `ui.js` = design-system components (Button, Card, Headline…), `layout.js` = header/menu/footer, `home.js`, `team.js`. Run at build time by the plugin in `vite.config.js`; the gallery grid is also re-rendered at runtime |

@@ -6,8 +6,10 @@
 .tm-intro__bigtext { position: absolute; left: -6vw; top: 12vh; white-space: nowrap; font-family: var(--font-display); font-size: 20vw; line-height: .8; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--ink-900) 10%, transparent); pointer-events: none; will-change: transform; }
 .tm-intro__top { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
 .tm-intro__h { position: relative; }
+/* Punchline on its own line so it can land last (src/motion/team.js). */
+.tm-intro__h .hl__accent, .tm-recruit .hl__accent { display: block; }
 .tm-jump { position: relative; display: flex; flex-wrap: wrap; gap: 8px; }
-.tm-jump__link { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 12px; border: 1px solid var(--border-strong); text-decoration: none; font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; transition: background var(--dur-fast), color var(--dur-fast); }
+.tm-jump__link { display: inline-flex; background: var(--surface-page); align-items: center; gap: 8px; min-height: 36px; padding: 0 12px; border: 1px solid var(--border-strong); text-decoration: none; font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; transition: background var(--dur-fast), color var(--dur-fast); }
 .tm-jump__link:hover { background: var(--ink-900); color: var(--paper-100); }
 .tm-jump__n { font-family: var(--font-mono); font-weight: 500; color: var(--text-accent); }
 
@@ -29,8 +31,6 @@
 .tm-card__mrole { font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-muted); }
 .tm-card__in { display: grid; place-items: center; min-width: 32px; min-height: 32px; text-decoration: none; font-weight: 700; font-size: var(--fs-label); color: var(--text-primary); }
 
-.tm-sub { padding: clamp(40px, 6vh, 72px) var(--gutter); background: var(--surface-page); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 28px clamp(32px, 5vw, 72px); align-items: start; scroll-margin-top: 80px; }
-.tm-sub__intro { display: flex; flex-direction: column; gap: 14px; border-top: 2px solid var(--ink-900); padding-top: 14px; }
 .tm-sub__desc { margin: 0; max-width: 46ch; font-size: var(--fs-body-l); line-height: var(--lh-body); color: var(--text-secondary); }
 .tm-sub__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 16px; }
 
@@ -42,3 +42,50 @@
 .tm-foot { position: relative; background: var(--ink-1000); color: var(--text-inverse); overflow: hidden; }
 .tm-foot__inner { padding: clamp(72px, 12vh, 120px) var(--gutter) 0; display: flex; flex-direction: column; gap: 48px; }
 .tm-foot__title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(72px, 14vw, 240px); line-height: var(--lh-display); text-transform: uppercase; white-space: nowrap; }
+
+/* ---------- Prompt 7: motion states ---------- */
+/* Intro wedge: the black -17° wedge (tan 17° = .306), bottom right. The outer box is the wipe
+   (clip-path, JS), the inner span is the shape. */
+.tm-intro__wedge { position: absolute; right: 0; bottom: 0; width: min(58vw, 980px); aspect-ratio: 1000 / 306; pointer-events: none; }
+.tm-intro__wedge-i { position: absolute; inset: 0; background: var(--ink-1000); clip-path: polygon(0 100%, 100% 0, 100% 100%); }
+/* Before the JS split runs, keep the intro headline + wedge hidden so they don't flash in their final
+   state. If the script never runs they show after 2s anyway. */
+@media (prefers-reduced-motion: no-preference) {
+  .tm-intro__h .hl:not([data-split]):not([data-done]), .tm-intro__wedge:not([data-split]) { visibility: hidden; animation: tm-show 0s 2s forwards; }
+}
+@keyframes tm-show { to { visibility: visible; } }
+
+/* Leadership: name underline draws from the left on hover / focus. */
+.tm-card__name { position: relative; align-self: flex-start; }
+.tm-card__name::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-base) var(--ease-out); }
+.tm-card--lead:hover .tm-card__name::after, .tm-card--lead:focus-within .tm-card__name::after { transform: scaleX(1); }
+
+/* Duotone portraits: colour photo underneath, an ink + paper copy on top (greyscale multiplied onto
+   paper, blacks lifted to ink). Hover fades the copy out: only opacity animates. */
+.tm-duo { position: absolute; inset: 0; overflow: hidden; background: var(--paper-200); }
+.tm-duo__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tm-duo__tone { position: absolute; inset: 0; isolation: isolate; background: var(--paper-200); transition: opacity var(--dur-base) var(--ease-out); }
+.tm-duo__tone .tm-duo__img { filter: grayscale(1) contrast(1.1); mix-blend-mode: multiply; }
+.tm-duo__tone::after { content: ''; position: absolute; inset: 0; background: var(--ink-900); mix-blend-mode: lighten; }
+.tm-card:hover .tm-duo__tone, .tm-card:focus-within .tm-duo__tone { opacity: 0; }
+.tm-card__todo { position: absolute; left: 10px; top: 10px; }
+
+/* Sub-team tabs. One red indicator moves between tabs (GSAP Flip on desktop). Phones: one row that
+   scrolls sideways. */
+.tm-subs { padding: clamp(40px, 6vh, 72px) var(--gutter); background: var(--surface-page); display: flex; flex-direction: column; gap: 28px; scroll-margin-top: 80px; }
+.tm-tabs { position: relative; display: flex; gap: 4px clamp(16px, 2vw, 32px); border-bottom: 1px solid var(--border-hairline); overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; scroll-padding-inline: var(--gutter); }
+.tm-tabs::-webkit-scrollbar { display: none; }
+.tm-tab { position: relative; flex: none; display: inline-flex; align-items: baseline; gap: 8px; min-height: 44px; padding: 12px 0; background: none; border: 0; cursor: pointer; white-space: nowrap; font-family: var(--font-body); font-weight: 700; font-size: var(--fs-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-muted); transition: color var(--dur-fast); }
+.tm-tab:hover, .tm-tab[aria-selected="true"] { color: var(--text-primary); }
+.tm-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tm-tab__n { font-family: var(--font-mono); font-weight: 500; color: var(--text-accent); }
+.tm-tabs__ind { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--accent); }
+.tm-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 28px clamp(32px, 5vw, 72px); align-items: start; }
+.tm-panel__intros { position: relative; }
+.tm-panel [hidden] { display: none; }
+.tm-panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; }
+.tm-panel__intro { display: flex; flex-direction: column; gap: 14px; }
+@media (max-width: 599px) { .tm-sub__grid { grid-template-columns: 1fr 1fr; gap: 12px; } }
+@media (max-width: 899px) {
+  .tm-tabs { margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
+}

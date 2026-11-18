@@ -304,7 +304,8 @@ export const galColCount = (w) => (w < 640 ? 1 : w < 960 ? 2 : 3);
 // filter can move the same nodes with GSAP Flip); the ones outside `filter` are [hidden] at the end of
 // column 1. data-open is the photo's index in the full list.
 export function galleryGrid(items, nCols, filter = 'all') {
-  const speeds = [-0.12, 0.1, -0.05];
+  // Column drift rates (see columnParallax): the middle column lags, the outer ones lead.
+  const speeds = [0.12, 0.04, 0.09];
   const vis = items.filter((g) => filter === 'all' || g.category === filter);
   const cols = Array.from({ length: nCols }, () => []);
   vis.forEach((g, k) => cols[k % nCols].push(g));

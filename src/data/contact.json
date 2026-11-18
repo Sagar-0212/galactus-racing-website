@@ -7,5 +7,6 @@
   { "id": "k6", "kind": "YouTube", "label": "YouTube", "value": "", "primary": false, "todo": true },
   { "id": "k7", "kind": "Lead", "label": "Lead", "value": "[Name], Business Head", "primary": false },
   { "id": "k8", "kind": "UPI", "label": "UPI", "value": "[team-upi-id]@bank", "primary": false, "todo": true },
-  { "id": "k9", "kind": "Bank", "label": "Bank", "value": "Shared on request via RIT's official account", "primary": false }
+  { "id": "k9", "kind": "Bank", "label": "Bank", "value": "Shared on request via RIT's official account", "primary": false },
+  { "id": "k10", "kind": "Apply", "label": "Recruitment form (Google Form URL)", "value": "", "primary": false, "todo": true }
 ]

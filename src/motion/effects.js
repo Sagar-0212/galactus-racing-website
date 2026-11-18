@@ -90,6 +90,21 @@ export function parallax(els) {
   }).filter(Boolean);
 }
 
+// ---------- Gallery columns: parallax that never rises above the grid's top edge while the heading
+// can be on screen. Offset is linear in scroll and crosses 0 exactly when the grid's top reaches the
+// viewport top (by then the heading has scrolled out above). Before that every column sits at or below
+// its resting slot; after it, columns drift up at different rates (data-speed = rate, 0..~0.15). ----------
+export function columnParallax(els) {
+  return els.map((el) => {
+    const r = Math.abs(+el.dataset.speed || 0); if (!r) return null;
+    const grid = el.parentElement;
+    return gsap.fromTo(el, { y: () => r * innerHeight }, {
+      y: () => -r * grid.offsetHeight, ease: 'none',
+      scrollTrigger: { trigger: grid, start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true },
+    });
+  }).filter(Boolean);
+}
+
 // ---------- Cars: previous cars + evolution on a pinned horizontal track (desktop only; under 900px
 // the CSS turns it into a scroll-snap row). Returns the track tween for containerAnimation triggers. ----------
 export function carsPin(root) {
