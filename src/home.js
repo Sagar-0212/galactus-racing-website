@@ -298,6 +298,15 @@ addEventListener('resize', () => {
 });
 
 // ---------- Start ----------
+// A #section link on first load: the browser would jump there before the section motion exists, and
+// ScrollTriggers created while the page sits below them fire their `once` callbacks mid-build (one
+// kills itself inside another trigger's first refresh, and ScrollTrigger throws). So: drop the hash
+// (stops the browser's own jump), stay at the top while the motion builds, jump in show(), put it back.
+const startHash = decodeURIComponent((location.hash || '').slice(1));
+if (startHash && document.getElementById(startHash)) {
+  history.replaceState(history.state, '', location.pathname + location.search);
+  window.scrollTo(0, 0);
+}
 // The build renders 3 gallery columns; re-lay them out for this screen before the motion loop starts.
 if (galCols !== 3) renderGallery({ refresh: false }); else bindGalleryCards();
 motion = initHomeMotion(root, { onActive: setActive });
@@ -312,8 +321,9 @@ function show() {
   // start(), after the layout steps (the car rail's height is set by one of them); jump to a #hash
   // once everything is built.
   motion.start(() => { layoutH = document.documentElement.scrollHeight; }).then(() => {
-    const id = decodeURIComponent((location.hash || '').slice(1));
-    if (id && document.getElementById(id)) go(id, true);
+    if (!startHash || !document.getElementById(startHash)) return;
+    go(startHash, true);
+    history.replaceState(history.state, '', location.pathname + location.search + '#' + encodeURIComponent(startHash));
   });
 }
 let layoutH = 0;

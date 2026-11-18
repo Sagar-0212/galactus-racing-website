@@ -62,6 +62,9 @@ export function loadFlip() {
 // Scroll to an element, `offset` px below the top of the viewport.
 // `immediate` jumps (used for #hash on page load, where Lenis may not have synced the browser's own jump).
 export function scrollToEl(el, offset = 0, { immediate = false } = {}) {
+  // Lenis clamps to the page length it last measured; the pinned sections set theirs after it starts
+  // (and its own resize check is debounced), so re-measure before jumping or deep targets fall short.
+  if (lenis) lenis.resize();
   const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
   if (lenis && !immediate) lenis.scrollTo(y, { duration: 1.2, easing: tokens().inOut });
   else if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
