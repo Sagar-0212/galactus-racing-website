@@ -3,6 +3,9 @@
 .tm-h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 4vw, 56px); line-height: var(--lh-display); text-transform: uppercase; }
 
 .tm-intro { position: relative; box-sizing: border-box; padding: clamp(120px, 18vh, 180px) var(--gutter) clamp(48px, 7vh, 80px); background: var(--surface-page) var(--grain); overflow: hidden; display: flex; flex-direction: column; gap: 36px; }
+/* Decorative outline text: shown once the display font is in (team.js adds .fonts-ok), so the font
+   swap can't shift it (it was the page's only layout shift, CLS 0.09). */
+html:not(.fonts-ok) .tm-intro__bigtext { visibility: hidden; }
 .tm-intro__bigtext { position: absolute; left: -6vw; top: 12vh; white-space: nowrap; font-family: var(--font-display); font-size: 20vw; line-height: .8; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--ink-900) 10%, transparent); pointer-events: none; will-change: transform; }
 .tm-intro__top { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
 .tm-intro__h { position: relative; }
