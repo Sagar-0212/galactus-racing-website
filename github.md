@@ -1,13 +1,7 @@
-repo: Sagar-0212/G
+repo: Sagar-0212/galactus-racing-website
 branch: main
 
 ## Last sync
-date: 2026-10-11T00:00:00Z
+date: 2026-11-18
 ### Updated in this project
-- Repository connected; it is currently empty (no commits yet)
-- Site not pushed yet: export the project and push it manually
-
-## Screen map
-| Screen | Repo files |
-|---|---|
-| Galactus Racing (home + all sections) | (none yet) |
+- Site pushed (Prompt 8). Not deployed: import the repo on vercel.com (framework Vite, build `npm run build`, output `dist`)

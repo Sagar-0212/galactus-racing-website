@@ -1,4 +1,21 @@
+# dependencies and build output
 node_modules/
 dist/
-.DS_Store
+
+# local verification output and tool caches (never shipped)
+scraps/
 .playwright-mcp/
+.lighthouseci/
+
+# secrets: Supabase keys etc. go in .env files, never in git
+.env
+.env.*
+!.env.example
+
+# editor / OS / local tool settings
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/settings.local.json
+*.log
