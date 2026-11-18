@@ -1,4 +1,4 @@
-// Home page scroll effects: counts, bars, journey timeline, parallax, cars pin, marquee, contact wedge,
+// Home page scroll effects: counts, bars, parallax, cars pin, marquee, contact wedge,
 // page chrome (progress bar, header line, sector label). All driven by ScrollTrigger; layout is only
 // measured on refresh (load / resize), never per frame.
 import { gsap, ScrollTrigger, tokens, reveal } from './core.js';
@@ -52,28 +52,6 @@ export function counts(root) {
   });
 }
 export function finalCounts(root) { root.querySelectorAll('[data-count]').forEach((el) => { el.textContent = fmt(el, +el.dataset.count); }); }
-
-// ---------- Journey: red rail fills to the 60% line with a timing tick on its tip, diamonds light up,
-// the 01/06 counter strip ticks one chapter per lit diamond ----------
-export function journey(root, reduce) {
-  const list = root.querySelector('[data-jlist]'); if (!list) return;
-  const fill = root.querySelector('[data-jfill]'), tip = root.querySelector('[data-jtip]'), strip = root.querySelector('[data-jcount]'), dots = [...root.querySelectorAll('[data-jdot]')];
-  const n = strip ? strip.children.length : 1;
-  const setCount = (k, instant) => strip && gsap.to(strip, { yPercent: -100 * (Math.max(1, k) - 1) / n, duration: instant ? 0 : tokens().base, ease: tokens().out, overwrite: true });
-  if (reduce) { dots.forEach((d) => d.classList.add('is-on')); if (fill) gsap.set(fill, { scaleY: 1 }); setCount(dots.length, true); return; }
-  const st = { trigger: list, start: 'top 60%', end: 'bottom 60%', scrub: true, invalidateOnRefresh: true };
-  const tl = gsap.timeline({ scrollTrigger: st });
-  if (fill) tl.fromTo(fill, { scaleY: 0 }, { scaleY: 1, ease: 'none' }, 0);
-  if (tip) tl.fromTo(tip, { y: 0 }, { y: () => list.offsetHeight, ease: 'none' }, 0);
-  // A diamond lights when it crosses the 60% line and only goes dark when scrolled back above it
-  // (no end, so it stays lit after leaving the top). The counter tallies those two events.
-  let lit = 0;
-  // Positions come from offsetTop inside the (untransformed) list: the chapters carry the reveal's
-  // y/skew transform at refresh time, which getBoundingClientRect would bake in (~43px late).
-  dots.forEach((d) => ScrollTrigger.create({ trigger: list, start: () => `top+=${d.parentElement.offsetTop + d.offsetTop} 60%`,
-    onEnter: () => { d.classList.add('is-on'); setCount(++lit); },
-    onLeaveBack: () => { d.classList.remove('is-on'); setCount(--lit); } }));
-}
 
 // ---------- Parallax (desktop). Same maths as the original: offset ∝ distance of the scene centre
 // from the viewport centre, so it is linear from "scene top at screen bottom" to "scene bottom at top". ----------

@@ -1,5 +1,4 @@
-// Home sections A: About (headline line masks, outline drift, lap-timer stats), Journey (split-flap
-// years, tip tick, counter strip), Achievements (starting-grid cards, award tags).
+// Home sections A: About (headline line masks, outline drift, lap-timer stats) and Achievements (starting-grid cards, award tags).
 // Only transform / opacity / clip-path are animated. Digit strips rest on their final value in CSS,
 // so reduced motion simply never calls these.
 import { gsap, ScrollTrigger, tokens, REDUCE } from './core.js';
@@ -59,26 +58,6 @@ export function rolls(root) {
       scrollTrigger: { trigger: num, start: 'top 92%', once: true },
       onComplete: () => { num.setAttribute('data-done', ''); gsap.set(strips, { clearProps: 'transform' }); },
     }).fromTo(strips, { y: 0, yPercent: 0 }, { yPercent: (i, s) => endY(s), duration: t.wipe * 1.6, ease: 'power2.out' }, 0);
-  });
-}
-
-// ---------- Journey years: split-flap. Each digit flicks through its strip in hard steps ----------
-// (one step per flap, ~50ms each), digits start 60ms apart so the year settles left to right.
-export function flaps(root) {
-  root.querySelectorAll('[data-jitem]').forEach((item) => {
-    if (item.hasAttribute('data-flapped')) return;
-    const strips = [...item.querySelectorAll('.flap [data-strip]')];
-    if (!strips.length) return;
-    const tl = gsap.timeline({
-      // Starts with the item's own reveal (same trigger), a beat after the wipe begins.
-      delay: (+item.dataset.delay || 0) / 1000 + 0.12,
-      scrollTrigger: { trigger: item, start: 'top 92%', once: true },
-      onComplete: () => { item.setAttribute('data-flapped', ''); gsap.set(strips, { clearProps: 'transform' }); },
-    });
-    strips.forEach((s, i) => {
-      const steps = cells(s) - 1;
-      tl.fromTo(s, { y: 0, yPercent: 0 }, { yPercent: endY(s), duration: steps * 0.05, ease: `steps(${steps})` }, i * 0.06);
-    });
   });
 }
 
