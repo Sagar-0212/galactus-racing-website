@@ -50,12 +50,15 @@ export function initHomeMotion(root, { onActive } = {}) {
   // own motion is built up front. Steps added after a breakpoint change run at once, then refresh.
   let queue = Promise.resolve(), started = false, gen = 0;
   const yieldTask = () => new Promise((r) => (globalThis.scheduler && scheduler.yield ? scheduler.yield().then(r) : setTimeout(r, 0)));
-  let pending = null; // { c, steps, g } waiting for start()
-  function run({ c, steps, g }, after) {
+  let pending = null; // { c, steps, g, layout } waiting for start()
+  // midway(): called once the first `layout` steps have run (they set the heights of the pinned
+  // sections, so everything measured before them, like the sector labels, is stale until a refresh).
+  function run({ c, steps, g, layout = 0 }, after, midway) {
     queue = queue.then(async () => {
-      for (const step of steps) {
+      for (let k = 0; k < steps.length; k++) {
         if (g !== gen) return; // context reverted (breakpoint changed) while queued
-        c.add(step);
+        c.add(steps[k]);
+        if (midway && k + 1 === layout) midway();
         await yieldTask();
       }
       if (g === gen && after) after();
@@ -87,7 +90,7 @@ export function initHomeMotion(root, { onActive } = {}) {
       () => { galTweens = columnParallax(galCols()); },
     );
     else steps.push(() => bigDrift(root));
-    const job = { c, steps, g };
+    const job = { c, steps, g, layout: desktop ? 2 : 1 };
     if (started) run(job, () => ScrollTrigger.refresh()); else pending = job;
     return () => { if (stopMarq) stopMarq(); if (stopTilt) stopTilt(); galTweens = []; };
   });
@@ -98,11 +101,16 @@ export function initHomeMotion(root, { onActive } = {}) {
     intro: (loader) => startLights(loader, () => { if (dust) dust.go(); if (!matchMedia(REDUCE).matches) heroIntro(H, dust); }, { skip: matchMedia(REDUCE).matches }),
     refresh: () => ScrollTrigger.refresh(),
     // First run of the queued section motion (from show()). Resolves when every step has run.
-    start() {
+    // The start-up refresh happens here, once, right after the layout steps (car rail, teardown; the
+    // Journey sets its height earlier), so every trigger created before them, sector labels included,
+    // is measured on the final page. onLayout runs after that refresh.
+    start(onLayout) {
       if (started) return queue;
       started = true;
       const job = pending; pending = null;
-      return job ? run(job) : queue;
+      const settle = () => { ScrollTrigger.refresh(); if (onLayout) onLayout(); };
+      if (!job) { settle(); return queue; }
+      return run(job, null, settle);
     },
     // Gallery grid was re-rendered (filter / column change): new reveals + column parallax.
     refreshGallery(grid) {

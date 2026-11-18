@@ -308,11 +308,10 @@ function show() {
   if (shown) return; shown = true;
   const ld = $('[data-loader]');
   motion.intro(ld);
-  motion.refresh();
-  layoutH = document.documentElement.scrollHeight;
-  // Section motion builds in small steps behind the start lights; jump to a #hash once it's done
-  // (the car rail's height is set by one of those steps).
-  motion.start().then(() => {
+  // Section motion builds in small steps behind the start lights. The one start-up refresh runs inside
+  // start(), after the layout steps (the car rail's height is set by one of them); jump to a #hash
+  // once everything is built.
+  motion.start(() => { layoutH = document.documentElement.scrollHeight; }).then(() => {
     const id = decodeURIComponent((location.hash || '').slice(1));
     if (id && document.getElementById(id)) go(id, true);
   });
@@ -322,4 +321,4 @@ const imgReady = !heroImg ? Promise.resolve() : heroImg.decode ? heroImg.decode(
 Promise.all([document.fonts ? document.fonts.ready : Promise.resolve(), imgReady]).then(() => requestAnimationFrame(show));
 setTimeout(show, 3000);
 // Late layout changes (images that finish after show()) get one more refresh on window load.
-addEventListener('load', () => { if (shown && document.documentElement.scrollHeight !== layoutH) motion.refresh(); }, { once: true });
+addEventListener('load', () => { if (shown && layoutH && document.documentElement.scrollHeight !== layoutH) motion.refresh(); }, { once: true });
