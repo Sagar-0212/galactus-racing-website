@@ -199,13 +199,17 @@ select { appearance: none; padding-right: var(--space-8); background-image: line
 .sublist__grid .field:has(textarea), .sublist__grid .field--check { grid-column: 1 / -1; }
 .sublist__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
-.drop { display: grid; justify-items: center; gap: var(--space-4); padding: var(--space-6) var(--space-5); border: var(--border-2) dashed var(--ink-300); background: var(--paper-50); text-align: center; transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
+.drop { position: relative; display: grid; justify-items: center; gap: var(--space-4); padding: var(--space-6) var(--space-5); border: var(--border-2) dashed var(--ink-300); background: var(--paper-50); text-align: center; transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
 .drop.is-over { border-style: solid; border-color: var(--border-strong); background: var(--surface-sunken); }
 .drop.is-busy { opacity: .6; pointer-events: none; }
 .drop__img { max-height: 260px; width: auto; object-fit: contain; border: var(--border-1) solid var(--border-hairline); background: var(--surface-sunken); }
 .drop__meta { font-family: var(--font-mono); font-size: var(--fs-body-s); }
 .drop__small { color: var(--text-muted); }
 .drop__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); }
+/* Real file input, visually hidden but focusable; its <label class="btn"> shows the focus ring. */
+.file-input { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; border: 0; opacity: 0; overflow: hidden; }
+.file-input:focus-visible + .btn { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.file-input[aria-invalid="true"] + .btn { outline: var(--border-2) solid var(--danger); outline-offset: 2px; }
 .drop__status:empty { display: none; }
 .drop__status { font-weight: var(--fw-bold); }
 
@@ -214,7 +218,6 @@ dialog { color: var(--text-primary); }
 dialog::backdrop { background: var(--scrim); }
 .panel { position: fixed; inset: 0 0 0 auto; width: min(600px, 100vw); height: 100dvh; max-width: 100vw; max-height: 100dvh; margin: 0; padding: 0; border: 0; border-left: var(--border-1) solid var(--border-strong); background: var(--surface-raised); }
 .panel[open] { display: flex; flex-direction: column; animation: panel-in var(--dur-base) var(--ease-out); }
-.panel.is-closing { animation: panel-out var(--dur-base) var(--ease-out) forwards; }
 .panel__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); padding: var(--space-5) var(--space-6); border-bottom: var(--border-1) solid var(--border-hairline); }
 .panel__title { margin: 0; font: var(--fw-bold) var(--fs-h3)/var(--lh-tight) var(--font-body); }
 .panel__sub { color: var(--text-secondary); margin-top: var(--space-2); overflow-wrap: anywhere; }
@@ -224,23 +227,22 @@ dialog::backdrop { background: var(--scrim); }
 
 .dlg { width: min(460px, calc(100vw - 32px)); padding: var(--space-6); border: var(--border-1) solid var(--border-strong); background: var(--surface-raised); box-shadow: var(--shadow-overlay); }
 .dlg[open] { animation: fade-in var(--dur-base) var(--ease-out); }
-.dlg.is-closing { animation: fade-out var(--dur-base) var(--ease-out) forwards; }
 .dlg__title { margin: 0 0 var(--space-4); font: var(--fw-bold) var(--fs-h3)/var(--lh-tight) var(--font-body); overflow-wrap: anywhere; }
 .dlg__body { color: var(--text-secondary); margin-bottom: var(--space-6); }
 .dlg__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-4); }
 
 .drawer { position: fixed; inset: 0 auto 0 0; width: min(320px, 88vw); height: 100dvh; max-height: 100dvh; margin: 0; padding: var(--space-5); border: 0; border-right: var(--border-1) solid var(--border-strong); background: var(--surface-raised); }
 .drawer[open] { display: flex; flex-direction: column; gap: var(--space-5); animation: drawer-in var(--dur-base) var(--ease-out); }
-.drawer.is-closing { animation: drawer-out var(--dur-base) var(--ease-out) forwards; }
 .drawer__head { display: flex; justify-content: space-between; align-items: center; }
 .drawer nav { display: flex; flex-direction: column; flex: 1; gap: var(--space-5); }
 
 /* ---------- toasts ---------- */
 .toasts { position: fixed; right: var(--space-6); bottom: var(--space-6); z-index: 20; display: grid; gap: var(--space-3); justify-items: end; pointer-events: none; }
-.toast { display: flex; align-items: center; gap: var(--space-5); min-height: var(--adm-field); padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5); background: var(--ink-900); color: var(--paper-100); box-shadow: var(--shadow-overlay); pointer-events: auto; animation: toast-in var(--dur-base) var(--ease-out); max-width: min(480px, calc(100vw - 32px)); }
+/* Toasts never block clicks on what's underneath; only their Undo button takes clicks. */
+.toast { display: flex; align-items: center; gap: var(--space-5); min-height: var(--adm-field); padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5); background: var(--ink-900); color: var(--paper-100); box-shadow: var(--shadow-overlay); pointer-events: none; animation: toast-in var(--dur-base) var(--ease-out); max-width: min(480px, calc(100vw - 32px)); }
 .toast:not(:has(button)) { padding-right: var(--space-5); }
 .toast.is-leaving { animation: fade-out var(--dur-base) var(--ease-out) forwards; }
-.toast__btn { min-height: var(--adm-tap); padding: 0 var(--space-5); background: transparent; color: var(--paper-100); border: var(--border-1) solid var(--border-inverse); font: var(--fw-bold) var(--adm-text)/1 var(--font-body); cursor: pointer; }
+.toast__btn { pointer-events: auto; min-height: var(--adm-tap); padding: 0 var(--space-5); background: transparent; color: var(--paper-100); border: var(--border-1) solid var(--border-inverse); font: var(--fw-bold) var(--adm-text)/1 var(--font-body); cursor: pointer; }
 .toast__btn:hover { background: var(--paper-100); color: var(--ink-900); }
 .toast__btn:focus-visible { outline-color: var(--red-200); }
 
@@ -252,9 +254,7 @@ dialog::backdrop { background: var(--scrim); }
 .login__help { margin-top: var(--space-5); color: var(--text-muted); }
 
 @keyframes panel-in { from { opacity: 0; transform: translateX(32px); } }
-@keyframes panel-out { to { opacity: 0; transform: translateX(32px); } }
 @keyframes drawer-in { from { opacity: 0; transform: translateX(-32px); } }
-@keyframes drawer-out { to { opacity: 0; transform: translateX(-32px); } }
 @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } }
 @keyframes fade-out { to { opacity: 0; } }
 @keyframes toast-in { from { opacity: 0; transform: translateY(12px); } }
@@ -270,7 +270,6 @@ dialog::backdrop { background: var(--scrim); }
 @media (max-width: 639px) {
   .panel { width: 100vw; border-left: 0; }
   .panel[open] { animation-name: sheet-in; }
-  .panel.is-closing { animation-name: sheet-out; }
   .panel__head, .panel__body, .panel__foot { padding-left: var(--space-5); padding-right: var(--space-5); }
   .panel__foot .btn { flex: 1; }
   .row { flex-wrap: wrap; padding: var(--space-4); }
@@ -289,7 +288,7 @@ dialog::backdrop { background: var(--scrim); }
   .sec__head .btn--primary { width: 100%; }
 }
 @keyframes sheet-in { from { opacity: 0; transform: translateY(24px); } }
-@keyframes sheet-out { to { opacity: 0; transform: translateY(24px); } }
+
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

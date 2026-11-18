@@ -10,14 +10,11 @@ export function el(html) {
   return t.content.firstElementChild;
 }
 
-// Close with a short exit animation (220ms), unless reduced motion.
+// Close right away. (No exit animation: a modal dialog that is still fading out keeps the whole page
+// inert, so a quick click straight after Save / Delete would be lost. Dialogs only animate in.)
 export function closeDialog(dlg) {
-  return new Promise((res) => {
-    if (!dlg.open) return res();
-    if (reducedMotion()) { dlg.close(); return res(); }
-    dlg.classList.add('is-closing');
-    setTimeout(() => { dlg.classList.remove('is-closing'); dlg.close(); res(); }, 200);
-  });
+  if (dlg.open) dlg.close();
+  return Promise.resolve();
 }
 
 // Confirm dialog. Focus starts on the safe button. Resolves true / false.
@@ -48,7 +45,7 @@ let undoAction = null;
 function toastBox() {
   let box = document.getElementById('toasts');
   if (!box || !box.isConnected) box = el('<div id="toasts" class="toasts" aria-live="polite"></div>');
-  const host = [...document.querySelectorAll('dialog[open]:not(.is-closing)')].pop() || document.body;
+  const host = [...document.querySelectorAll('dialog[open]')].pop() || document.body;
   if (box.parentElement !== host) host.append(box);
   return box;
 }
@@ -69,8 +66,8 @@ export function toast(msg, { action, ms = 3000 } = {}) {
     t.append(b);
     undoAction = { toast: t, run: () => { close(); action.run(); } };
     // Keep it while the pointer or keyboard focus is on it.
-    t.addEventListener('mouseenter', () => clearTimeout(timer));
-    t.addEventListener('mouseleave', start);
+    b.addEventListener('mouseenter', () => clearTimeout(timer));
+    b.addEventListener('mouseleave', start);
     t.addEventListener('focusin', () => clearTimeout(timer));
     t.addEventListener('focusout', start);
   }

@@ -348,18 +348,24 @@ function onDragStart(e) {
   const before = [...list.children].map((r) => r.dataset.id).join();
   row.classList.add('is-dragging');
   list.classList.add('is-sorting');
-  let raf = 0, lastY = e.clientY, lastX = e.clientX;
+  let raf = 0, lastY = e.clientY, lastX = e.clientX, dragging = true;
+  // Runs on every pointer move, and keeps running while the pointer is held near the top/bottom edge,
+  // so a row can be dragged past the visible part of a long list without wiggling the mouse.
   const step = () => {
     raf = 0;
-    const edge = 70;
-    if (lastY < edge) window.scrollBy(0, -12); else if (lastY > innerHeight - edge) window.scrollBy(0, 12);
+    const edge = 80, y0 = window.scrollY;
+    if (lastY < edge) window.scrollBy(0, -Math.ceil((edge - lastY) / 5) - 4);
+    else if (lastY > innerHeight - edge) window.scrollBy(0, Math.ceil((lastY - innerHeight + edge) / 5) + 4);
     const over = document.elementFromPoint(lastX, lastY)?.closest('.row');
-    if (!over || over === row || over.parentElement !== list) return;
-    const r = over.getBoundingClientRect();
-    list.insertBefore(row, lastY < r.top + r.height / 2 ? over : over.nextSibling);
+    if (over && over !== row && over.parentElement === list) {
+      const r = over.getBoundingClientRect();
+      list.insertBefore(row, lastY < r.top + r.height / 2 ? over : over.nextSibling);
+    }
+    if (dragging && window.scrollY !== y0) raf = requestAnimationFrame(step);
   };
   const onMove = (ev) => { lastY = ev.clientY; lastX = ev.clientX; if (!raf) raf = requestAnimationFrame(step); };
   const onUp = async () => {
+    dragging = false;
     document.removeEventListener('pointermove', onMove);
     document.removeEventListener('pointerup', onUp);
     document.removeEventListener('pointercancel', onUp);
@@ -494,8 +500,8 @@ async function openEditor(coll, id, { field } = {}) {
         for (const c of state.items.cars || []) if (c.id !== saved.id && c.current) await api.update('cars', c.id, { current: false });
       }
       await close();
+      await route(); // list shows the change first, then the toast confirms it
       toast('Saved ✓');
-      await route();
       const row = $(`[data-coll="${coll}"] [data-id="${CSS.escape(saved.id)}"] [data-act="edit"], [data-coll="${coll}"][data-id="${CSS.escape(saved.id)}"] [data-act="edit"]`);
       if (row) { row.focus(); row.closest('.row, .card')?.classList.add('is-new'); }
       else if (opener && document.contains(opener)) opener.focus();

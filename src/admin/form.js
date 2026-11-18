@@ -27,14 +27,14 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
   }
   const helpHtml = (f, path, show = true) => (f.help && show ? `<p class="field__help" id="${fid(path)}-help">${esc(f.help)}</p>` : '');
   const errHtml = (path) => `<p class="field__error" id="${fid(path)}-err" ${errors[path] ? '' : 'hidden'}>${esc(errors[path] || '')}</p>`;
-  const described = (f, path, show = true) => [f.help && show ? `${fid(path)}-help` : '', `${fid(path)}-err`, `${fid(path)}-todo`].filter(Boolean).join(' ');
+  const described = (f, path, show = true, v) => [f.help && show ? `${fid(path)}-help` : '', errors[path] ? `${fid(path)}-err` : '', hasTodo(v) ? `${fid(path)}-todo` : ''].filter(Boolean).join(' ');
   const todoHint = (path, v) => `<p class="field__todo" id="${fid(path)}-todo" ${hasTodo(v) ? '' : 'hidden'}>Check this fact, fix it if needed, then <button type="button" class="linkbtn" data-act="todo-clear" data-path="${esc(path)}">mark it as correct</button> (removes “[TODO]”).</p>`;
 
   function field(f, obj, path, showHelp = true) {
     if (f.showIf && !f.showIf(obj)) return '';
     const v = getPath(obj, f.k);
     const inv = errors[path] ? ' aria-invalid="true"' : '';
-    const common = `id="${fid(path)}" data-path="${esc(path)}" aria-describedby="${described(f, path, showHelp)}"${inv}${f.required ? ' aria-required="true"' : ''}`;
+    const common = `id="${fid(path)}" data-path="${esc(path)}" aria-describedby="${described(f, path, showHelp, v)}"${inv}${f.required ? ' aria-required="true"' : ''}`;
     const wrap = (inner, cls = '') => `<div class="field ${cls}" data-field="${esc(path)}">${inner}${errHtml(path)}</div>`;
     switch (f.type) {
       case 'textarea':
@@ -52,7 +52,7 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
         return `<fieldset class="field field--tags" data-field="${esc(path)}"><legend class="field__label">${esc(f.label)}</legend>${helpHtml(f, path)}
           <ul class="tags">${arr.map((s, i) => `<li class="tags__row" data-field="${esc(path + '.' + i)}">
             <label class="sr-only" for="${fid(path + '.' + i)}">${esc(f.label)} ${i + 1}</label>
-            <input type="text" id="${fid(path + '.' + i)}" data-path="${esc(path + '.' + i)}" value="${esc(s)}" aria-describedby="${fid(path + '.' + i)}-todo">
+            <input type="text" id="${fid(path + '.' + i)}" data-path="${esc(path + '.' + i)}" value="${esc(s)}" ${hasTodo(s) ? `aria-describedby="${fid(path + '.' + i)}-todo"` : ''}>
             <button type="button" class="btn btn--ghost btn--sq" data-act="tag-del" data-list="${esc(path)}" data-i="${i}" aria-label="Remove “${esc(s || 'empty')}”">✕</button>
             ${todoHint(path + '.' + i, s)}</li>`).join('')}</ul>
           <button type="button" class="btn btn--ghost" data-act="tag-add" data-list="${esc(path)}">+ ${esc(f.add || 'Add')}</button>${errHtml(path)}</fieldset>`;
@@ -77,6 +77,9 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
         const alt = f.alt ? getPath(obj, f.alt) : '';
         const req = f.required || (f.requiredNew && isNew);
         const altF = { k: f.alt, label: 'Describe this photo', required: true, help: 'For people who can’t see it, and for Google. Example: Rahul welding the roll cage in the workshop' };
+        // The real <input type=file> sits right before its <label for>, inside the dialog. Clicking the label opens
+        // the picker natively (no script click); keyboard users focus the input itself (Enter / Space).
+        const fileInput = `<input type="file" accept="image/*" class="file-input" id="${fid(path)}" data-file="${esc(path)}" aria-describedby="${fid(path)}-label${errors[path] ? ` ${fid(path)}-err` : ''}"${errors[path] ? ' aria-invalid="true"' : ''}>`;
         return `<div class="field field--image" data-field="${esc(path)}">
           <span class="field__label" id="${fid(path)}-label">${esc(f.label)}${req ? ' <span class="field__req">Required</span>' : ''}</span>
           ${helpHtml(f, path)}
@@ -84,14 +87,13 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
             ${v ? `<img class="drop__img" src="${esc(v)}" alt="">
               <p class="drop__meta">${up ? `${up.width} × ${up.height} px · ${fmtBytes(up.bytes)} WebP <span class="muted">(was ${fmtBytes(up.originalBytes)})</span>` : 'Current photo'}</p>
               <div class="drop__actions">
-                <button type="button" class="btn btn--ghost" data-act="img-choose" data-path="${esc(path)}" id="${fid(path)}" aria-describedby="${fid(path)}-label">Replace photo</button>
+                ${fileInput}<label class="btn btn--ghost" for="${fid(path)}">Replace photo</label>
                 <button type="button" class="btn btn--ghost btn--danger-text" data-act="img-remove" data-path="${esc(path)}">Remove photo</button>
               </div>`
             : `<p class="drop__hint">Drag a photo here, or</p>
-              <button type="button" class="btn btn--primary" data-act="img-choose" data-path="${esc(path)}" id="${fid(path)}" aria-describedby="${fid(path)}-label ${fid(path)}-err">Choose photo</button>
+              <div class="drop__actions">${fileInput}<label class="btn btn--primary" for="${fid(path)}">Choose photo</label></div>
               <p class="drop__small">JPG, PNG or WebP. Large photos are shrunk automatically.</p>`}
             <p class="drop__status" role="status" aria-live="polite"></p>
-            <input type="file" accept="image/*" class="sr-only" tabindex="-1" aria-hidden="true" data-file="${esc(path)}">
           </div>${errHtml(path)}</div>
           ${v && f.alt ? field({ ...altF }, obj, f.alt) : ''}`;
       }
@@ -125,12 +127,19 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
     const isConfirm = !!input.dataset.confirm;
     if (b) b.innerHTML = (isConfirm ? v === true : hasTodo(v)) ? badge : '';
     const hint = document.getElementById(fid(path) + '-todo');
-    if (hint) hint.hidden = !hasTodo(v);
+    if (hint) {
+      hint.hidden = !hasTodo(v);
+      const ids = (input.getAttribute('aria-describedby') || '').split(' ').filter((x) => x && x !== hint.id);
+      if (hasTodo(v)) ids.push(hint.id);
+      if (ids.length) input.setAttribute('aria-describedby', ids.join(' ')); else input.removeAttribute('aria-describedby');
+    }
     if (errors[path]) {
       delete errors[path];
       input.removeAttribute('aria-invalid');
       const e = document.getElementById(fid(path) + '-err');
       if (e) e.hidden = true;
+      const ids = (input.getAttribute('aria-describedby') || '').split(' ').filter((x) => x && x !== fid(path) + '-err');
+      if (ids.length) input.setAttribute('aria-describedby', ids.join(' ')); else input.removeAttribute('aria-describedby');
     }
   }
   form.addEventListener('input', (e) => {
@@ -185,8 +194,6 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
       const input = form.querySelector(`[data-path="${CSS.escape(path)}"]:not(button)`);
       if (input) { input.value = clean; refreshField(input); input.focus(); }
       announce('Marked as correct. Remember to save.');
-    } else if (act === 'img-choose') {
-      form.querySelector(`[data-file="${CSS.escape(b.dataset.path)}"]`).click();
     } else if (act === 'img-remove') {
       setPath(draft, b.dataset.path, '');
       uploads.delete(b.dataset.path);
@@ -270,7 +277,7 @@ export function buildForm({ coll, item, isNew, onBusy = () => {} }) {
     isBusy: () => busy > 0,
     showErrors,
     focusPath,
-    firstInput: () => form.querySelector('input:not([type=file]), textarea, select, button[data-act="img-choose"]'),
+    firstInput: () => form.querySelector('input, textarea, select'),
   };
 }
 export { $, $$ };
