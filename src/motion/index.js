@@ -5,8 +5,9 @@ import { gsap, ScrollTrigger, DESKTOP, REDUCE, BOT, smoothScroll, scrollToEl, to
 import { heroEls, heroScroll, heroIntro, startLights, carTilt, fitHeadline } from './hero.js';
 import { createDust } from './dust.js';
 import { teardown, teardownCards, evoIn } from './cars.js';
-import { headlineLines, bigDrift, rolls, flaps, startingGrid, awardTags, brandPulse, investRaised, contactWipe } from './sections.js';
-import { chrome, reveals, counts, finalCounts, journey, parallax, columnParallax, carsPin, wedgeRise, marquee } from './effects.js';
+import { initJourney } from './journey.js';
+import { headlineLines, bigDrift, rolls, startingGrid, awardTags, brandPulse, investRaised, contactWipe } from './sections.js';
+import { chrome, reveals, counts, finalCounts, parallax, columnParallax, carsPin, wedgeRise, marquee } from './effects.js';
 
 export { scrollToEl, loadFlip };
 export { bindCard, animateLb, flipGallery } from './gallery.js';
@@ -26,6 +27,9 @@ export function initHomeMotion(root, { onActive } = {}) {
   // Dust: lighter on phones, one static haze frame under reduced motion.
   const phone = !matchMedia(DESKTOP).matches;
   const dust = H && createDust(H.dustCanvas, { reduce: matchMedia(REDUCE).matches || BOT, max: phone ? 60 : 150, haze: phone ? 10 : 22, dprMax: phone ? 1 : 1.5, hold: true });
+  // Journey before anything measures: its drive mode makes the section ~400vh tall, which moves every
+  // trigger below it (sector labels included). Own matchMedia: it also switches on screen height.
+  initJourney(root);
   chrome(root, onActive);
 
   // Headline size depends on the car's outline and the font: fit after fonts load and on every refresh.
@@ -63,7 +67,7 @@ export function initHomeMotion(root, { onActive } = {}) {
     const { reduce } = c.conditions;
     const g = ++gen;
     ctx = c; desktop = c.conditions.desktop;
-    if (reduce) { finalCounts(root); journey(root, true); ctx = null; return; }
+    if (reduce) { finalCounts(root); ctx = null; return; }
     heroScroll(H, dust);
     let stopTilt = null, stopMarq = null;
     if (desktop) stopTilt = carTilt(H);
@@ -74,7 +78,7 @@ export function initHomeMotion(root, { onActive } = {}) {
     else steps.push(() => { teardownCards(root); evoIn(root, null); });
     for (let k = 0; k < all.length; k += 8) { const part = all.slice(k, k + 8), off = k; steps.push(() => reveals(part, !desktop, off)); }
     steps.push(
-      () => counts(root), () => headlineLines(root), () => rolls(root), () => journey(root, false), () => flaps(root),
+      () => counts(root), () => headlineLines(root), () => rolls(root),
       () => startingGrid(root, desktop), () => awardTags(root), () => brandPulse(root), () => investRaised(root),
       () => contactWipe(root, desktop), () => wedgeRise(root), () => { stopMarq = marquee(root); },
     );

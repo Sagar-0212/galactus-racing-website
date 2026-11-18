@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baja History Trail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=Saira+Condensed:wght@500;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#110d09; --text:#f3ece0; --muted:#a8998a; --line:#3a2f25;
+  --orange:#ff6a13; --gold:#ffc22e; --sand:#d9b98c; --paper:#ece3cc; --ink:#1d1813;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:Barlow,system-ui,sans-serif}
+button{font:inherit}
+
+.intro,.outro{min-height:88vh;display:grid;place-content:center;text-align:center;padding:24px 16px;gap:14px;
+  background:radial-gradient(ellipse at 50% 70%,#2a1d12 0%,var(--bg) 70%)}
+.eyebrow{font:700 14px/1 "Saira Condensed";letter-spacing:.3em;color:var(--orange);text-transform:uppercase}
+.intro h1{font:400 clamp(48px,10vw,118px)/.95 "Saira Stencil One";letter-spacing:.01em}
+.intro h1 span{color:var(--orange)}
+.intro p{color:var(--muted);font-size:18px;max-width:32ch;margin:0 auto}
+.pill{justify-self:center;border:1px dashed #5a4a3b;color:var(--muted);border-radius:999px;padding:5px 12px;font-size:12px;letter-spacing:.08em}
+.scrollcue{margin-top:24px;font:700 14px "Saira Condensed";letter-spacing:.25em;color:var(--sand);animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(8px)}}
+.outro h2{font:400 clamp(32px,6vw,60px)/1 "Saira Stencil One"}
+.outro p{color:var(--muted)}
+.dl{justify-self:center;margin-top:10px;color:#140f0b;background:var(--orange);text-decoration:none;font:700 15px "Saira Condensed";letter-spacing:.08em;padding:10px 18px;border-radius:6px}
+.dl:hover{background:var(--gold)}
+.dls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.dl.alt{background:none;color:var(--text);border:1.5px solid #5a4a3b}
+.dl.alt:hover{border-color:var(--gold);background:none}
+.dl[hidden]{display:none}
+.dlmsg{font-size:14px;min-height:1.2em}
+
+#history{position:relative}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;
+  background:
+    radial-gradient(#ffffff09 1px,transparent 1.3px) 0 0/22px 22px,
+    radial-gradient(ellipse at 45% 50%,#2c2117 0%,#130e0a 75%);}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:linear-gradient(180deg,transparent 55%,#c9a77a14 100%),radial-gradient(ellipse at 50% 120%,#d9b98c1f,transparent 60%)}
+#track{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+
+.t-edge{fill:none;stroke:#2a1f16;stroke-width:104;stroke-linecap:round;stroke-linejoin:round}
+.t-dirt{fill:none;stroke:#6e5238;stroke-width:86;stroke-linecap:round;stroke-linejoin:round}
+.t-dirt2{fill:none;stroke:#7d5f42;stroke-width:52;stroke-linecap:round;opacity:.6}
+.t-gravel{fill:none;stroke:#a88a68;stroke-width:3;stroke-dasharray:2 17;stroke-linecap:round;opacity:.55}
+.rut{fill:none;stroke:#4c3826;stroke-width:7;stroke-linecap:round;opacity:.55}
+.tyre{fill:none;stroke:#2a1d12;stroke-width:6;stroke-linecap:round;opacity:.85;stroke-dasharray:1000;stroke-dashoffset:1000}
+.lbl-t{font:700 19px "Saira Condensed";letter-spacing:.14em;text-transform:uppercase}
+.lbl-y{font:400 44px "Saira Stencil One";fill:#f3ece0}
+.lbl-s{font:700 17px "Saira Condensed";fill:#f3ece0;letter-spacing:.25em}
+.lbl-o{font:700 13px "Saira Condensed";fill:#f3ece088;letter-spacing:.25em}
+
+.splat{position:absolute;inset:0;pointer-events:none;z-index:8;opacity:0}
+.splat i{position:absolute;border-radius:50%;background:radial-gradient(circle at 40% 40%,#5a4030 0 45%,#3a2a1ecc 60%,transparent 70%)}
+.splat.water i{background:radial-gradient(circle at 40% 40%,#cfe8f7aa 0 35%,#9cc9e655 55%,transparent 70%)}
+
+.hud{position:absolute;top:14px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;z-index:6;pointer-events:none}
+.panel{background:#140f0bdd;border:1px solid var(--line);border-radius:12px;padding:8px 12px;backdrop-filter:blur(6px)}
+.gauge{display:flex;align-items:center;gap:12px}
+.gauge svg{width:86px;height:54px;display:block}
+.arcbg{fill:none;stroke:#3a2f25;stroke-width:7;stroke-linecap:round}
+#arc{fill:none;stroke:var(--orange);stroke-width:7;stroke-linecap:round;stroke-dasharray:0 100}
+#spdT{font:700 24px "Saira Condensed";fill:#fff}
+.unit{font:700 9px "Saira Condensed";fill:var(--muted);letter-spacing:.15em}
+.susp{border-left:1px solid var(--line);padding-left:12px;text-align:center}
+.susp small,.cp small{display:block;font:700 11px "Saira Condensed";color:var(--muted);letter-spacing:.2em}
+.meter{display:flex;gap:3px;align-items:flex-end;height:30px;margin-top:3px;justify-content:center}
+.meter i{width:5px;border-radius:2px;background:#3a2f25;transition:background .1s}
+.meter i.on{background:var(--gold)}
+.right{display:flex;gap:8px;align-items:flex-start}
+.cp{min-width:150px}
+.cp b{display:block;font:700 21px/1.15 "Saira Condensed";white-space:nowrap;letter-spacing:.04em}
+.fuel{display:flex;align-items:center;gap:6px;margin-top:5px;font:700 10px "Saira Condensed";color:var(--muted);letter-spacing:.15em}
+.bar{flex:1;height:5px;background:#3a2f25;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#d6452b,var(--gold) 40%,#7bc96f)}
+#snd{pointer-events:auto;cursor:pointer;color:var(--muted);font:700 13px "Saira Condensed";letter-spacing:.12em}
+#snd[aria-pressed="true"]{color:var(--orange);border-color:var(--orange)}
+
+.chips{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:6px;z-index:6;max-width:calc(100% - 32px);overflow-x:auto;padding:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{font:700 14px "Saira Condensed";letter-spacing:.06em;background:#140f0bdd;color:var(--muted);border:1px solid #4a3b2e;border-radius:6px;padding:6px 11px;white-space:nowrap;cursor:pointer;transition:background .3s,color .3s}
+.chip.done{color:#140f0b;background:var(--c);border-color:transparent}
+.chip.on{outline:2px solid #fff;outline-offset:2px}
+
+/* inspection-tag card */
+.card{position:absolute;right:28px;top:50%;width:min(380px,36vw);z-index:5;perspective:1400px;
+  opacity:0;pointer-events:none;transform:translate(60px,-50%) rotate(6deg);transform-origin:20px 20px;
+  transition:opacity .3s,transform .6s cubic-bezier(.2,1.6,.4,1)}
+.card.show{opacity:1;pointer-events:auto;transform:translate(0,-50%) rotate(-1.5deg)}
+.flip{position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.25,.5,1)}
+.card.flipped .flip{transform:rotateY(180deg)}
+.face{position:relative;background:var(--paper);color:var(--ink);border-radius:8px 20px 20px 8px;padding:16px 16px 16px 22px;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 30px 60px -20px #000,inset 0 0 40px #c8b58f66;
+  background-image:radial-gradient(#8a6d4a18 1px,transparent 1.5px);background-size:7px 7px}
+.face::before{content:"";position:absolute;left:9px;top:16px;width:9px;height:9px;border-radius:50%;background:#2a1f16;box-shadow:0 0 0 2px #b9ad91}
+.face::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(ellipse at 90% 100%,#6e523833,transparent 45%),radial-gradient(ellipse at 0% 0%,#6e523822,transparent 40%)}
+.back{position:absolute;inset:0;transform:rotateY(180deg);display:flex;flex-direction:column;gap:12px;overflow:auto}
+.thead{display:flex;justify-content:space-between;font:700 12px "Saira Condensed";letter-spacing:.2em;color:#6b5a48;border-bottom:2px dashed #b9a988;padding-bottom:6px}
+.yrrow{display:flex;align-items:center;gap:10px;margin-top:8px}
+.yr{font:400 54px/1 "Saira Stencil One";color:var(--ink)}
+.evt{font:700 12px "Saira Condensed";letter-spacing:.14em;text-transform:uppercase;color:#140f0b;padding:3px 8px;border-radius:4px}
+.stamp{position:absolute;right:22px;top:112px;z-index:2;background:#ece3cccc;font:400 20px "Saira Stencil One";letter-spacing:.08em;border:3px solid currentColor;border-radius:6px;padding:2px 8px;
+  transform:rotate(-14deg) scale(2.2);opacity:0;mix-blend-mode:multiply}
+.card.show .stamp{animation:stamp .35s .45s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes stamp{to{transform:rotate(-14deg) scale(1);opacity:.85}}
+.photo{position:relative;height:118px;border-radius:8px;margin:12px 0;overflow:hidden;display:grid;place-items:center;border:2px dashed #8a7458}
+.photo span{font:700 11px "Saira Condensed";letter-spacing:.2em;color:#f3ece0bb;border:1px dashed #f3ece066;padding:3px 10px;border-radius:999px}
+.card h3{font:700 25px/1.1 "Saira Condensed";letter-spacing:.01em}
+.card p{color:#4f4337;font-size:15.5px;line-height:1.45;margin-top:5px}
+.btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{background:none;border:1.5px solid var(--ink);color:var(--ink);border-radius:6px;padding:7px 13px;font:700 14px "Saira Condensed";letter-spacing:.06em;cursor:pointer}
+.btn:hover{background:#1d18130f}
+.btn.cta{background:var(--orange);border-color:var(--orange);color:#140f0b}
+.specs{display:grid;gap:7px}
+.spec{display:flex;align-items:baseline;gap:8px;font:600 15px Barlow}
+.spec span{color:#6b5a48}
+.spec i{flex:1;border-bottom:2px dotted #b9a988;transform:translateY(-4px)}
+.spec b{font:700 22px "Saira Condensed"}
+blockquote{font:500 17px/1.4 Barlow;font-style:italic;border-left:3px solid var(--orange);padding-left:12px;color:#3d342b}
+
+.hint{position:absolute;left:50%;top:64%;transform:translateX(-50%);font:700 14px "Saira Condensed";letter-spacing:.25em;color:var(--sand);z-index:4;transition:opacity .4s;pointer-events:none}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+
+@media (max-width:760px){
+  #track{top:128px;height:36%}
+  .hud{top:10px;left:10px;right:10px}
+  .gauge svg{width:70px;height:44px}
+  .cp{min-width:0}
+  .cp b{font-size:17px}
+  .chips{top:86px;bottom:auto}
+  .card{left:16px;right:16px;width:auto;top:auto;bottom:14px;transform:translateY(60px) rotate(3deg)}
+  .card.show{transform:rotate(-1deg)}
+  .photo{height:66px;margin:10px 0}
+  .stamp{top:96px;font-size:16px}
+  .yr{font-size:42px}
+  .card h3{font-size:21px}
+  .card p{font-size:14.5px}
+  .hint{top:auto;bottom:40%}
+}
+@media (prefers-reduced-motion:reduce){
+  .card,.flip{transition-duration:.01s}
+  .card.show .stamp{animation-duration:.01s;animation-delay:0s}
+  .scrollcue{animation:none}
+}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <div class="eyebrow">Your Team Racing · Off-road since 2008</div>
+  <h1>Our <span>Trail</span></h1>
+  <p>Every checkpoint is a year. Every year, a new machine.</p>
+  <div class="pill">DEMO · SAMPLE CONTENT</div>
+  <div class="scrollcue">SCROLL TO FIRE IT UP ↓</div>
+</header>
+
+<section id="history" aria-label="Club history timeline">
+  <div class="stage" id="stage">
+    <svg id="track" aria-hidden="true">
+      <defs id="defs">
+        <pattern id="tread" width="5" height="12" patternUnits="userSpaceOnUse">
+          <rect width="5" height="12" fill="#121212"/><rect width="2.2" height="12" fill="#323232"/>
+        </pattern>
+        <filter id="soft" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter>
+      </defs>
+      <g id="far"></g>
+      <g id="near"></g>
+      <g id="trackG"></g>
+      <g id="dustG"></g>
+      <ellipse id="shadow" rx="46" ry="32" fill="#000" opacity=".45" filter="url(#soft)"/>
+      <g id="car">
+        <circle id="brakeGlow" cx="-40" cy="0" r="16" fill="#ff2a2a" filter="url(#soft)" opacity="0"/>
+        <circle cx="44" cy="0" r="22" fill="#ffe9a8" filter="url(#soft)" opacity=".25"/>
+        <!-- suspension arms -->
+        <g stroke="#9a9a9a" stroke-width="3" stroke-linecap="round">
+          <line x1="-14" y1="-10" x2="-24" y2="-24"/><line x1="-14" y1="10" x2="-24" y2="24"/>
+          <line x1="14" y1="-8" x2="24" y2="-23"/><line x1="14" y1="8" x2="24" y2="23"/>
+        </g>
+        <!-- big knobbly tyres -->
+        <rect x="-36" y="-33" width="24" height="14" rx="4" fill="url(#tread)"/>
+        <rect x="-36" y="19" width="24" height="14" rx="4" fill="url(#tread)"/>
+        <rect x="13" y="-32" width="22" height="13" rx="4" fill="url(#tread)"/>
+        <rect x="13" y="19" width="22" height="13" rx="4" fill="url(#tread)"/>
+        <!-- body -->
+        <rect x="-30" y="-15" width="54" height="30" rx="9" fill="#ff6a13"/>
+        <path d="M22 -11 L38 -6 L38 6 L22 11 Z" fill="#ff6a13"/>
+        <rect x="-33" y="-9" width="13" height="18" rx="2" fill="#3b3b3b"/>
+        <circle cx="-26" cy="0" r="4" fill="#1a1a1a"/>
+        <!-- roll cage -->
+        <rect x="-17" y="-16" width="30" height="32" rx="5" fill="none" stroke="#efefef" stroke-width="3.4"/>
+        <line x1="-17" y1="-16" x2="13" y2="16" stroke="#efefef" stroke-width="2.2"/>
+        <!-- driver -->
+        <circle cx="-3" cy="0" r="7" fill="#f4f4f4"/>
+        <rect x="1" y="-4" width="4" height="8" rx="2" fill="#1d1d1d"/>
+        <!-- lights -->
+        <rect x="36.5" y="-6" width="2.5" height="4" fill="#fff4cc"/>
+        <rect x="36.5" y="2" width="2.5" height="4" fill="#fff4cc"/>
+        <rect id="brake" x="-35.5" y="-3" width="2.5" height="6" fill="#ff3b3b" opacity=".2"/>
+      </g>
+    </svg>
+
+    <div class="splat" id="splat"></div>
+
+    <div class="hud">
+      <div class="panel gauge">
+        <svg viewBox="0 0 100 64">
+          <path class="arcbg" d="M10 56 A40 40 0 0 1 90 56"/>
+          <path id="arc" d="M10 56 A40 40 0 0 1 90 56" pathLength="100"/>
+          <text id="spdT" x="50" y="50" text-anchor="middle">0</text>
+          <text class="unit" x="50" y="62" text-anchor="middle">KM/H</text>
+        </svg>
+        <div class="susp"><small>SUSP</small><div class="meter" id="meter"></div></div>
+      </div>
+      <div class="right">
+        <div class="panel cp"><small>CHECKPOINT</small><b id="yr">START ZONE</b>
+          <div class="fuel">FUEL<div class="bar"><i id="fuel"></i></div></div></div>
+        <button class="panel" id="snd" aria-pressed="false" title="Engine sound">🔇 SOUND</button>
+      </div>
+    </div>
+
+    <nav class="chips" id="chips" aria-label="Jump to year"></nav>
+    <div class="hint" id="hint">KEEP SCROLLING ↓</div>
+
+    <div class="card" id="card" aria-live="polite">
+      <div class="flip">
+        <div class="face front">
+          <div class="thead"><span>TECH INSPECTION</span><span id="cNo"></span></div>
+          <div class="yrrow"><span class="yr" id="cYear"></span><span class="evt" id="cTag"></span></div>
+          <div class="stamp" id="cStamp"></div>
+          <div class="photo" id="cPhoto"><span>PHOTO SLOT</span></div>
+          <h3 id="cTitle"></h3>
+          <p id="cText"></p>
+          <div class="btns">
+            <button class="btn" data-flip>Build spec ↻</button>
+            <button class="btn cta" id="cCta" hidden>Join the crew →</button>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="thead"><span>BUILD SPEC</span><span id="bYear"></span></div>
+          <div class="specs" id="cSpecs"></div>
+          <blockquote id="cQuote"></blockquote>
+          <div class="btns"><button class="btn" data-flip>Back ↺</button></div>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="fx"></canvas>
+  </div>
+</section>
+
+<footer class="outro">
+  <div class="eyebrow">Chequered flag</div>
+  <h2>End of the trail. For now.</h2>
+  <p>Rest of the website continues here…</p>
+  <div class="dls">
+    <a class="dl" href="DESIGN.md" download="DESIGN.md">⬇ Design spec (DESIGN.md)</a>
+    <a class="dl alt" href="baja-history-trail-demo.html" download="baja-history-trail-demo.html">⬇ Demo code (.html)</a>
+  </div>
+  <p class="dlmsg" id="dlmsg" aria-live="polite"></p>
+</footer>
+<script>
+(async () => {
+  // Inside the Claude artifact viewer, files are saved through the downloads capability.
+  // Opened as a normal local file, the plain links above work as they are.
+  if (!window.claude || !window.claude.use) return;
+  const dl = await window.claude.use('downloads');
+  const links = document.querySelectorAll('a.dl'), msg = document.getElementById('dlmsg');
+  if (!dl) { links.forEach(a => a.hidden = true); msg.textContent = 'Downloads aren’t available in this view.'; return; }
+  links.forEach(a => a.addEventListener('click', async e => {
+    e.preventDefault(); msg.textContent = '';
+    try {
+      const text = await (await fetch(a.getAttribute('href'))).text();
+      await dl.save({filename: a.getAttribute('download'), data: text});
+      msg.textContent = 'Saved ' + a.getAttribute('download');
+    } catch (err) {
+      const c = err && err.code;
+      if (c === 'declined') return;
+      if (c === 'rate_limited') msg.textContent = 'One moment, then try again.';
+      else msg.textContent = 'Couldn’t save the file here.';
+    }
+  }));
+})();
+</script>
+
+<script>
+(() => {
+  // ---------- SAMPLE CONTENT (replace with the team's real history) ----------
+  const STOPS = [
+    {year:2008, tag:'Founded',     obs:'rocks', title:'The team is formed',      text:'A handful of engineering students, a sketchbook and one goal: build an off-road car from scratch.', specs:[['Members','12'],['Car','On paper'],['Budget','Tiny']], quote:'“We started with a whiteboard and zero tools.”', hue:25},
+    {year:2009, tag:'First build', obs:'water', title:'First car rolls out',     text:'Hand-welded roll cage, borrowed engine, endless nights in the workshop. It moves!', specs:[['Weight','260 kg'],['Top speed','45 km/h'],['Susp. travel','150 mm']], quote:'“It started on the third try.”', hue:200},
+    {year:2011, tag:'Endurance',   obs:'log',   title:'First endurance finish',  text:'Four hours of dust, mud and rocks, and the car made it to the chequered flag.', specs:[['Weight','235 kg'],['Top speed','52 km/h'],['Endurance','4 h ✓']], quote:'“Finishing felt like winning.”', hue:35},
+    {year:2013, tag:'Redesign',    obs:'jump',  title:'Lighter. Tougher. Faster.', text:'A full redesign: new chassis, new suspension geometry, 30 kg lighter.', specs:[['Weight','205 kg'],['Top speed','58 km/h'],['Susp. travel','230 mm']], quote:'“Every gram had to earn its place.”', hue:15},
+    {year:2015, tag:'Podium',      obs:'mud',   title:'First podium',            text:'Third overall. The whole team on the stage, still covered in mud.', specs:[['Overall','P3'],['Hill climb','P1'],['Weight','198 kg']], quote:'“Best day in the workshop’s history.”', hue:45, best:true},
+    {year:2018, tag:'Innovation',  obs:'rocks', title:'Design innovation award', text:'Our in-house gearbox and data logging earned the judges’ innovation award.', specs:[['Award','Innovation'],['Sensors','14'],['Top speed','62 km/h']], quote:'“Engineers first, racers second.”', hue:160},
+    {year:2021, tag:'Comeback',    obs:'water', title:'Back in the dirt',        text:'After a year away, a rebuilt team and a rebuilt car return to competition.', specs:[['New members','40'],['Weight','192 kg'],['Endurance','4 h ✓']], quote:'“Missed the dust more than anything.”', hue:205},
+    {year:2024, tag:'Record',      obs:'jump',  title:'Best overall finish',     text:'Podium overall plus wins in suspension and manoeuvrability: our strongest year yet.', specs:[['Overall','P2'],['Event wins','2'],['Weight','184 kg']], quote:'“The best car we’ve ever built.”', hue:40, best:true},
+  ];
+  const FINISH = {tag:'Next season', title:'Your name on the next car', text:'Designers, welders, drivers, managers: there’s a place in the workshop. Join the crew.', specs:[['Seasons','17'],['Cars built','14'],['Next build','You?']], quote:'“See you in the dirt.”', hue:20};
+  const ORANGE = '#ff6a13', GOLD = '#ffc22e';
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const $ = id => document.getElementById(id);
+  const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const svg = $('track'), far = $('far'), near = $('near'), trackG = $('trackG'), car = $('car'), shadow = $('shadow');
+
+  // ---------- trail geometry ----------
+  const GAP = 820, X0 = 420, YS = [240, 380];
+  const pts = [{x:-420, y:310}];
+  STOPS.forEach((s, i) => pts.push({x: X0 + i * GAP, y: YS[i % 2]}));
+  pts.push({x: X0 + STOPS.length * GAP - 60, y: 310});
+  let d = `M${pts[0].x} ${pts[0].y}`; const nodeL = [0];
+  const measure = el('path', {}, $('defs'));
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1], b = pts[i], k = (b.x - a.x) * .55;
+    d += ` C${a.x + k} ${a.y} ${b.x - k} ${b.y} ${b.x} ${b.y}`;
+    measure.setAttribute('d', d); nodeL.push(measure.getTotalLength());
+  }
+  const LT = nodeL[nodeL.length - 1];
+  const stopL = STOPS.map((s, i) => nodeL[i + 1]);
+  const CAR_OFF = 44;
+  const carStop = stopL.map(L => L - CAR_OFF);
+  const carFinish = LT - 80;
+  const obsL = carStop.map((L, i) => (L + (i ? carStop[i - 1] : 0)) / 2 + (i ? 0 : 60));
+
+  const road = el('path', {d}, $('defs'));
+  function at(L) {
+    L = Math.max(0, Math.min(LT, L));
+    const p = road.getPointAtLength(L), q = road.getPointAtLength(Math.min(LT, L + 2)), r = road.getPointAtLength(Math.max(0, L - 2));
+    return {x: p.x, y: p.y, a: Math.atan2(q.y - r.y, q.x - r.x)};
+  }
+  const deg = a => (a * 180 / Math.PI).toFixed(2);
+  const off = (q, o) => ({x: q.x - Math.sin(q.a) * o, y: q.y + Math.cos(q.a) * o});
+  function offsetPath(o, from = 0, to = LT, step = 8) {
+    let s = '';
+    for (let l = from; l <= to; l += step) { const p = off(at(l), o); s += (s ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1); }
+    return s;
+  }
+
+  // ---------- scenery (parallax) ----------
+  const span = [-1800, LT + 2600];
+  let hd = `M${span[0]} 0`;
+  for (let x = span[0]; x <= span[1]; x += 60) hd += `L${x} ${(70 + Math.sin(x / 260) * 26 + Math.sin(x / 97) * 10).toFixed(1)}`;
+  hd += `L${span[1]} 0Z`;
+  el('path', {d: hd, fill: '#21180f'}, far);
+  let bd = `M${span[0]} 600`;
+  for (let x = span[0]; x <= span[1]; x += 60) bd += `L${x} ${(548 + Math.sin(x / 210) * 18 + Math.sin(x / 71) * 7).toFixed(1)}`;
+  bd += `L${span[1]} 600Z`;
+  el('path', {d: bd, fill: '#1b140d'}, far);
+  for (let x = span[0]; x < span[1]; x += rnd(90, 190)) {     // bushes + rocks
+    const top = Math.random() < .5, y = top ? rnd(95, 140) : rnd(470, 520);
+    if (Math.random() < .6) for (let j = 0; j < 3; j++) el('circle', {cx: x + j * 13, cy: y + rnd(-5, 5), r: rnd(9, 16), fill: j % 2 ? '#2b3a22' : '#24321d'}, near);
+    else el('ellipse', {cx: x, cy: y, rx: rnd(10, 22), ry: rnd(6, 11), fill: '#3d3329', stroke: '#2a221b', 'stroke-width': 2}, near);
+  }
+
+  // ---------- trail ----------
+  el('path', {d, class: 't-edge'}, trackG);
+  el('path', {d, class: 't-dirt'}, trackG);
+  el('path', {d, class: 't-dirt2'}, trackG);
+  el('path', {d, class: 't-gravel'}, trackG);
+  [-16, 16].forEach(o => el('path', {d: offsetPath(o), class: 'rut'}, trackG));
+  const tyres = [-22, 22].map(o => el('path', {d: offsetPath(o), class: 'tyre', pathLength: 1000}, trackG));
+
+  function chequer(L, label) {
+    const p = at(L);
+    const g = el('g', {transform: `translate(${p.x} ${p.y}) rotate(${deg(p.a)})`}, trackG);
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 2; c++)
+      el('rect', {x: c * 10 - 10, y: -40 + r * 10, width: 10, height: 10, fill: (r + c) % 2 ? '#f4f4f4' : '#0b0b0b'}, g);
+    const t = el('text', {x: p.x, y: p.y - 66, 'text-anchor': 'middle', class: 'lbl-s'}, trackG); t.textContent = label;
+  }
+  chequer(150, 'START');
+  chequer(LT - 4, 'TODAY');
+
+  // obstacles (one on each stretch)
+  STOPS.forEach((s, i) => {
+    const p = at(obsL[i]), g = el('g', {transform: `translate(${p.x} ${p.y}) rotate(${deg(p.a)})`}, trackG);
+    if (s.obs === 'water') {
+      el('ellipse', {rx: 74, ry: 40, fill: '#2f5a74', opacity: .9}, g);
+      el('ellipse', {rx: 56, ry: 28, fill: 'none', stroke: '#9cc9e6', 'stroke-width': 2, opacity: .35}, g);
+      el('ellipse', {cx: -18, cy: -10, rx: 18, ry: 6, fill: '#9cc9e6', opacity: .25}, g);
+    } else if (s.obs === 'mud') {
+      el('ellipse', {rx: 80, ry: 42, fill: '#2a1d13'}, g);
+      [[-30, -12, 16], [20, 10, 20], [42, -16, 10], [-50, 14, 12]].forEach(([x, y, r]) => el('ellipse', {cx: x, cy: y, rx: r, ry: r * .6, fill: '#3a2a1c'}, g));
+    } else if (s.obs === 'log') {
+      el('rect', {x: -11, y: -52, width: 22, height: 104, rx: 11, fill: '#6b4a2b', stroke: '#3f2a17', 'stroke-width': 3}, g);
+      el('ellipse', {cx: 0, cy: -52, rx: 10, ry: 4, fill: '#a77b4f'}, g);
+      [-30, -6, 20].forEach(y => el('line', {x1: -8, y1: y, x2: 8, y2: y + 6, stroke: '#4b331d', 'stroke-width': 2}, g));
+    } else if (s.obs === 'jump') {
+      const grad = el('linearGradient', {id: 'ramp' + i, x1: 0, x2: 1}, $('defs'));
+      el('stop', {offset: 0, 'stop-color': '#6e5238'}, grad); el('stop', {offset: 1, 'stop-color': '#c9a072'}, grad);
+      el('rect', {x: -60, y: -46, width: 60, height: 92, rx: 4, fill: `url(#ramp${i})`}, g);
+      el('rect', {x: -2, y: -46, width: 5, height: 92, fill: '#2a1f16'}, g);
+    } else {
+      [[-30, -24, 11], [-6, 18, 14], [18, -10, 10], [36, 26, 9], [-44, 12, 8], [10, -34, 7]].forEach(([x, y, r]) =>
+        el('ellipse', {cx: x, cy: y, rx: r, ry: r * .75, fill: '#7a6b5c', stroke: '#3b322a', 'stroke-width': 2.5}, g));
+    }
+    const lp = off(p, p.y < 310 ? 70 : -62);
+    const t = el('text', {x: lp.x, y: lp.y, 'text-anchor': 'middle', class: 'lbl-o'}, trackG);
+    t.textContent = {rocks: 'ROCK GARDEN', water: 'WATER CROSSING', log: 'LOG HOP', jump: 'JUMP', mud: 'MUD PIT'}[s.obs];
+  });
+
+  // checkpoints: marshal flags + labels
+  STOPS.forEach((s, i) => {
+    const L = stopL[i], p = at(L), col = s.best ? GOLD : ORANGE;
+    const g = el('g', {transform: `translate(${p.x} ${p.y}) rotate(${deg(p.a)})`}, trackG);
+    el('rect', {x: -2, y: -42, width: 4, height: 84, fill: '#f3ece0', opacity: .5}, g);
+    [-56, 56].forEach(y => {
+      el('circle', {cx: 0, cy: y, r: 5, fill: '#1a1410'}, g);
+      el('path', {d: `M0 ${y} L-22 ${y - 9} L-22 ${y + 9} Z`, fill: col}, g);
+    });
+    const up = p.y < 310, y0 = up ? p.y - 104 : p.y + 82;
+    const t1 = el('text', {x: p.x, y: y0, 'text-anchor': 'middle', class: 'lbl-t', fill: col}, trackG); t1.textContent = `CP${i + 1} · ${s.tag}`;
+    const t2 = el('text', {x: p.x, y: y0 + 44, 'text-anchor': 'middle', class: 'lbl-y'}, trackG); t2.textContent = s.year;
+  });
+
+  // ---------- dust / splash particles ----------
+  const dustG = $('dustG'), P = [];
+  for (let i = 0; i < 110; i++) P.push({c: el('circle', {r: 0, opacity: 0}, dustG), life: 0});
+  let pIdx = 0;
+  function emit(x, y, vx, vy, r0, r1, dur, col, op) {
+    if (reduce) return;
+    const p = P[pIdx++ % P.length];
+    Object.assign(p, {x, y, vx, vy, r0, r1, dur, t: 0, op, life: 1}); p.c.setAttribute('fill', col);
+  }
+  function burst(pt, n, col, speed, r0, r1, dur, op) {
+    for (let i = 0; i < n; i++) { const a = rnd(0, Math.PI * 2), s = rnd(.2, 1) * speed; emit(pt.x, pt.y, Math.cos(a) * s, Math.sin(a) * s, r0, r1, dur * rnd(.7, 1.2), col, op); }
+  }
+  function stepParticles(dt) {
+    P.forEach(p => {
+      if (!p.life) return;
+      p.t += dt; const k = p.t / p.dur;
+      if (k >= 1) { p.life = 0; p.c.setAttribute('opacity', 0); return; }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .985; p.vy *= .985;
+      p.c.setAttribute('cx', p.x.toFixed(1)); p.c.setAttribute('cy', p.y.toFixed(1));
+      p.c.setAttribute('r', (p.r0 + (p.r1 - p.r0) * k).toFixed(1));
+      p.c.setAttribute('opacity', (p.op * (1 - k)).toFixed(2));
+    });
+  }
+
+  // screen splatter
+  const splat = $('splat');
+  function splatter(kind) {
+    if (reduce) return;
+    splat.innerHTML = ''; splat.className = 'splat' + (kind === 'water' ? ' water' : '');
+    for (let i = 0; i < 9; i++) {
+      const b = document.createElement('i'), s = rnd(20, 90);
+      Object.assign(b.style, {width: s + 'px', height: s * rnd(.7, 1) + 'px', left: rnd(0, 95) + '%', top: rnd(5, 90) + '%'});
+      splat.appendChild(b);
+    }
+    splat.style.transition = 'none'; splat.style.opacity = 1;
+    requestAnimationFrame(() => { splat.style.transition = 'opacity 1.6s ease-out .3s'; splat.style.opacity = 0; });
+  }
+
+  // ---------- scroll timeline ----------
+  const TRAVEL = 1, DWELL = .9;
+  const segs = []; let u = 0, prev = 0;
+  carStop.forEach((L, i) => {
+    segs.push({u0: u, u1: u + TRAVEL, move: true, a: prev, b: L}); u += TRAVEL;
+    segs.push({u0: u, u1: u + DWELL, stop: i, a: L}); u += DWELL; prev = L;
+  });
+  segs.push({u0: u, u1: u + TRAVEL, move: true, a: prev, b: carFinish}); u += TRAVEL;
+  segs.push({u0: u, u1: u + .8, stop: STOPS.length, a: carFinish}); u += .8;
+  const U = u;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function sample(x) {
+    const s = segs.find(s => x <= s.u1) || segs[segs.length - 1];
+    if (s.move) { const t = Math.min(1, Math.max(0, (x - s.u0) / (s.u1 - s.u0))); return s.a + (s.b - s.a) * ease(t); }
+    return s.a;
+  }
+  const stopSegs = segs.filter(s => s.stop !== undefined);
+  const sec = $('history'), stage = $('stage');
+  sec.style.height = `calc(${(U * 55).toFixed(1)}vh + 100vh)`;
+  const scrollTotal = () => sec.offsetHeight - innerHeight;
+  const targetU = () => Math.min(1, Math.max(0, -sec.getBoundingClientRect().top / scrollTotal())) * U;
+
+  // chips
+  const chips = $('chips');
+  const chipEls = [...STOPS.map(s => s.year), '🏁'].map((label, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = label;
+    b.style.setProperty('--c', i < STOPS.length ? (STOPS[i].best ? GOLD : ORANGE) : '#f3ece0');
+    b.onclick = () => { const s = stopSegs[i]; window.scrollTo({top: sec.offsetTop + (s.u0 + s.u1) / 2 / U * scrollTotal(), behavior: reduce ? 'auto' : 'smooth'}); };
+    chips.appendChild(b); return b;
+  });
+
+  // HUD suspension meter
+  const meter = $('meter');
+  const bars = Array.from({length: 6}, (_, i) => { const b = document.createElement('i'); b.style.height = (8 + i * 4) + 'px'; meter.appendChild(b); return b; });
+
+  // ---------- card ----------
+  const card = $('card');
+  card.querySelectorAll('[data-flip]').forEach(b => b.onclick = () => card.classList.toggle('flipped'));
+  $('cCta').onclick = () => alert('This would open the team’s join / recruitment page.');
+  function fillCard(i) {
+    const fin = i === STOPS.length, s = fin ? FINISH : STOPS[i];
+    const col = fin ? '#f3ece0' : (s.best ? GOLD : ORANGE);
+    const yr = fin ? 'NOW' : s.year;
+    $('cNo').textContent = fin ? 'FINAL' : `CP ${i + 1}/${STOPS.length}`;
+    $('cYear').textContent = yr; $('bYear').textContent = yr;
+    $('cTag').textContent = s.tag; $('cTag').style.background = col;
+    const st = $('cStamp');
+    st.textContent = fin ? 'OPEN' : s.best ? 'PODIUM' : 'PASSED';
+    st.style.color = fin ? '#c05a13' : s.best ? '#b8261b' : '#2f6d32';
+    $('cPhoto').style.background = `linear-gradient(135deg,hsl(${s.hue} 45% 26%),#1b140e 85%)`;
+    $('cTitle').textContent = s.title; $('cText').textContent = s.text;
+    $('cSpecs').innerHTML = s.specs.map(([k, v]) => `<div class="spec"><span>${k}</span><i></i><b>${v}</b></div>`).join('');
+    $('cQuote').textContent = s.quote;
+    $('cCta').hidden = !fin;
+  }
+  let active = -1;
+  function setActive(i) {
+    if (i === active) return;
+    active = i; card.classList.remove('flipped');
+    if (i < 0) { card.classList.remove('show'); return; }
+    card.classList.remove('show'); fillCard(i); void card.offsetWidth; card.classList.add('show');
+    if (i === STOPS.length) confetti();
+  }
+
+  // ---------- engine sound (opt-in, single-cylinder thump) ----------
+  let audio = null;
+  $('snd').onclick = () => {
+    if (!audio) {
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), am = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+      o.type = 'sawtooth'; f.type = 'lowpass'; g.gain.value = 0; lfo.type = 'square'; lg.gain.value = .5; am.gain.value = .5;
+      lfo.connect(lg); lg.connect(am.gain);
+      o.connect(f); f.connect(am); am.connect(g); g.connect(ac.destination); o.start(); lfo.start();
+      audio = {ac, o, f, g, lfo, on: false};
+    }
+    audio.on = !audio.on; if (audio.ac.state === 'suspended') audio.ac.resume();
+    $('snd').setAttribute('aria-pressed', audio.on); $('snd').textContent = audio.on ? '🔊 SOUND' : '🔇 SOUND';
+  };
+
+  // ---------- confetti ----------
+  let confettiDone = false;
+  function confetti() {
+    if (reduce || confettiDone) return; confettiDone = true;
+    const c = $('fx'), x = c.getContext('2d'), dpr = devicePixelRatio || 1;
+    const W = c.width = stage.clientWidth * dpr, H = c.height = stage.clientHeight * dpr;
+    const cols = ['#ffffff', '#111111', '#ff6a13', '#ffc22e', '#d9b98c'];
+    const Q = Array.from({length: 170}, () => ({x: W * .5, y: H * .4, vx: (Math.random() - .5) * 26 * dpr, vy: (-Math.random() * 20 - 6) * dpr, s: (Math.random() * 6 + 4) * dpr, c: cols[Math.random() * 5 | 0], a: Math.random() * 6, va: (Math.random() - .5) * .35}));
+    const t0 = performance.now();
+    (function f(now) {
+      x.clearRect(0, 0, W, H);
+      Q.forEach(p => { p.vy += .55 * dpr; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.a += p.va;
+        x.save(); x.translate(p.x, p.y); x.rotate(p.a); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); });
+      if (now - t0 < 3500) requestAnimationFrame(f); else x.clearRect(0, 0, W, H);
+    })(t0);
+  }
+
+  // ---------- camera + loop ----------
+  const VH = 600; let VW = 1000, anchor = .3, mobile = false;
+  function resize() { const r = svg.getBoundingClientRect(); VW = VH * r.width / Math.max(1, r.height); mobile = innerWidth < 760; anchor = mobile ? .5 : .3; }
+  addEventListener('resize', resize); resize();
+
+  let uc = targetU(), lastL = sample(uc), lastT = performance.now(), spd = 0, prevSpd = 0, brakeLvl = 0, bump = 0;
+  const tread = $('tread');
+  function frame(now) {
+    const dt = Math.min(64, now - lastT) || 16; lastT = now;
+    const tu = targetU();
+    uc = reduce ? tu : uc + (tu - uc) * (1 - Math.pow(.88, dt / 16.7));
+    if (Math.abs(tu - uc) < 1e-4) uc = tu;
+
+    const L = sample(uc), pL = lastL;
+    const v = Math.abs(L - pL) / dt; lastL = L;
+    spd += (Math.min(120, v * 110) - spd) * .2;            // Baja cars top out ~60–70 km/h; exaggerated a bit for fun
+    const braking = spd < prevSpd - .15 && spd > 4; prevSpd = spd;
+    const atStop = stopSegs.some(s => uc >= s.u0 && uc <= s.u1);
+    brakeLvl += ((braking ? 1 : atStop ? .5 : .1) - brakeLvl) * .25;
+
+    const p = at(L), dir = {x: Math.cos(p.a), y: Math.sin(p.a)};
+
+    // obstacle crossings
+    const lo = Math.min(pL, L), hi = Math.max(pL, L);
+    STOPS.forEach((s, i) => {
+      if (obsL[i] > lo && obsL[i] <= hi && hi - lo < 400) {
+        const op = at(obsL[i]);
+        if (s.obs === 'water') { burst(op, 26, '#9cc9e6', .28, 2, 7, 700, .9); if (spd > 25) splatter('water'); bump = 4; }
+        else if (s.obs === 'mud') { burst(op, 26, '#4a3424', .25, 3, 8, 800, .95); if (spd > 25) splatter('mud'); bump = 5; }
+        else if (s.obs === 'rocks') { burst(op, 12, '#8b7b6b', .2, 2, 4, 500, .9); bump = 6; }
+        else if (s.obs === 'log') { burst(op, 14, '#b8946a', .18, 6, 22, 900, .4); bump = 9; }
+      }
+    });
+    // dust burst when braking into a checkpoint
+    carStop.forEach(cs => { if (cs - 30 > pL && cs - 30 <= L) burst(off(at(L - 34), 0), 22, '#b8946a', .09, 8, 36, 1400, .45); });
+
+    // dust trail
+    if (spd > 12 && Math.random() < spd / 90) {
+      const r = off(at(L - 36), rnd(-22, 22));
+      emit(r.x, r.y, -dir.x * .03 + rnd(-.015, .015), -dir.y * .03 + rnd(-.015, .015), 5, 22, 900, '#b8946a', .35);
+    }
+    stepParticles(dt);
+
+    // suspension: bumps, roughness, airtime on jumps
+    bump *= Math.pow(.9, dt / 16.7);
+    let air = 0;
+    STOPS.forEach((s, i) => { if (s.obs === 'jump') { const k = L - obsL[i]; if (k > 0 && k < 180) air = Math.sin(Math.PI * k / 180); } });
+    const rough = reduce ? 0 : spd / 120 * 1.8 + bump;
+    const jit = air ? 0 : Math.sin(now / 37) * rough * .6 + (Math.random() - .5) * rough * .5;
+    const sway = air ? 0 : Math.sin(now / 83) * rough * .7;
+    const sc = 1 + air * .3;
+    const cp = off(p, jit);
+    car.setAttribute('transform', `translate(${cp.x.toFixed(1)} ${cp.y.toFixed(1)}) rotate(${(+deg(p.a) + sway).toFixed(2)}) scale(${sc.toFixed(3)})`);
+    shadow.setAttribute('cx', (p.x + air * 22).toFixed(1)); shadow.setAttribute('cy', (p.y + 4 + air * 26).toFixed(1));
+    shadow.setAttribute('opacity', (.45 - air * .25).toFixed(2));
+    tread.setAttribute('patternTransform', `translate(${(-L % 5).toFixed(2)} 0)`);
+    $('brake').setAttribute('opacity', (.2 + brakeLvl * .8).toFixed(2));
+    $('brakeGlow').setAttribute('opacity', (brakeLvl * .9).toFixed(2));
+
+    const camX = p.x - VW * anchor + (mobile ? 0 : Math.min(90, spd * .8));
+    svg.setAttribute('viewBox', `${camX.toFixed(1)} 0 ${VW.toFixed(1)} ${VH}`);
+    far.setAttribute('transform', `translate(${(camX * .7).toFixed(1)} 0)`);
+    near.setAttribute('transform', `translate(${(camX * .35).toFixed(1)} 0)`);
+    const tOff = (1000 - Math.max(0, L - 36) / LT * 1000).toFixed(1);
+    tyres.forEach(t => t.style.strokeDashoffset = tOff);
+
+    let passed = -1;
+    carStop.forEach((cs, i) => { if (L >= cs - 4) passed = i; });
+    const finished = L >= carFinish - 4;
+    chipEls.forEach((c, i) => c.classList.toggle('done', i <= passed || (i === STOPS.length && finished)));
+    let act = -1;
+    stopSegs.forEach((s, i) => { if (uc >= s.u0 - .15 && uc <= s.u1 + .15) act = i; });
+    setActive(act);
+    chipEls.forEach((c, i) => c.classList.toggle('on', i === act));
+
+    $('spdT').textContent = Math.round(spd);
+    $('arc').style.strokeDasharray = `${(spd / 120 * 100).toFixed(1)} 100`;
+    const sl = Math.min(6, Math.round((rough / 7 + air) * 6));
+    bars.forEach((b, i) => b.classList.toggle('on', i < sl));
+    $('yr').textContent = finished ? '🏁 TODAY' : passed < 0 ? 'START ZONE' : `CP${passed + 1} · ${STOPS[passed].year}`;
+    $('fuel').style.width = (100 - 82 * Math.min(1, L / carFinish)).toFixed(1) + '%';
+    $('hint').style.opacity = uc < .08 ? 1 : 0;
+
+    if (audio) {
+      const t = audio.ac.currentTime, hz = 32 + spd * 1.1;
+      audio.o.frequency.setTargetAtTime(hz, t, .05);
+      audio.lfo.frequency.setTargetAtTime(hz / 2, t, .05);
+      audio.f.frequency.setTargetAtTime(260 + spd * 9, t, .05);
+      audio.g.gain.setTargetAtTime(audio.on ? .05 + spd / 120 * .06 : 0, t, .08);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

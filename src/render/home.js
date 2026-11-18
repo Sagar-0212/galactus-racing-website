@@ -110,25 +110,77 @@ export function about({ stats }) {
   </section>`;
 }
 
+// ---------- S02 Journey: the trail ----------
+// One HTML for every mode. Default (no JS, phones, reduced motion): a vertical stack of inspection cards
+// on a red progress line. Desktop with motion: src/motion/journey.js adds .jr--drive and the section
+// becomes a pinned trail; the buggy drives the lane and brakes at each checkpoint, where that chapter's
+// card wipes in. The road, HUD and year tags only show in drive mode.
+// Side-view buggy, facing right, drawn in our colours (classes in home.css). No text on it, so it can
+// be mirrored when it reverses. Wheels are their own groups so they can spin.
+const wheel = (cx, cy, r) => `<g class="bg__wheel" data-jwheel=""><circle cx="${cx}" cy="${cy}" r="${r}" class="bg__tyre"/><circle cx="${cx}" cy="${cy}" r="${r * 0.42}" class="bg__hub"/><path d="M${cx - r * 0.78} ${cy}H${cx + r * 0.78}M${cx} ${cy - r * 0.78}V${cy + r * 0.78}" class="bg__spoke"/></g>`;
+const BUGGY = `<svg class="jr__bg" viewBox="0 0 160 80" aria-hidden="true" focusable="false">
+  <path d="M34 60 L58 44 M122 62 L104 44" class="bg__arm"/>
+  <rect x="12" y="30" width="22" height="16" class="bg__engine"/>
+  <path d="M20 44 L64 38 L110 38 L148 47 L150 54 L140 56 L24 56 Z" class="bg__body"/>
+  <rect x="64" y="46" width="44" height="4" class="bg__stripe"/>
+  <path d="M40 42 L54 8 L92 8 L108 40 M54 8 L98 40 M40 42 L30 30" class="bg__cage"/>
+  <circle cx="74" cy="24" r="9" class="bg__helmet"/><rect x="76" y="20" width="8" height="6" class="bg__visor"/>
+  <rect x="144" y="48" width="5" height="4" class="bg__lamp"/>
+  ${wheel(34, 60, 18)}${wheel(122, 62, 16)}
+</svg>`;
+
 export function journey({ journey: chapters }) {
-  const items = chapters.map((c, i) => `<li class="jr__item" data-reveal="" data-delay="${(i % 3) * 90}" data-jitem="">
+  const n = chapters.length, last = n - 1;
+  const of = (i) => `${pad2(i + 1)} / ${pad2(n)}`;
+  const car = (cls, extra = '') => `<img class="${cls}" src="/assets/hero-car-640.webp" width="640" height="439" loading="lazy" decoding="async" alt="Abhimanyu (M04), our car today"${extra}>`;
+  const items = chapters.map((c, i) => `<li class="jr__item" data-jitem="${i}">
       <span class="jr__dot" data-jdot="" aria-hidden="true"></span>
-      <span class="jr__year">${flap(c.date)}</span>
-      <div class="jr__body"><strong class="jr__title">${esc(c.title)}</strong><span class="jr__story">${t(c.story)}</span></div>
+      <article class="jr__card">
+        <header class="jr__card-h"><span>Tech inspection</span><span>CP ${of(i)}</span></header>
+        <div class="jr__yrrow"><span class="jr__year">${flap(c.date)}</span><span class="jr__stamp" data-jstamp="">${i === last ? 'Today' : 'Passed'}</span></div>
+        ${c.photo ? `<img class="jr__photo" src="${esc(c.photo)}" alt="${esc(c.photoAlt || c.title)}" loading="lazy" decoding="async">` : ''}
+        ${i === last ? car('jr__car-static') : ''}
+        <h3 class="jr__title">${t(c.title)}</h3>
+        <p class="jr__story">${t(c.story)}</p>
+        ${i === last ? `<a class="btn btn--accent btn--md jr__join" href="team.html#join"><span class="btn__label">Join the crew</span><span class="btn__icon" aria-hidden="true">→</span></a>` : ''}
+      </article>
     </li>`).join('');
-  return `<section id="journey" class="jr" data-scene="" data-sector-label="S02 / Journey">
-    <div class="jr__bigtext" data-hx="0.9" aria-hidden="true">2008 — 2026 — 2008 — 2026</div>
-    <div class="jr__grid">
+  const gates = chapters.map((c, i) => `<div class="jr__gate${i === last ? ' jr__gate--fin' : ''}" data-jgate="${i}">
+        <span class="jr__gate-yr">${esc(c.date)}</span><span class="jr__gate-cp">CP${pad2(i + 1)}</span><span class="jr__gate-post"></span>
+      </div>`).join('');
+  return `<section id="journey" class="jr" data-scene="" data-sector-label="S02 / Journey" data-jr="" style="--jr-n:${n}">
+    <div class="jr__stage" data-jstage="">
+      <div class="jr__bigtext" data-jfar="" aria-hidden="true">${esc(chapters[0].date)} — ${esc(chapters[last].date)} — ${esc(chapters[0].date)} — ${esc(chapters[last].date)}</div>
       <div class="jr__side">
         <span class="eyebrow" data-reveal=""><span class="eyebrow__line"></span>Our journey</span>
         <div data-reveal="">${headline({ as: 'h2', size: 'l', text: 'Built crash by crash.', accent: 'crash by crash.' })}</div>
         <p class="jr__lead" data-reveal="">Every car we build carries the scars of the one before it. Six chapters, from one borrowed welding machine to the podium.</p>
-        <div class="jr__counter" data-reveal=""><span class="jr__count" aria-hidden="true"><span class="jr__count-strip" data-jcount="">${chapters.map((_, k) => `<span>${pad2(k + 1)}</span>`).join('')}</span></span><span class="micro jr__of">/ ${pad2(chapters.length)} chapters</span></div>
+        <div class="jr__counter" data-reveal=""><span class="jr__count" aria-hidden="true"><span class="jr__count-strip" data-jcount="">${chapters.map((_, k) => `<span>${pad2(k + 1)}</span>`).join('')}</span></span><span class="micro jr__of">/ ${pad2(n)} chapters</span></div>
       </div>
-      <ol class="jr__list" data-jlist="">
+      <div class="jr__hud" aria-hidden="true">
+        <span class="jr__hud-row"><span class="jr__hud-k">Checkpoint</span><b class="jr__hud-v" data-jhud="">Start</b></span>
+        <span class="jr__hud-bar"><i data-jhudbar=""></i></span>
+      </div>
+      <ol class="jr__list" data-jlist="" aria-live="polite">
         <span class="jr__rail" aria-hidden="true"><span class="jr__fill" data-jfill=""></span><span class="jr__tip" data-jtip=""></span></span>
         ${items}
       </ol>
+      <div class="jr__road" data-jroad="" aria-hidden="true">
+        <div class="jr__world" data-jworld="">
+          <div class="jr__lane" data-jlane=""><span class="jr__lane-fill" data-jlfill=""></span></div>
+          <div class="jr__start" data-jstart=""><span class="jr__gate-cp">Start</span><span class="jr__gate-post"></span></div>
+          <div class="jr__wedge" data-jwedge=""></div>
+          ${gates}
+          <div class="jr__car-wrap" data-jcar="">${car('jr__car', ' data-jcarimg=""')}</div>
+        </div>
+        <div class="jr__buggy" data-jbuggy="">
+          <div class="jr__buggy-flip" data-jflip="">
+            <div class="jr__dust"><canvas data-jdust=""></canvas></div>
+            ${BUGGY}
+          </div>
+        </div>
+      </div>
+      <nav class="jr__tags" aria-label="Jump to a year">${chapters.map((c, i) => `<button type="button" class="jr__tag" data-jtag="${i}">${esc(c.date)}</button>`).join('')}</nav>
     </div>
   </section>`;
 }

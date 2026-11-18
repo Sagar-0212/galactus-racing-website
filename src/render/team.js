@@ -72,7 +72,7 @@ export function renderTeam({ team, subteams, contact }) {
       <div class="tm-tabs" role="tablist" aria-label="Sub-teams" data-tabs="">${tabList}</div>
       ${panel}
     </section>
-    <section class="tm-recruit">
+    <section id="join" class="tm-recruit">
       <div class="tm-recruit__box" data-in="">
         <div class="tm-recruit__text">
           <span class="eyebrow eyebrow--inv">Recruitment 2026–27 <span class="todo">[TODO]</span></span>
