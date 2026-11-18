@@ -49,16 +49,21 @@ function renderPartials() {
   };
 }
 
-export default defineConfig({
-  plugins: [renderPartials()],
-  build: {
-    // admin.html is dev-only (mock API) until the real backend exists, so it is not a build input.
-    rolldownOptions: {
-      input: {
-        main: resolve(root, 'index.html'),
-        team: resolve(root, 'team.html'),
-        notfound: resolve(root, '404.html'),
+// admin.html (dashboard, demo data) is left out of the normal production build.
+// Include it only for testing: `npm run build:admin` or `ADMIN=1 npm run build`.
+export default defineConfig(({ mode }) => {
+  const withAdmin = process.env.ADMIN === '1' || mode === 'admin';
+  return {
+    plugins: [renderPartials()],
+    build: {
+      rolldownOptions: {
+        input: {
+          main: resolve(root, 'index.html'),
+          team: resolve(root, 'team.html'),
+          notfound: resolve(root, '404.html'),
+          ...(withAdmin ? { admin: resolve(root, 'admin.html') } : {}),
+        },
       },
     },
-  },
+  };
 });

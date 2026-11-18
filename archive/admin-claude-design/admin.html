@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Galactus Racing · Admin</title>
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/fonts.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/colors.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/typography.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/spacing.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/effects.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/motion.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/tokens/base.css">
+  <link rel="stylesheet" href="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/styles.css">
+  <script src="/_ds/mtvna-design-system-fbc62792-c4b1-4aee-8f7a-1a234eda7fcb/_ds_bundle.js"></script>
+  <script src="./admin-api.js"></script>
+  <link rel="icon" type="image/png" href="/assets/icons/icon-192.png">
+  <style>
+    html, body { margin: 0; background: #EEE7DD; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: #960101; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, label:focus-within > [data-zone-face] { outline: 2px solid #B30A0A; outline-offset: 2px; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--surface-page) var(--grain);color:var(--text-primary);font-family:var(--font-body)">
+
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <main data-screen-label="00 Login" style="position:relative;min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box;overflow:hidden">
+      <div aria-hidden="true" style="position:absolute;inset:0;background:var(--surface-inverse);clip-path:var(--wedge-clip)"></div>
+      <form onSubmit="{{ onLogin }}" noValidate="" style="position:relative;width:min(440px,100%);box-sizing:border-box;background:var(--surface-raised);border:1px solid var(--border-strong);box-shadow:var(--shadow-hard);padding:clamp(24px,5vw,40px);display:flex;flex-direction:column;gap:28px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <img src="/assets/logo-gr.webp" width="640" height="446" alt="Galactus Racing logo" style="height:40px;width:auto;display:block">
+            <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" tagline="Racing · Site admin" rule="{{ false }}" hint-size="140px,40px"></x-import>
+          </div>
+          <a href="index.html" style="display:inline-flex;align-items:center;min-height:44px;text-decoration:none;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">← Website</a>
+        </div>
+        <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(56px,12vw,84px);line-height:var(--lh-display);text-transform:uppercase">Pit <span style="color:var(--text-accent)">lane.</span></h1>
+        <p style="margin:0;color:var(--text-secondary);line-height:var(--lh-body)">Team members only. Sign in to edit what the website shows.</p>
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Input" label="Username" value="{{ user }}" onChange="{{ onUser }}" error="{{ userErr }}" hint-size="100%,72px"></x-import>
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Input" label="Password" type="password" value="{{ pw }}" onChange="{{ onPw }}" error="{{ pwErr }}" hint-size="100%,96px"></x-import>
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" type="submit" variant="primary" size="lg" icon-right="→" disabled="{{ busy }}" style="{{ fullW }}" hint-size="100%,56px">{{ loginLabel }}</x-import>
+      </form>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;min-height:100vh;align-items:stretch">
+
+      <sc-if value="{{ navScrim }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeNav }}" style="position:fixed;inset:0;z-index:40;background:var(--scrim)"></div>
+      </sc-if>
+
+      <sc-if value="{{ showSide }}" hint-placeholder-val="{{ true }}">
+        <aside aria-label="Sections" style="position:{{ sidePos }};top:0;left:0;z-index:50;flex:none;width:min(280px,86vw);height:100vh;box-sizing:border-box;background:var(--surface-inverse);color:var(--text-inverse);display:flex;flex-direction:column;padding:24px 0 12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:0 24px 24px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <img src="/assets/logo-gr-light.webp" width="640" height="446" alt="Galactus Racing logo" style="height:34px;width:auto;display:block">
+              <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" tagline="Racing · Site admin" inverse="{{ true }}" rule="{{ false }}" hint-size="120px,40px"></x-import>
+            </div>
+            <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="✕" label="Close menu" variant="inverse" onClick="{{ closeNav }}" hint-size="44px,44px"></x-import>
+            </sc-if>
+          </div>
+          <div style="padding:0 24px 8px;font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-inverse-muted)">Content</div>
+          <nav style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column">
+            <sc-for list="{{ nav }}" as="n" hint-placeholder-count="9">
+              <button type="button" onClick="{{ n.go }}" aria-current="{{ n.current }}" style="flex:none;display:flex;align-items:center;gap:14px;min-height:44px;padding:0 24px;border:0;background:{{ n.bg }};color:var(--paper-100);cursor:pointer;text-align:left;font-family:var(--font-body);font-weight:700;font-size:13px;letter-spacing:var(--tracking-label);text-transform:uppercase" style-hover="background:var(--ink-800)">
+                <span style="width:8px;height:8px;flex:none;background:{{ n.mark }}"></span>
+                <span style="font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--text-inverse-muted)">{{ n.num }}</span>
+                <span style="flex:1;min-width:0">{{ n.label }}</span>
+                <sc-if value="{{ n.hasTag }}" hint-placeholder-val="{{ false }}">
+                  <span style="flex:none;white-space:nowrap;font-family:var(--font-mono);font-size:10px;font-weight:500;color:{{ n.tagColor }}">{{ n.tag }}</span>
+                </sc-if>
+              </button>
+            </sc-for>
+          </nav>
+          <div style="flex:none;display:flex;flex-direction:column;padding:12px 24px 0;border-top:1px solid var(--border-inverse)">
+            <a href="index.html" style="display:flex;align-items:center;justify-content:space-between;min-height:44px;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase" style-hover="color:var(--red-400)">← Back to website <span>↗</span></a>
+            <button type="button" onClick="{{ logout }}" style="display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0;border:0;background:none;color:var(--text-inverse);cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase" style-hover="color:var(--red-400)">Sign out <span>→</span></button>
+          </div>
+        </aside>
+      </sc-if>
+
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+          <div style="position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;height:60px;padding:0 8px 0 20px;background:var(--surface-inverse);color:var(--text-inverse)">
+            <div style="display:flex;align-items:center;gap:10px"><img src="/assets/logo-gr-light.webp" width="640" height="446" alt="" style="height:26px;width:auto;display:block"><x-import component-from-global-scope="MTVNADesignSystem_fbc627.Wordmark" name="GALACTUS" inverse="{{ true }}" rule="{{ false }}" hint-size="100px,20px"></x-import></div>
+            <button type="button" onClick="{{ openNav }}" aria-label="Open sections menu" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 12px;border:0;background:none;color:var(--text-inverse);cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">{{ sectionLabel }} <span style="color:var(--red-400)">↓</span></button>
+          </div>
+        </sc-if>
+
+        <main data-screen-label="{{ screenLabel }}" style="flex:1;width:100%;max-width:1080px;box-sizing:border-box;padding:clamp(24px,5vw,56px) clamp(16px,4vw,56px) 140px;display:flex;flex-direction:column;gap:24px">
+          <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--border-strong)">
+            <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+              <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ sectionNum }} / {{ sectionLabel }} · {{ countText }}</span>
+              <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(52px,8vw,96px);line-height:var(--lh-display);text-transform:uppercase;overflow-wrap:anywhere">{{ sectionLabel }}<span style="color:var(--text-accent)">.</span></h1>
+              <p style="margin:0;max-width:60ch;color:var(--text-secondary);line-height:var(--lh-body);text-wrap:pretty">{{ sectionDesc }}</p>
+            </div>
+            <sc-if value="{{ showAdd }}" hint-placeholder-val="{{ true }}">
+              <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="accent" icon-right="→" onClick="{{ onAdd }}" disabled="{{ loading }}" hint-size="140px,44px">{{ addLabel }}</x-import>
+            </sc-if>
+          </header>
+
+          <sc-if value="{{ hasTabs }}" hint-placeholder-val="{{ false }}">
+            <div style="overflow-x:auto">
+              <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Tabs" items="{{ tabs }}" value="{{ tabValue }}" onChange="{{ setTab }}" hint-size="100%,30px"></x-import>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">
+            <span>{{ savedText }}</span>
+            <span>{{ orderTip }}</span>
+          </div>
+
+          <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:48px 0;font-family:var(--font-mono);font-size:12px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">Loading…</div>
+          </sc-if>
+
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:40px 24px;border:1px solid var(--border-strong);background:var(--surface-raised)">
+              <span style="font-family:var(--font-display);font-size:var(--fs-display-s);line-height:var(--lh-display);text-transform:uppercase">{{ emptyText }}</span>
+              <sc-if value="{{ emptyCanAdd }}" hint-placeholder-val="{{ true }}">
+                <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="primary" onClick="{{ onAdd }}" hint-size="140px,44px">{{ addLabel }}</x-import>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:16px">
+              <sc-for list="{{ ovCards }}" as="c" hint-placeholder-count="6">
+                <button type="button" onClick="{{ c.go }}" style="text-align:left;display:flex;flex-direction:column;gap:10px;padding:20px;background:{{ c.bg }};color:{{ c.fg }};border:1px solid var(--border-strong);cursor:pointer;font-family:var(--font-body);transition:box-shadow 220ms var(--ease-out), translate 220ms var(--ease-out)" style-hover="box-shadow:var(--shadow-hard);translate:-3px -3px">
+                  <span style="display:flex;justify-content:space-between;gap:8px;width:100%;font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase"><span>{{ c.label }}</span><span style="color:var(--red-400)">↗</span></span>
+                  <span style="font-family:var(--font-display);font-size:64px;line-height:var(--lh-display)">{{ c.n }}</span>
+                  <span style="font-size:var(--fs-body-s);opacity:.8">{{ c.note }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;align-items:start">
+              <div style="display:flex;flex-direction:column;border:1px solid var(--border-strong);background:var(--surface-raised);min-width:0">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border-strong)">
+                  <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">Recent messages</span>
+                  <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" size="sm" onClick="{{ goMessages }}" hint-size="120px,32px">All messages</x-import>
+                </div>
+                <div style="overflow-x:auto">
+                  <table style="width:100%;border-collapse:collapse;font-size:var(--fs-body-s)">
+                    <thead>
+                      <tr>
+                        <th style="text-align:left;padding:10px 20px;border-bottom:1px solid var(--border-hairline);font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;font-weight:500;color:var(--text-muted)">From</th>
+                        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--border-hairline);font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;font-weight:500;color:var(--text-muted)">Received</th>
+                        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--border-hairline);font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;font-weight:500;color:var(--text-muted)">Status</th>
+                        <th style="padding:10px 20px;border-bottom:1px solid var(--border-hairline)"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <sc-for list="{{ ovMsgs }}" as="m" hint-placeholder-count="2">
+                        <tr>
+                          <td style="padding:12px 20px;border-bottom:1px solid var(--border-hairline)"><div style="display:flex;flex-direction:column;gap:2px"><strong style="font-weight:700">{{ m.name }}</strong><span style="color:var(--text-muted)">{{ m.interest }}</span></div></td>
+                          <td style="padding:12px;border-bottom:1px solid var(--border-hairline);white-space:nowrap;color:var(--text-secondary)">{{ m.when }}</td>
+                          <td style="padding:12px;border-bottom:1px solid var(--border-hairline)"><x-import component-from-global-scope="MTVNADesignSystem_fbc627.Badge" tone="{{ m.tone }}" hint-size="60px,20px">{{ m.status }}</x-import></td>
+                          <td style="padding:12px 20px;border-bottom:1px solid var(--border-hairline);text-align:right"><x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="ghost" size="sm" icon-right="→" onClick="{{ m.open }}" hint-size="70px,32px">Open</x-import></td>
+                        </tr>
+                      </sc-for>
+                    </tbody>
+                  </table>
+                </div>
+                <sc-if value="{{ ovNoMsgs }}" hint-placeholder-val="{{ false }}">
+                  <span style="padding:20px;color:var(--text-muted)">No messages yet.</span>
+                </sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;border:1px solid var(--border-strong);background:var(--surface-raised)">
+                <div style="padding:16px 20px;border-bottom:1px solid var(--border-strong);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">Needs attention</div>
+                <sc-for list="{{ ovTodo }}" as="t" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ t.go }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:52px;padding:10px 20px;border:0;border-bottom:1px solid var(--border-hairline);background:none;color:var(--text-primary);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--fs-body-s)" style-hover="background:var(--surface-sunken)"><span style="display:flex;align-items:center;gap:12px"><span style="width:8px;height:8px;flex:none;background:{{ t.mark }}"></span>{{ t.text }}</span><span style="color:var(--text-accent);font-weight:700">→</span></button>
+                </sc-for>
+                <sc-if value="{{ ovClear }}" hint-placeholder-val="{{ false }}">
+                  <span style="padding:20px;color:var(--text-muted)">All clear. Nothing waiting on you.</span>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isSingle }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;border:1px solid var(--border-strong);background:var(--surface-raised)">
+              <dl style="margin:0;display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr)">
+                <sc-for list="{{ singleRows }}" as="r" hint-placeholder-count="6">
+                  <dt style="padding:14px 20px;border-bottom:1px solid var(--border-hairline);font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ r.label }}</dt>
+                  <dd style="margin:0;padding:14px 20px;border-bottom:1px solid var(--border-hairline);font-weight:600;overflow-wrap:anywhere">{{ r.value }}</dd>
+                </sc-for>
+              </dl>
+              <div style="padding:16px 20px;display:flex;justify-content:flex-end">
+                <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="primary" icon-right="→" onClick="{{ editSingle }}" hint-size="150px,44px">Edit settings</x-import>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasRows }}" hint-placeholder-val="{{ true }}">
+            <ol style="list-style:none;margin:0;padding:0;border:1px solid var(--border-strong);background:var(--surface-raised)">
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+                <li draggable="{{ dragOn }}" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDrop="{{ r.drop }}" onDragEnd="{{ dragEnd }}" style="display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;padding:16px 16px 16px 20px;border-top:{{ r.border }};background:{{ r.bg }}">
+                  <sc-if value="{{ showHandle }}" hint-placeholder-val="{{ false }}">
+                    <span aria-hidden="true" title="Drag to reorder" style="cursor:grab;font-family:var(--font-mono);font-size:14px;color:var(--text-muted);user-select:none">⋮⋮</span>
+                  </sc-if>
+                  <sc-if value="{{ r.hasThumb }}" hint-placeholder-val="{{ false }}">
+                    <div role="img" aria-label="{{ r.title }}" style="flex:none;width:{{ r.thumbW }};aspect-ratio:{{ r.thumbAspect }};box-sizing:border-box;background-color:var(--surface-sunken);background-image:{{ r.thumbBg }};background-size:{{ r.thumbFit }};background-position:center;background-repeat:no-repeat;border:1px solid var(--border-hairline);display:grid;place-items:center">
+                      <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted);text-align:center;padding:4px">No image</span>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ r.hasBig }}" hint-placeholder-val="{{ false }}">
+                    <span style="flex:none;min-width:96px;font-family:var(--font-display);font-size:52px;line-height:var(--lh-display)">{{ r.big }}<span style="color:var(--text-accent)">{{ r.bigAccent }}</span></span>
+                  </sc-if>
+                  <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:8px">
+                    <sc-if value="{{ r.hasBadges }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;flex-wrap:wrap;gap:6px">
+                        <sc-for list="{{ r.badges }}" as="b" hint-placeholder-count="1">
+                          <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Badge" tone="{{ b.tone }}" hint-size="64px,20px">{{ b.text }}</x-import>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ r.titleBig }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-family:var(--font-display);font-size:30px;line-height:var(--lh-display);text-transform:uppercase;overflow-wrap:anywhere">{{ r.title }}</span>
+                    </sc-if>
+                    <sc-if value="{{ r.titleSmall }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-weight:800;font-size:13px;letter-spacing:var(--tracking-label);text-transform:uppercase;line-height:1.35;overflow-wrap:anywhere">{{ r.title }}</span>
+                    </sc-if>
+                    <sc-if value="{{ r.hasSub }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ r.sub }}</span>
+                    </sc-if>
+                    <sc-if value="{{ r.hasSub2 }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:var(--fs-body-s);line-height:1.45;color:var(--text-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ r.sub2 }}</span>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;gap:8px;margin-left:auto">
+                    <sc-if value="{{ canReorder }}" hint-placeholder-val="{{ true }}">
+                      <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="↑" label="{{ r.upLabel }}" disabled="{{ r.first }}" onClick="{{ r.up }}" hint-size="44px,44px"></x-import>
+                      <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="↓" label="{{ r.downLabel }}" disabled="{{ r.last }}" onClick="{{ r.down }}" hint-size="44px,44px"></x-import>
+                    </sc-if>
+                    <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" onClick="{{ r.edit }}" hint-size="80px,44px">{{ editLabel }}</x-import>
+                    <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="✕" label="{{ r.delLabel }}" variant="ghost" onClick="{{ r.del }}" hint-size="44px,44px"></x-import>
+                  </div>
+                </li>
+              </sc-for>
+            </ol>
+          </sc-if>
+        </main>
+
+        <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}">
+          <div role="region" aria-label="Unsaved changes" style="position:sticky;bottom:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding:14px clamp(16px,4vw,56px);background:var(--surface-inverse);color:var(--text-inverse);border-top:2px solid var(--accent)">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-weight:800;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">Unsaved changes</span>
+              <span style="font-size:var(--fs-body-s);color:var(--text-inverse-muted)">{{ dirtyText }}</span>
+            </div>
+            <div style="display:flex;gap:16px;align-items:center">
+              <button type="button" onClick="{{ onDiscard }}" disabled="{{ saving }}" style="height:44px;padding:0 8px;border:0;background:none;color:var(--text-inverse);cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase" style-hover="color:var(--red-400)">Discard</button>
+              <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="accent" icon-right="↗" onClick="{{ onSave }}" disabled="{{ saving }}" hint-size="120px,44px">{{ saveLabel }}</x-import>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:80;display:flex;justify-content:flex-end">
+      <div onClick="{{ closeForm }}" style="position:absolute;inset:0;background:var(--scrim)"></div>
+      <form onSubmit="{{ submitForm }}" noValidate="" role="dialog" aria-modal="true" aria-label="{{ formTitle }}" style="position:relative;width:min(600px,100%);height:100%;box-sizing:border-box;background:var(--surface-page);border-left:1px solid var(--border-strong);display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px clamp(20px,4vw,32px) 20px;border-bottom:1px solid var(--border-strong)">
+          <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+            <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ formKicker }}</span>
+            <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--fs-display-s);line-height:var(--lh-display);text-transform:uppercase;overflow-wrap:anywhere">{{ formTitle }}</h2>
+            <sc-if value="{{ formHasLink }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ formLinkHref }}" target="_blank" rel="noopener" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;background:var(--ink-900);color:var(--paper-100);font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase" style-hover="background:var(--accent);color:var(--paper-100)">{{ formLinkLabel }} <span>↗</span></a>
+            </sc-if>
+          </div>
+          <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="✕" label="Close" variant="ghost" onClick="{{ closeForm }}" hint-size="44px,44px"></x-import>
+        </div>
+
+        <div style="flex:1;overflow:auto;padding:28px clamp(20px,4vw,32px) 40px;display:flex;flex-direction:column;gap:28px">
+          <sc-if value="{{ statPreview }}" hint-placeholder-val="{{ false }}">
+            <div aria-hidden="true" style="display:flex;flex-direction:column;gap:10px;padding:28px 24px;background:var(--surface-inverse) var(--grain);color:var(--text-inverse)">
+              <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-inverse-muted)">Preview</span>
+              <span style="font-family:var(--font-display);font-size:96px;line-height:var(--lh-display)">{{ pv.n }}<span style="color:var(--red-400)">{{ pv.suffix }}</span></span>
+              <span style="font-weight:800;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">{{ pv.label }}</span>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;flex-wrap:wrap;gap:28px 24px">
+            <sc-for list="{{ fields }}" as="fd" hint-placeholder-count="4">
+              <div style="flex:{{ fd.flex }};min-width:0;display:flex;flex-direction:column;gap:8px">
+
+                <sc-if value="{{ fd.isInput }}" hint-placeholder-val="{{ true }}">
+                  <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Input" label="{{ fd.label }}" type="{{ fd.type }}" multiline="{{ fd.multiline }}" placeholder="{{ fd.ph }}" value="{{ fd.value }}" onChange="{{ fd.onInput }}" error="{{ fd.err }}" hint="{{ fd.hint }}" hint-size="100%,96px"></x-import>
+                </sc-if>
+
+                <sc-if value="{{ fd.isSelect }}" hint-placeholder-val="{{ false }}">
+                  <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Select" label="{{ fd.label }}" options="{{ fd.options }}" value="{{ fd.value }}" onChange="{{ fd.onInput }}" placeholder="Choose…" hint-size="100%,72px"></x-import>
+                </sc-if>
+
+                <sc-if value="{{ fd.isSwitch }}" hint-placeholder-val="{{ false }}">
+                  <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Switch" label="{{ fd.label }}" checked="{{ fd.checked }}" onChange="{{ fd.onSwitch }}" hint-size="200px,28px"></x-import>
+                </sc-if>
+
+                <sc-if value="{{ fd.isMeta }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-secondary)">{{ fd.label }}</span>
+                  <span style="font-family:var(--font-mono);font-size:13px">{{ fd.value }}</span>
+                </sc-if>
+
+                <sc-if value="{{ fd.isImage }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-secondary)">{{ fd.label }}</span>
+                  <sc-if value="{{ fd.hasImg }}" hint-placeholder-val="{{ false }}">
+                    <div role="img" aria-label="{{ fd.label }} preview" style="position:relative;width:100%;max-height:420px;aspect-ratio:{{ fd.aspect }};box-sizing:border-box;background-color:var(--surface-sunken);background-image:{{ fd.bgImg }};background-size:{{ fd.fit }};background-position:center;background-repeat:no-repeat;border:1px solid var(--border-strong)">
+                      <div style="position:absolute;right:12px;bottom:12px;display:flex;gap:8px">
+                        <label style="position:relative;display:inline-flex;align-items:center;height:44px;padding:0 18px;background:var(--paper-100);color:var(--ink-900);border:1px solid var(--ink-900);cursor:pointer;font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase" style-hover="background:var(--ink-900);color:var(--paper-100)">Replace<input type="file" accept="{{ fd.accept }}" onChange="{{ fd.pick }}" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%"></label>
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="primary" onClick="{{ fd.remove }}" hint-size="90px,44px">Remove</x-import>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ fd.noImg }}" hint-placeholder-val="{{ true }}">
+                    <label onDragOver="{{ fd.over }}" onDragLeave="{{ fd.leave }}" onDrop="{{ fd.drop }}" style="position:relative;display:block;cursor:pointer">
+                      <input type="file" accept="{{ fd.accept }}" onChange="{{ fd.pick }}" style="position:absolute;width:1px;height:1px;opacity:0">
+                      <div data-zone-face="" style="min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;box-sizing:border-box;text-align:center;border:1px dashed {{ fd.line }};background:{{ fd.zoneBg }}">
+                        <span style="font-family:var(--font-display);font-size:44px;line-height:var(--lh-display)">{{ fd.icon }}</span>
+                        <span style="font-weight:800;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase">{{ fd.prompt }}</span>
+                        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:var(--tracking-micro);text-transform:uppercase;color:var(--text-muted)">{{ fd.rules }}</span>
+                      </div>
+                    </label>
+                  </sc-if>
+                </sc-if>
+
+                <sc-if value="{{ fd.isPairs }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--border-strong)">
+                    <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-secondary)">{{ fd.label }} · {{ fd.countText }}</span>
+                    <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" size="sm" onClick="{{ fd.add }}" disabled="{{ fd.full }}" hint-size="100px,32px">{{ fd.addLabel }}</x-import>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <sc-for list="{{ fd.rows }}" as="p" hint-placeholder-count="3">
+                      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) 44px;gap:12px;align-items:start">
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Input" placeholder="{{ p.kPh }}" value="{{ p.k }}" onChange="{{ p.onK }}" error="{{ p.kErr }}" hint-size="100%,44px"></x-import>
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Input" placeholder="{{ p.vPh }}" value="{{ p.v }}" onChange="{{ p.onV }}" error="{{ p.vErr }}" hint-size="100%,44px"></x-import>
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="✕" label="{{ p.rmLabel }}" variant="ghost" onClick="{{ p.remove }}" hint-size="44px,44px"></x-import>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ fd.isLines }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--border-strong)">
+                    <span style="font-weight:700;font-size:var(--fs-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-secondary)">{{ fd.label }} · {{ fd.countText }}</span>
+                    <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" size="sm" onClick="{{ fd.add }}" disabled="{{ fd.full }}" hint-size="100px,32px">{{ fd.addLabel }}</x-import>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <sc-for list="{{ fd.rows }}" as="p" hint-placeholder-count="3">
+                      <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 44px;gap:8px;align-items:start">
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Input" placeholder="{{ p.ph }}" value="{{ p.v }}" onChange="{{ p.onV }}" error="{{ p.err }}" hint-size="100%,44px"></x-import>
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="↑" label="{{ p.upLabel }}" variant="ghost" disabled="{{ p.first }}" onClick="{{ p.up }}" hint-size="44px,44px"></x-import>
+                        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.IconButton" icon="✕" label="{{ p.rmLabel }}" variant="ghost" onClick="{{ p.remove }}" hint-size="44px,44px"></x-import>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ fd.showErr }}" hint-placeholder-val="{{ false }}">
+                  <span role="alert" style="font-size:var(--fs-body-s);color:var(--danger)">{{ fd.err }}</span>
+                </sc-if>
+                <sc-if value="{{ fd.showHint }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:var(--fs-body-s);color:var(--text-muted);line-height:1.45">{{ fd.hint }}</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px clamp(20px,4vw,32px);border-top:1px solid var(--border-strong);background:var(--surface-raised)">
+          <span role="status" style="font-size:var(--fs-body-s);color:var(--danger)">{{ formErrText }}</span>
+          <div style="display:flex;gap:12px;margin-left:auto">
+            <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" onClick="{{ closeForm }}" hint-size="100px,44px">Cancel</x-import>
+            <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" type="submit" variant="primary" icon-right="→" hint-size="140px,44px">{{ formSubmitLabel }}</x-import>
+          </div>
+        </div>
+      </form>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ confirmOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:120">
+      <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Dialog" title="{{ cf.title }}" onClose="{{ cf.cancel }}" hint-size="100%,100%">
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <p style="margin:0">{{ cf.body }}</p>
+          <div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px">
+            <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="outline" onClick="{{ cf.cancel }}" hint-size="100px,44px">{{ cf.cancelLabel }}</x-import>
+            <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Button" variant="accent" onClick="{{ cf.ok }}" hint-size="100px,44px">{{ cf.okLabel }}</x-import>
+          </div>
+        </div>
+      </x-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;z-index:140;left:16px;right:16px;bottom:{{ toastBottom }};display:flex;justify-content:center;pointer-events:none">
+      <div style="pointer-events:auto">
+        <x-import component-from-global-scope="MTVNADesignSystem_fbc627.Toast" title="{{ t.title }}" message="{{ t.message }}" tone="{{ t.tone }}" action="{{ t.action }}" onAction="{{ t.onAction }}" onClose="{{ closeToast }}" hint-size="320px,56px"></x-import>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const YEAR = new Date().getFullYear();
+const uid = (p) => p + Math.random().toString(36).slice(2, 9);
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const pad = (n) => String(n).padStart(2, '0');
+const inr = (n) => '₹' + Number(n).toLocaleString('en-IN');
+const when = (iso) => iso ? new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+const RE = { email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, url: /^https?:\/\/[^\s.]+\.[^\s]{2,}$/i, phone: /^\+?[\d\s()-]{8,18}$/ };
+const GROUPS = ['Leadership', 'Chassis', 'Powertrain', 'Suspension', 'Brakes', 'Electrical', 'Manufacturing', 'Business & Marketing'];
+const SHAPES = [{ value: '4/5', label: 'Portrait 4:5' }, { value: '4/3', label: 'Landscape 4:3' }, { value: '3/2', label: 'Wide 3:2' }, { value: '1/1', label: 'Square 1:1' }];
+const KINDS = ['Email', 'Phone', 'WhatsApp', 'Address', 'Instagram', 'LinkedIn', 'YouTube', 'Website'];
+const LINK_KINDS = ['Instagram', 'LinkedIn', 'YouTube', 'Website'];
+const DEFAULT_SPECS = ['Engine', 'Transmission', 'Suspension', 'Brakes', 'Chassis', 'Weight', 'Top speed'];
+const badge = (text, tone) => text ? { text, tone: tone || 'ink' } : null;
+
+const SECTIONS = [
+  { key: 'overview', label: 'Overview', special: 'overview', desc: 'A quick look at everything on the site, what changed and what still needs attention.' },
+  { key: 'stats', label: 'Stats', one: 'stat', reorder: true, preview: 'stat',
+    desc: 'The numbers under “Who we are” on the home page. Order here is the order on the site.',
+    fields: [
+      { k: 'n', label: 'Number', type: 'number', req: true, int: true, min: 0, max: 99999, half: true, ph: '18', hint: 'Whole number, 0 to 99,999' },
+      { k: 'suffix', label: 'Suffix', type: 'text', max: 3, half: true, ph: '+', hint: 'Optional, e.g. + or k', check: (s) => /\d/.test(s) ? 'Put digits in the number field.' : '' },
+      { k: 'label', label: 'Label', type: 'text', req: true, min: 3, max: 24, unique: true, counter: true, ph: 'Years active' },
+    ],
+    row: (it) => ({ big: String(it.n), bigAccent: it.suffix, title: it.label, small: true }) },
+  { key: 'cars', label: 'Cars', one: 'car', reorder: true,
+    desc: 'Cars in the “Our cars” section, left to right. Each needs a photo, a short description and its spec sheet.',
+    thumb: { w: '144px', aspect: '16/10', fit: 'cover' },
+    fields: [
+      { k: 'photo', label: 'Photo', type: 'image', req: true, aspect: '16/10', fit: 'contain', minW: 600 },
+      { k: 'name', label: 'Name', type: 'text', req: true, max: 40, unique: true, ph: 'GR-27 Name' },
+      { k: 'code', label: 'Code', type: 'text', req: true, half: true, pattern: /^\d{2}$/, patternMsg: 'Exactly two digits, e.g. 27.', unique: true, uniqueMsg: (s) => 'GR-' + s + ' is already taken.', ph: '27', hint: 'Two digits, shown as GR-27' },
+      { k: 'season', label: 'Season', type: 'number', req: true, int: true, min: 2008, max: YEAR + 2, half: true, ph: String(YEAR), hint: 'Year it raced', def: String(YEAR) },
+      { k: 'current', label: 'Current car', type: 'switch', exclusive: true, hint: 'Gets the red “Current car” tag on the site. Only one car can have it.' },
+      { k: 'desc', label: 'Description', type: 'textarea', req: true, min: 20, max: 280, counter: true, ph: 'What made this car different?' },
+      { k: 'specs', label: 'Specs', type: 'pairs', min: 1, max: 12, kPh: 'Spec, e.g. Weight', vPh: 'Value, e.g. 158 kg', addLabel: 'Add spec', hint: 'The site shows the first 6 on phones and up to 10 on larger screens.', def: () => DEFAULT_SPECS.map((k) => ({ k, v: '' })) },
+    ],
+    row: (it) => ({ title: it.name, sub: 'Season ' + it.season + ' · ' + (it.specs || []).length + ' specs', badges: [badge('GR-' + it.code), it.current && badge('Current car', 'red'), !it.photo && badge('Needs photo', 'warning')] }) },
+  { key: 'achievements', label: 'Achievements', one: 'achievement', reorder: true, filter: 'category',
+    desc: 'Milestones, results and awards in the Achievements section. Shown in this order.',
+    fields: [
+      { k: 'year', label: 'Year', type: 'number', req: true, int: true, min: 2008, max: YEAR + 1, half: true, ph: String(YEAR), def: String(YEAR) },
+      { k: 'category', label: 'Type', type: 'select', req: true, half: true, options: ['Milestone', 'Podium', 'Event win', 'Result', 'Award'], def: 'Milestone' },
+      { k: 'title', label: 'Title', type: 'text', req: true, max: 48, counter: true, ph: 'Endurance champions' },
+      { k: 'event', label: 'Event', type: 'text', max: 48, ph: 'MEGA ATV', hint: 'Optional. Competition or organiser.' },
+      { k: 'detail', label: 'Detail', type: 'textarea', max: 120, counter: true, ph: 'P1 at MEGA ATV, zero DNFs.', hint: 'Optional. One line under the title.' },
+    ],
+    row: (it) => ({ big: String(it.year), title: it.title, sub: [it.category, it.event].filter(Boolean).join(' · '), sub2: it.detail,
+      badges: [['Podium', 'Event win'].includes(it.category) && badge(it.category, 'red')] }) },
+  { key: 'journey', label: 'Journey', one: 'chapter', reorder: true,
+    desc: 'Chapters in the “Our journey” timeline on the home page, top to bottom. Each one gets a year, a title and a short story.',
+    thumb: { w: '112px', aspect: '16/10', fit: 'cover' },
+    fields: [
+      { k: 'photo', label: 'Photo', type: 'image', aspect: '16/10', fit: 'cover', minW: 800, hint: 'Optional. Shown at the top of the chapter card.' },
+      { k: 'title', label: 'Title', type: 'text', req: true, max: 40, unique: true, ph: 'The First Build' },
+      { k: 'date', label: 'Date', type: 'text', req: true, max: 24, half: true, ph: '2009 or 2014 – 2019', hint: 'Shown above the title' },
+      { k: 'year', label: 'Big year', type: 'number', req: true, int: true, min: 2000, max: YEAR + 5, half: true, ph: String(YEAR), def: String(YEAR), hint: 'Large outlined year beside the card' },
+      { k: 'story', label: 'Story', type: 'textarea', req: true, min: 40, max: 420, counter: true, ph: 'Tell it like you would at the workshop.' },
+    ],
+    row: (it) => ({ big: String(it.year), title: it.title, sub: it.date, sub2: it.story, badges: [!it.photo && badge('Needs photo', 'warning')] }) },
+  { key: 'gallery', label: 'Gallery', one: 'photo', reorder: true, filter: 'category',
+    desc: 'Photos in “Paddock diaries”. Type drives the filter tabs on the site; shape sets each tile’s proportions.',
+    thumb: { w: '112px', fit: 'cover' },
+    fields: [
+      { k: 'photo', label: 'Photo', type: 'image', req: true, aspectFrom: 'shape', fit: 'cover', minW: 800 },
+      { k: 'caption', label: 'Caption', type: 'text', req: true, max: 60, counter: true, ph: 'Endurance start, MEGA ATV 2025' },
+      { k: 'category', label: 'Type', type: 'select', req: true, half: true, options: ['Race day', 'Workshop', 'Team', 'Testing'], def: 'Race day' },
+      { k: 'shape', label: 'Tile shape', type: 'select', req: true, half: true, options: SHAPES, def: '4/3' },
+      { k: 'alt', label: 'Alt text', type: 'text', max: 140, ph: 'Car leaping a dirt mound, dust behind', hint: 'Describe the photo for screen readers. Falls back to the caption.' },
+    ],
+    row: (it) => ({ title: it.caption, sub: [it.category, (SHAPES.find((s) => s.value === it.shape) || {}).label].filter(Boolean).join(' · '), thumbAspect: it.shape, badges: [!it.photo && badge('Needs photo', 'warning')] }) },
+  { key: 'team', label: 'Team Members', one: 'member', reorder: true, filter: 'group',
+    desc: 'Leadership cards and sub-team rosters. Leadership members get portrait cards; everyone else is listed under their sub-team.',
+    thumb: { w: '64px', aspect: '4/5', fit: 'cover' },
+    fields: [
+      { k: 'photo', label: 'Portrait', type: 'image', aspect: '4/5', fit: 'cover', minW: 400, hint: 'Optional. Used on leadership cards.' },
+      { k: 'name', label: 'Name', type: 'text', req: true, max: 40, ph: 'Full name' },
+      { k: 'role', label: 'Role', type: 'text', req: true, max: 40, half: true, ph: 'Chassis lead' },
+      { k: 'group', label: 'Sub-team', type: 'select', req: true, half: true, options: GROUPS, def: 'Chassis' },
+      { k: 'bio', label: 'Short bio', type: 'textarea', max: 140, counter: true, ph: 'Driver and overall vehicle integration.', hint: 'Optional. Shown on leadership cards.' },
+      { k: 'linkedin', label: 'LinkedIn', type: 'url', ph: 'https://linkedin.com/in/…', hint: 'Optional.' },
+    ],
+    row: (it) => ({ title: it.name, sub: it.role + ' · ' + it.group, badges: [it.group === 'Leadership' && badge('Leadership', 'red')] }) },
+  { key: 'sponsors', label: 'Sponsors', one: 'sponsor', reorder: true, filter: 'tier',
+    desc: 'Partner logos, grouped by tier on the site. Turn off “Show on site” to hide a logo without deleting it.',
+    thumb: { w: '144px', aspect: '16/10', fit: 'contain' },
+    fields: [
+      { k: 'logo', label: 'Logo', type: 'image', req: true, aspect: '16/10', fit: 'contain', minW: 200, svg: true },
+      { k: 'name', label: 'Company', type: 'text', req: true, max: 40, unique: true, ph: 'Company name' },
+      { k: 'tier', label: 'Tier', type: 'select', req: true, half: true, options: ['Title', 'Gold', 'Silver', 'Bronze', 'In-kind'], def: 'Bronze' },
+      { k: 'since', label: 'Partner since', type: 'number', int: true, min: 2008, max: YEAR + 1, half: true, ph: String(YEAR), hint: 'Optional. Year' },
+      { k: 'url', label: 'Website', type: 'url', ph: 'https://…', hint: 'Optional. The logo links here.' },
+      { k: 'active', label: 'Show on site', type: 'switch', def: true },
+    ],
+    row: (it) => ({ title: it.name, sub: [it.tier, it.since && 'since ' + it.since].filter(Boolean).join(' · '), thumbKey: 'logo', badges: [badge(it.tier, it.tier === 'Title' ? 'red' : 'ink'), !it.active && badge('Hidden', 'warning')] }) },
+  { key: 'fundraising', label: 'Fundraising', one: 'package', reorder: true,
+    desc: 'Sponsorship packages in “Invest in us”, left to right. The enquiry form’s interest list uses these names.',
+    fields: [
+      { k: 'name', label: 'Package name', type: 'text', req: true, max: 24, unique: true, ph: 'Gold' },
+      { k: 'price', label: 'Price (₹)', type: 'number', req: true, int: true, min: 1000, max: 100000000, half: true, ph: '200000', hint: 'Rupees, digits only' },
+      { k: 'plus', label: 'Show as “and up”', type: 'switch', half: true, hint: 'Adds a + after the price, e.g. ₹5,00,000+' },
+      { k: 'featured', label: 'Most popular', type: 'switch', exclusive: true, hint: 'Highlights this package in black. Only one can have it.' },
+      { k: 'perks', label: 'Perks', type: 'lines', min: 1, max: 8, maxLen: 60, ph: 'Logo on car side panel', addLabel: 'Add perk' },
+    ],
+    row: (it) => ({ title: it.name, sub: inr(it.price) + (it.plus ? '+' : '') + ' · ' + (it.perks || []).length + ' perks', sub2: (it.perks || []).join(' · '), badges: [it.featured && badge('Most popular', 'red')] }) },
+  { key: 'contact', label: 'Contact', one: 'contact detail', many: 'contact details', reorder: true,
+    desc: 'Email, phone, address and social links in the footer. The primary entry is shown large.',
+    fields: [
+      { k: 'kind', label: 'Type', type: 'select', req: true, half: true, options: KINDS, def: 'Email' },
+      { k: 'label', label: 'Label', type: 'text', max: 32, half: true, ph: 'Team email', hint: 'Optional. Defaults to the type.' },
+      { k: 'value', label: 'Value', type: 'text', req: true, max: 200, ph: (v) => ({ Email: 'team@galactusracing.in', Phone: '+91 98765 43210', WhatsApp: '+91 98765 43210', Address: 'Workshop address' }[v.kind] || 'https://…') },
+      { k: 'primary', label: 'Primary', type: 'switch', exclusive: true, hint: 'Shown large in the footer. Only one entry can be primary.' },
+    ],
+    check: (v) => {
+      const s = (v.value || '').trim(), k = v.kind;
+      if (!s) return {};
+      if (k === 'Email' && !RE.email.test(s)) return { value: 'Enter a valid email address.' };
+      if ((k === 'Phone' || k === 'WhatsApp') && !RE.phone.test(s)) return { value: 'Use digits with country code, e.g. +91 98765 43210.' };
+      if (LINK_KINDS.includes(k) && !RE.url.test(s)) return { value: 'Enter a full link starting with https://' };
+      if (k === 'Address' && s.length < 10) return { value: 'Enter the full address.' };
+      return {};
+    },
+    row: (it) => ({ title: it.value || 'Not set', small: true, sub: it.kind + (it.label ? ' · ' + it.label : ''), badges: [it.primary && badge('Primary', 'red'), !it.value && badge('Missing', 'warning')] }) },
+  { key: 'enquiries', label: 'Messages', one: 'message', reorder: false, filter: 'status', addLabel: 'Log message', editLabel: 'Open',
+    desc: 'Messages from the site’s enquiry form, newest first. Track who you’ve replied to and keep internal notes.',
+    sort: (a, b) => String(b.receivedAt).localeCompare(String(a.receivedAt)),
+    link: (v) => v.email && RE.email.test(v.email) ? { href: 'mailto:' + v.email + '?subject=' + encodeURIComponent('Re: your enquiry to Galactus Racing'), label: 'Reply by email' } : null,
+    fields: [
+      { k: 'receivedAt', label: 'Received', type: 'meta', fmt: when, def: () => new Date().toISOString() },
+      { k: 'status', label: 'Status', type: 'select', req: true, half: true, options: ['New', 'Replied', 'Archived'], def: 'New' },
+      { k: 'interest', label: 'Interested in', type: 'select', half: true, options: (data) => [...(data.fundraising || []).map((p) => p.name), 'In-kind (parts / services)', 'Individual donation', 'Other'] },
+      { k: 'name', label: 'Name', type: 'text', req: true, max: 60, half: true, ph: 'Full name' },
+      { k: 'company', label: 'Company', type: 'text', max: 60, half: true, ph: 'Optional' },
+      { k: 'email', label: 'Email', type: 'email', req: true, half: true, ph: 'name@company.com' },
+      { k: 'phone', label: 'Phone', type: 'text', half: true, ph: '+91 98765 43210', check: (s) => RE.phone.test(s) ? '' : 'Use digits with country code.' },
+      { k: 'message', label: 'Message', type: 'textarea', req: true, min: 10, max: 2000, counter: true },
+      { k: 'notes', label: 'Internal notes', type: 'textarea', max: 1000, hint: 'Only visible here. Never sent to the person.' },
+    ],
+    row: (it) => ({ title: it.name, sub: [it.company, it.interest, when(it.receivedAt)].filter(Boolean).join(' · '), sub2: it.message,
+      badges: [badge(it.status, { New: 'red', Replied: 'success', Archived: 'ink' }[it.status])] }) },
+  { key: 'settings', label: 'Settings', one: 'setting', single: true,
+    desc: 'Site-wide values: name, tagline, fundraising totals, recruitment and the admin username.',
+    fields: [
+      { k: 'siteTitle', label: 'Site name', type: 'text', req: true, max: 40, ph: 'Galactus Racing' },
+      { k: 'tagline', label: 'Tagline', type: 'text', req: true, max: 40, ph: 'Freedom for failure.' },
+      { k: 'seasonGoal', label: 'Season goal (₹)', type: 'number', req: true, int: true, min: 0, max: 100000000, half: true, ph: '1200000' },
+      { k: 'raised', label: 'Raised so far (₹)', type: 'number', req: true, int: true, min: 0, max: 100000000, half: true, ph: '780000' },
+      { k: 'recruiting', label: 'Recruitment open', type: 'switch', hint: 'Shows the “Apply to join” block on the Team page.' },
+      { k: 'applyUrl', label: 'Application link', type: 'url', ph: 'https://forms.gle/…', hint: 'Optional. Where “Apply to join” goes.' },
+      { k: 'adminUser', label: 'Admin username', type: 'text', req: true, min: 3, max: 24, pattern: /^[a-z0-9._-]+$/i, patternMsg: 'Letters, numbers, dots and dashes only.', hint: 'Demo only. Real accounts come with the backend.' },
+    ],
+    row: () => ({ title: 'Site settings' }) },
+];
+const KEYS = SECTIONS.filter((s) => !s.special).map((s) => s.key);
+const SEC = Object.fromEntries(SECTIONS.map((s) => [s.key, s]));
+const plural = (s, n) => n === 1 ? s.one : (s.many || s.one + 's');
+const optVals = (o) => o.map((x) => typeof x === 'string' ? x : x.value);
+const emptyData = () => Object.fromEntries(KEYS.map((k) => [k, []]));
+const emptySaved = () => Object.fromEntries(KEYS.map((k) => [k, '[]']));
+
+class Component extends DCLogic {
+  state = { w: innerWidth, authed: false, user: '', userErr: '', pw: '', pwErr: '', busy: false, section: 'overview', navOpen: false,
+    data: emptyData(), saved: emptySaved(), savedAt: {}, loading: true, saving: false, filters: {},
+    form: null, imgErr: {}, zoneHot: null, confirm: null, toast: null, drag: null, over: null };
+
+  componentDidMount() {
+    this.onResize = () => this.setState({ w: innerWidth });
+    this.onUnload = (e) => { if (this.anyDirty() || this.formDirty()) { e.preventDefault(); e.returnValue = ''; } };
+    this.onKey = (e) => {
+      if (e.key === 'Escape') {
+        if (this.state.confirm) return this.setState({ confirm: null });
+        if (this.state.form) return this.closeForm();
+        if (this.state.navOpen) return this.setState({ navOpen: false });
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && this.state.authed) {
+        e.preventDefault();
+        if (this.state.form) this.applyForm(); else this.save();
+      }
+    };
+    addEventListener('resize', this.onResize);
+    addEventListener('beforeunload', this.onUnload);
+    addEventListener('keydown', this.onKey);
+    const wait = () => window.GalactusAPI ? this.boot() : setTimeout(wait, 30);
+    wait();
+  }
+  componentWillUnmount() {
+    removeEventListener('resize', this.onResize);
+    removeEventListener('beforeunload', this.onUnload);
+    removeEventListener('keydown', this.onKey);
+    clearTimeout(this.toastTimer);
+  }
+  get api() { return window.GalactusAPI; }
+  boot() { if (this.api.session()) { this.setState({ authed: true }); this.loadAll(); } }
+
+  async login(e) {
+    e && e.preventDefault();
+    const u = this.state.user.trim();
+    if (!u || !this.state.pw) return this.setState({ userErr: u ? '' : 'Enter your username.', pwErr: this.state.pw ? '' : 'Enter the password.' });
+    this.setState({ busy: true, pwErr: '', userErr: '' });
+    try { await this.api.login(u, this.state.pw); this.setState({ authed: true, busy: false, pw: '', section: 'overview' }); this.loadAll(); }
+    catch (err) { this.setState({ busy: false, pwErr: err.message }); }
+  }
+  logout() {
+    const go = () => { this.api.logout(); this.setState({ authed: false, confirm: null, form: null, navOpen: false, data: emptyData(), saved: emptySaved(), loading: true }); };
+    if (this.anyDirty()) this.ask({ title: 'Sign out?', body: 'You have unsaved changes in ' + this.dirtyList().join(', ') + '. Signing out discards them.', okLabel: 'Sign out', run: go });
+    else go();
+  }
+  expired(err) { if (err.status === 401) { this.api.logout(); this.setState({ authed: false, pwErr: err.message, form: null, confirm: null }); return true; } return false; }
+  async loadAll() {
+    this.setState({ loading: true });
+    try {
+      const res = await Promise.all(KEYS.map((t) => this.api.list(t)));
+      const data = {}, saved = {}, savedAt = {};
+      KEYS.forEach((t, i) => { data[t] = res[i].items || []; saved[t] = JSON.stringify(data[t]); savedAt[t] = res[i].savedAt; });
+      this.setState({ data, saved, savedAt, loading: false });
+    } catch (err) {
+      this.setState({ loading: false });
+      if (!this.expired(err)) this.toast('Could not load', err.message, 'red');
+    }
+  }
+  async save() {
+    const t = this.state.section;
+    if (this.state.saving || !this.isDirty(t)) return;
+    this.setState({ saving: true });
+    try {
+      const r = await this.api.save(t, this.state.data[t]);
+      this.setState((s) => ({ saving: false, saved: { ...s.saved, [t]: JSON.stringify(r.items) }, savedAt: { ...s.savedAt, [t]: r.savedAt } }));
+      this.toast('Saved', SEC[t].label + ' is up to date on the site.');
+    } catch (err) {
+      this.setState({ saving: false });
+      if (!this.expired(err)) this.toast('Save failed', err.message, 'red');
+    }
+  }
+  discard() {
+    const t = this.state.section;
+    this.ask({ title: 'Discard changes?', body: 'All unsaved edits to ' + SEC[t].label + ' go back to the last saved version.', okLabel: 'Discard',
+      run: () => this.setState((s) => ({ data: { ...s.data, [t]: JSON.parse(s.saved[t]) }, confirm: null })) });
+  }
+
+  isDirty(t) { return KEYS.includes(t) && JSON.stringify(this.state.data[t]) !== this.state.saved[t]; }
+  dirtyList() { return KEYS.filter((t) => this.isDirty(t)).map((t) => SEC[t].label); }
+  anyDirty() { return this.dirtyList().length > 0; }
+  formDirty() { const f = this.state.form; return !!f && JSON.stringify(f.values) !== f.initial; }
+  setList(t, list) { this.setState((s) => ({ data: { ...s.data, [t]: list } })); }
+  move(t, i, j) {
+    const list = [...this.state.data[t]];
+    if (j < 0 || j >= list.length || i === j) return;
+    const [it] = list.splice(i, 1); list.splice(j, 0, it);
+    this.setList(t, list);
+  }
+  ask(c) { this.setState({ confirm: c }); }
+  toast(title, message, tone, action, onAction) {
+    clearTimeout(this.toastTimer);
+    this.setState({ toast: { title, message, tone: tone || 'ink', action, onAction } });
+    this.toastTimer = setTimeout(() => this.setState({ toast: null }), action ? 6000 : 3500);
+  }
+  goSection(k) { this.setState({ section: k, navOpen: false, drag: null, over: null }); scrollTo(0, 0); }
+  itemName(t, it) { return SEC[t].row(it).title || SEC[t].one; }
+  visibleIdx(t) {
+    const sec = SEC[t], list = this.state.data[t] || [], f = this.state.filters[t] || 'all';
+    let idx = list.map((_, i) => i);
+    if (sec.filter && f !== 'all') idx = idx.filter((i) => list[i][sec.filter] === f);
+    if (sec.sort) idx.sort((a, b) => sec.sort(list[a], list[b]));
+    return idx;
+  }
+
+  blank(sec) {
+    const v = { id: uid(sec.key[0]) };
+    sec.fields.forEach((fd) => {
+      const d = typeof fd.def === 'function' ? fd.def() : fd.def;
+      v[fd.k] = d !== undefined ? d : fd.type === 'switch' ? false : (fd.type === 'pairs' || fd.type === 'lines') ? [] : '';
+    });
+    const f = this.state.filters[sec.key];
+    if (sec.filter && f && f !== 'all') v[sec.filter] = f;
+    return v;
+  }
+  openForm(t, index) {
+    const sec = SEC[t], src = index >= 0 ? clone(this.state.data[t][index]) : this.blank(sec);
+    sec.fields.forEach((fd) => {
+      if (fd.type === 'number') src[fd.k] = src[fd.k] == null ? '' : String(src[fd.k]);
+      if (src[fd.k] === undefined) src[fd.k] = fd.type === 'switch' ? false : (fd.type === 'pairs' || fd.type === 'lines') ? [] : '';
+    });
+    this.setState({ form: { type: t, index, values: src, initial: JSON.stringify(src), touched: {}, submitted: false }, imgErr: {}, zoneHot: null });
+  }
+  closeForm() {
+    if (this.formDirty()) this.ask({ title: 'Discard edits?', body: 'You changed this ' + SEC[this.state.form.type].one + ' but haven’t applied it. Close anyway?', okLabel: 'Discard', cancelLabel: 'Keep editing', run: () => this.setState({ form: null, confirm: null }) });
+    else this.setState({ form: null });
+  }
+  setField(k, v, touchKey) {
+    this.setState((s) => s.form && ({ form: { ...s.form, values: { ...s.form.values, [k]: v }, touched: { ...s.form.touched, [touchKey || k]: true } } }));
+  }
+  validate(f) {
+    const sec = SEC[f.type], v = f.values, E = {}, others = this.state.data[f.type].filter((_, i) => i !== f.index);
+    sec.fields.forEach((fd) => {
+      const k = fd.k, val = v[k], name = fd.label.toLowerCase();
+      let m = '';
+      if (['text', 'textarea', 'email', 'url'].includes(fd.type)) {
+        const s = (val || '').trim();
+        if (!s) m = fd.req ? 'Enter ' + (fd.type === 'email' ? 'an email' : 'the ' + name) + '.' : '';
+        else if (fd.min && s.length < fd.min) m = 'At least ' + fd.min + ' characters (' + s.length + ' so far).';
+        else if (fd.max && s.length > fd.max) m = 'Max ' + fd.max + ' characters (' + s.length + ' now).';
+        else if (fd.type === 'email' && !RE.email.test(s)) m = 'Enter a valid email, e.g. name@company.com.';
+        else if (fd.type === 'url' && !RE.url.test(s)) m = 'Enter a full link starting with https://';
+        else if (fd.pattern && !fd.pattern.test(s)) m = fd.patternMsg;
+        else if (fd.unique && others.some((o) => String(o[k] || '').trim().toLowerCase() === s.toLowerCase())) m = fd.uniqueMsg ? fd.uniqueMsg(s) : 'Another ' + sec.one + ' already uses this.';
+        else if (fd.check) m = fd.check(s, v) || '';
+      } else if (fd.type === 'number') {
+        const s = String(val == null ? '' : val).trim();
+        if (!s) m = fd.req ? 'Enter the ' + name.replace(/ \(.*\)/, '') + '.' : '';
+        else if (!/^\d+$/.test(s)) m = 'Digits only, no commas or symbols.';
+        else if (fd.min != null && +s < fd.min || fd.max != null && +s > fd.max) m = 'Between ' + fd.min.toLocaleString('en-IN') + ' and ' + fd.max.toLocaleString('en-IN') + '.';
+      } else if (fd.type === 'select') {
+        if (fd.req && !val) m = 'Choose one.';
+      } else if (fd.type === 'image') {
+        if (fd.req && !val) m = 'Add an image.';
+      } else if (fd.type === 'pairs') {
+        const seen = {};
+        (val || []).forEach((r, i) => {
+          const a = r.k.trim(), b = r.v.trim();
+          if (!a) E[k + '.k.' + i] = 'Name it.'; else if (seen[a.toLowerCase()]) E[k + '.k.' + i] = 'Duplicate.';
+          if (!b) E[k + '.v.' + i] = 'Enter a value.';
+          seen[a.toLowerCase()] = true;
+        });
+        if ((val || []).length < (fd.min || 0)) m = 'Add at least ' + fd.min + '.';
+      } else if (fd.type === 'lines') {
+        (val || []).forEach((s, i) => {
+          if (!s.trim()) E[k + '.' + i] = 'Empty. Fill it in or remove it.';
+          else if (fd.maxLen && s.trim().length > fd.maxLen) E[k + '.' + i] = 'Max ' + fd.maxLen + ' characters.';
+        });
+        if ((val || []).length < (fd.min || 0)) m = 'Add at least ' + fd.min + '.';
+      }
+      if (m) E[k] = m;
+    });
+    if (sec.check) Object.assign(E, sec.check(v) || {});
+    Object.entries(this.state.imgErr || {}).forEach(([k, m]) => { if (m) E[k] = m; });
+    return E;
+  }
+  applyForm() {
+    const f = this.state.form;
+    if (!f) return;
+    const sec = SEC[f.type], E = this.validate(f);
+    if (Object.keys(E).length) return this.setState({ form: { ...f, submitted: true } });
+    const v = f.values, item = { ...v };
+    sec.fields.forEach((fd) => {
+      const val = v[fd.k];
+      if (fd.type === 'number') item[fd.k] = String(val).trim() === '' ? null : +val;
+      else if (['text', 'textarea', 'email', 'url'].includes(fd.type)) item[fd.k] = (val || '').trim();
+      else if (fd.type === 'pairs') item[fd.k] = val.map((r) => ({ k: r.k.trim(), v: r.v.trim() }));
+      else if (fd.type === 'lines') item[fd.k] = val.map((s) => s.trim());
+      else if (fd.type === 'switch') item[fd.k] = !!val;
+    });
+    let list = [...this.state.data[f.type]];
+    sec.fields.filter((fd) => fd.exclusive && item[fd.k]).forEach((fd) => { list = list.map((o) => ({ ...o, [fd.k]: false })); });
+    if (f.index >= 0) list[f.index] = item; else if (sec.sort) list.unshift(item); else list.push(item);
+    this.setState((s) => ({ data: { ...s.data, [f.type]: list }, form: null }));
+    this.toast(f.index >= 0 ? 'Updated' : 'Added', this.itemName(f.type, item) + ' · save to publish.');
+  }
+  remove(t, i) {
+    const list = this.state.data[t], name = this.itemName(t, list[i]);
+    this.ask({ title: 'Delete ' + SEC[t].one + '?', body: '“' + name + '” will be removed. Nothing changes on the site until you save.', okLabel: 'Delete',
+      run: () => {
+        this.setState((s) => ({ data: { ...s.data, [t]: list.filter((_, j) => j !== i) }, confirm: null }));
+        this.toast('Deleted', name, 'ink', 'Undo', () => { this.setList(t, list); this.setState({ toast: null }); });
+      } });
+  }
+  async takeFile(fd, file) {
+    if (!file) return;
+    const k = fd.k, fail = (m) => this.setState((s) => ({ imgErr: { ...s.imgErr, [k]: m }, form: s.form && { ...s.form, touched: { ...s.form.touched, [k]: true } } }));
+    this.setState((s) => ({ zoneHot: null, imgErr: { ...s.imgErr, [k]: '' } }));
+    try {
+      const types = fd.svg ? /^image\/(jpeg|png|webp|svg\+xml)$/ : /^image\/(jpeg|png|webp)$/;
+      if (!types.test(file.type)) throw new Error(fd.svg ? 'Use a PNG, SVG, JPG or WebP file.' : 'Use a JPG, PNG or WebP image.');
+      if (file.size > 10 * 1024 * 1024) throw new Error('That file is over 10 MB.');
+      if (file.type === 'image/svg+xml') {
+        if (file.size > 300 * 1024) throw new Error('SVG is over 300 KB. Export a simpler file.');
+        const url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('Could not read that file.')); r.readAsDataURL(file); });
+        return this.setField(k, url);
+      }
+      const src = URL.createObjectURL(file);
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Could not read that image.')); i.src = src; });
+      URL.revokeObjectURL(src);
+      if (img.naturalWidth < fd.minW) throw new Error('Image is ' + img.naturalWidth + ' px wide. Use at least ' + fd.minW + ' px.');
+      const max = 1600, sc = Math.min(1, max / img.naturalWidth), c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * sc); c.height = Math.round(img.naturalHeight * sc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      let out = c.toDataURL('image/webp', 0.82);
+      if (!out.startsWith('data:image/webp')) out = c.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.85);
+      this.setField(k, out);
+    } catch (err) { fail(err.message); }
+  }
+
+  fieldVals(F, E, mob) {
+    const sec = SEC[F.type], fv = F.values;
+    const vis = (k) => (F.submitted || F.touched[k]) ? (E[k] || '') : '';
+    return sec.fields.map((fd) => {
+      const k = fd.k, val = fv[k], t = fd.type, err = vis(k);
+      const isInput = ['text', 'textarea', 'number', 'email', 'url'].includes(t);
+      let hint = fd.hint || '';
+      if (fd.counter) hint = ((val || '').trim().length) + ' / ' + fd.max + (hint ? ' · ' + hint : '');
+      const o = { k, label: fd.label, flex: fd.half ? '1 1 220px' : '1 1 100%', err, hint,
+        isInput, isSelect: t === 'select', isSwitch: t === 'switch', isImage: t === 'image', isPairs: t === 'pairs', isLines: t === 'lines', isMeta: t === 'meta',
+        showErr: !isInput && !!err, showHint: !isInput && !!hint && !err };
+      const set = (v) => this.setField(k, v);
+      if (isInput) Object.assign(o, { type: t === 'textarea' ? 'text' : t, multiline: t === 'textarea', value: val == null ? '' : val,
+        ph: typeof fd.ph === 'function' ? fd.ph(fv) : (fd.ph || ''), onInput: (e) => set(e.target.value) });
+      if (t === 'select') {
+        const opts = typeof fd.options === 'function' ? fd.options(this.state.data) : fd.options;
+        const vals = optVals(opts);
+        Object.assign(o, { options: val && !vals.includes(val) ? [...opts, val] : opts, value: val || '', onInput: (e) => set(e.target.value) });
+      }
+      if (t === 'switch') Object.assign(o, { checked: !!val, onSwitch: (v) => set(v) });
+      if (t === 'meta') Object.assign(o, { value: fd.fmt ? fd.fmt(val) : String(val || '') });
+      if (t === 'image') {
+        const hot = this.state.zoneHot === k;
+        Object.assign(o, { hasImg: !!val, noImg: !val, bgImg: val ? 'url("' + val + '")' : 'none', aspect: fd.aspectFrom ? (fv[fd.aspectFrom] || '4/3') : fd.aspect, fit: fd.fit || 'cover',
+          accept: fd.svg ? 'image/png,image/svg+xml,image/jpeg,image/webp' : 'image/jpeg,image/png,image/webp',
+          rules: fd.svg ? 'PNG or SVG with transparent background works best · min ' + fd.minW + ' px wide' : 'JPG, PNG or WebP · up to 10 MB · min ' + fd.minW + ' px wide',
+          line: hot ? 'var(--accent)' : err ? 'var(--danger)' : 'var(--border-strong)', zoneBg: hot ? 'var(--paper-50)' : 'var(--surface-raised)',
+          icon: hot ? '↓' : '↑', prompt: hot ? 'Drop to upload' : mob ? 'Tap to choose a file' : 'Drop a file or click to browse',
+          pick: (e) => { this.takeFile(fd, e.target.files[0]); e.target.value = ''; },
+          over: (e) => { e.preventDefault(); if (this.state.zoneHot !== k) this.setState({ zoneHot: k }); },
+          leave: () => this.setState({ zoneHot: null }),
+          drop: (e) => { e.preventDefault(); this.takeFile(fd, e.dataTransfer.files[0]); },
+          remove: () => { set(''); this.setState((s) => ({ imgErr: { ...s.imgErr, [k]: '' } })); } });
+      }
+      if (t === 'pairs' || t === 'lines') {
+        const arr = val || [];
+        Object.assign(o, { countText: arr.length + ' / ' + fd.max, full: arr.length >= fd.max, addLabel: fd.addLabel || 'Add',
+          add: () => set([...arr, t === 'pairs' ? { k: '', v: '' } : '']) });
+        o.rows = arr.map((r, i) => {
+          const rm = () => set(arr.filter((_, j) => j !== i));
+          if (t === 'pairs') return { k: r.k, v: r.v, kPh: fd.kPh, vPh: fd.vPh, kErr: vis(k + '.k.' + i), vErr: vis(k + '.v.' + i), rmLabel: 'Remove ' + (r.k || 'row'),
+            onK: (e) => this.setField(k, arr.map((x, j) => j === i ? { ...x, k: e.target.value } : x), k + '.k.' + i),
+            onV: (e) => this.setField(k, arr.map((x, j) => j === i ? { ...x, v: e.target.value } : x), k + '.v.' + i), remove: rm };
+          return { v: r, ph: fd.ph, err: vis(k + '.' + i), first: i === 0, rmLabel: 'Remove ' + (r || 'line'), upLabel: 'Move up',
+            onV: (e) => this.setField(k, arr.map((x, j) => j === i ? e.target.value : x), k + '.' + i),
+            up: () => { const n = [...arr]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; set(n); }, remove: rm };
+        });
+      }
+      return o;
+    });
+  }
+
+  overview() {
+    const D = this.state.data, go = (k) => () => this.goSection(k), cnt = (k, f) => (D[k] || []).filter(f).length;
+    const msgs = (D.enquiries || []).map((m, i) => ({ m, i })).sort((a, b) => String(b.m.receivedAt).localeCompare(String(a.m.receivedAt)));
+    const nNew = cnt('enquiries', (m) => m.status === 'New');
+    const cards = [
+      { label: 'Team members', n: (D.team || []).length, note: cnt('team', (t) => !t.photo) + ' without a photo', k: 'team' },
+      { label: 'Gallery photos', n: (D.gallery || []).length, note: cnt('gallery', (g) => !g.photo) + ' still need an image', k: 'gallery' },
+      { label: 'Journey chapters', n: (D.journey || []).length, note: 'In the home-page timeline', k: 'journey' },
+      { label: 'New messages', n: nNew, note: (D.enquiries || []).length + ' in the inbox', k: 'enquiries', ink: true },
+      { label: 'Cars', n: (D.cars || []).length, note: cnt('cars', (c) => !c.photo) + ' without a photo', k: 'cars' },
+      { label: 'Sponsors', n: (D.sponsors || []).length, note: cnt('sponsors', (s) => !s.active) + ' hidden from the site', k: 'sponsors' },
+    ].map((c) => ({ ...c, go: go(c.k), bg: c.ink ? 'var(--surface-inverse)' : 'var(--surface-raised)', fg: c.ink ? 'var(--paper-100)' : 'var(--text-primary)' }));
+    const todo = [];
+    this.dirtyList().forEach((l) => { const k = SECTIONS.find((s) => s.label === l).key; todo.push({ text: 'Unsaved changes in ' + l, go: go(k), mark: 'var(--accent)' }); });
+    if (nNew) todo.push({ text: nNew + ' new message' + (nNew === 1 ? '' : 's') + ' to reply to', go: go('enquiries'), mark: 'var(--accent)' });
+    [['cars', 'car', 'photo'], ['gallery', 'gallery photo', 'photo'], ['journey', 'journey chapter', 'photo']].forEach(([k, n, f]) => { const c = cnt(k, (x) => !x[f]); if (c) todo.push({ text: c + ' ' + n + (c === 1 ? '' : 's') + ' without an image', go: go(k), mark: 'var(--warning)' }); });
+    const miss = cnt('contact', (c) => !c.value); if (miss) todo.push({ text: miss + ' contact detail' + (miss === 1 ? '' : 's') + ' missing', go: go('contact'), mark: 'var(--warning)' });
+    if (!(D.sponsors || []).length) todo.push({ text: 'No sponsor logos yet', go: go('sponsors'), mark: 'var(--warning)' });
+    return {
+      ovCards: cards, ovTodo: todo, ovClear: !todo.length, ovNoMsgs: !msgs.length, goMessages: go('enquiries'),
+      ovMsgs: msgs.slice(0, 5).map(({ m, i }) => ({ name: m.name, interest: m.interest || '—', when: when(m.receivedAt), status: m.status, tone: { New: 'red', Replied: 'success', Archived: 'ink' }[m.status] || 'ink',
+        open: () => { this.goSection('enquiries'); this.openForm('enquiries', i); } })),
+    };
+  }
+
+  renderVals() {
+    const S = this.state, mob = S.w < 900, sec = SEC[S.section], list = sec.special ? [] : (S.data[S.section] || []);
+    const idx = sec.special ? [] : this.visibleIdx(S.section), filt = S.filters[S.section] || 'all';
+    const reorder = !!sec.reorder;
+    const rows = sec.single ? [] : idx.map((i, j) => {
+      const it = list[i], r = sec.row(it), name = r.title || sec.one;
+      const th = sec.thumb, img = th ? it[r.thumbKey || 'photo'] : null;
+      const badges = (r.badges || []).filter(Boolean);
+      return { title: name, sub: r.sub || '', sub2: r.sub2 || '', hasSub: !!r.sub, hasSub2: !!r.sub2, big: r.big || '', bigAccent: r.bigAccent || '', hasBig: !!r.big,
+        titleBig: !r.small, titleSmall: !!r.small, badges, hasBadges: badges.length > 0,
+        hasThumb: !!th, noImg: !!th && !img, thumbBg: img ? 'url("' + img + '")' : 'none', thumbW: th ? th.w : '0', thumbAspect: r.thumbAspect || (th && th.aspect) || '1/1', thumbFit: th ? th.fit : 'cover',
+        first: j === 0, last: j === idx.length - 1,
+        border: S.over === i && S.drag !== null && S.drag !== i ? '2px solid var(--accent)' : j === 0 ? '0' : '1px solid var(--border-hairline)',
+        bg: S.drag === i ? 'var(--surface-sunken)' : 'transparent',
+        upLabel: 'Move ' + name + ' up', downLabel: 'Move ' + name + ' down', delLabel: 'Delete ' + name,
+        up: () => this.move(S.section, i, idx[j - 1]), down: () => this.move(S.section, i, idx[j + 1]),
+        edit: () => this.openForm(S.section, i), del: () => this.remove(S.section, i),
+        dragStart: (e) => { if (!reorder) return; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(i)); this.setState({ drag: i }); },
+        dragOver: (e) => { if (S.drag === null) return; e.preventDefault(); if (S.over !== i) this.setState({ over: i }); },
+        drop: (e) => { e.preventDefault(); if (S.drag !== null) this.move(S.section, S.drag, i); this.setState({ drag: null, over: null }); } };
+    });
+    let tabs = [];
+    if (sec.filter) {
+      const fd = sec.fields.find((x) => x.k === sec.filter);
+      tabs = [{ value: 'all', label: 'All', count: list.length }, ...optVals(fd.options).map((v) => ({ value: v, label: v, count: list.filter((it) => it[sec.filter] === v).length }))];
+    }
+
+    const F = S.form, E = F ? this.validate(F) : {}, fsec = F ? SEC[F.type] : null, fv = F ? F.values : {};
+    const errCount = F && F.submitted ? Object.keys(E).length : 0;
+    const link = F && fsec.link ? fsec.link(fv) : null;
+    const dirty = this.isDirty(S.section), others = this.dirtyList().filter((l) => l !== sec.label);
+    const cf = S.confirm, newCount = (S.data.enquiries || []).filter((e) => e.status === 'New').length;
+    const n = list.length, nIdx = SECTIONS.indexOf(sec) + 1;
+
+    return {
+      isLogin: !S.authed, isApp: S.authed, isMob: mob, fullW: { width: '100%', justifyContent: 'space-between' },
+      pw: S.pw, pwErr: S.pwErr, busy: S.busy, loginLabel: S.busy ? 'Checking…' : 'Enter',
+      user: S.user, userErr: S.userErr, onUser: (e) => this.setState({ user: e.target.value, userErr: '' }),
+      onPw: (e) => this.setState({ pw: e.target.value, pwErr: '' }), onLogin: (e) => this.login(e),
+
+      showSide: !mob || S.navOpen, sidePos: mob ? 'fixed' : 'sticky', navScrim: mob && S.navOpen,
+      openNav: () => this.setState({ navOpen: true }), closeNav: () => this.setState({ navOpen: false }), logout: () => this.logout(),
+      nav: SECTIONS.map((s, i) => {
+        const on = s.key === S.section, d = this.isDirty(s.key), nw = s.key === 'enquiries' && newCount > 0;
+        return { label: s.label, num: pad(i + 1), current: on ? 'page' : undefined, bg: on ? 'var(--ink-800)' : 'transparent', mark: on ? 'var(--accent)' : 'transparent',
+          hasTag: d || nw, tag: d ? 'Unsaved' : newCount + ' new', tagColor: d ? 'var(--red-400)' : 'var(--paper-100)', go: () => this.goSection(s.key) };
+      }),
+
+      screenLabel: pad(nIdx) + ' ' + sec.label, sectionNum: 'S' + pad(nIdx), sectionLabel: sec.label, sectionDesc: sec.desc,
+      countText: S.loading ? '…' : sec.special ? 'Dashboard' : sec.single ? 'Site-wide' : n + ' ' + plural(sec, n),
+      showAdd: !sec.special && !sec.single, isOverview: !!sec.special && !S.loading, isSingle: !!sec.single && !S.loading,
+      ...(sec.special && !S.loading ? this.overview() : { ovCards: [], ovTodo: [], ovMsgs: [] }),
+      singleRows: sec.single ? sec.fields.map((fd) => { const v = (list[0] || {})[fd.k]; return { label: fd.label, value: fd.type === 'switch' ? (v ? 'Yes' : 'No') : fd.type === 'number' && v != null && v !== '' ? (fd.label.includes('₹') ? inr(v) : String(v)) : (v || '—') }; }) : [],
+      editSingle: () => this.openForm(S.section, list.length ? 0 : -1), addLabel: sec.addLabel || 'Add ' + sec.one, editLabel: sec.editLabel || 'Edit',
+      onAdd: () => this.openForm(S.section, -1),
+      hasTabs: !!sec.filter && !S.loading, tabs, tabValue: filt, setTab: (v) => this.setState((s) => ({ filters: { ...s.filters, [S.section]: v } })),
+      savedText: sec.special ? 'Signed in as ' + (this.api && this.api.session() ? 'admin' : '') : S.savedAt[S.section] ? 'Last saved ' + when(S.savedAt[S.section]) : 'Never saved · showing the site’s current content',
+      orderTip: sec.special ? 'Click a card to jump to its section' : sec.single ? '' : !reorder ? 'Newest first' : mob ? 'Use ↑ ↓ to reorder' : 'Drag rows or use ↑ ↓ to reorder',
+      loading: S.loading, isEmpty: !S.loading && !sec.special && !sec.single && !rows.length, hasRows: !S.loading && rows.length > 0,
+      emptyText: filt !== 'all' && n ? 'Nothing under ' + filt + '.' : 'No ' + plural(sec, 0) + ' yet.', emptyCanAdd: true,
+      rows, canReorder: reorder, showHandle: reorder && !mob, dragOn: reorder && !mob ? 'true' : 'false', dragEnd: () => this.setState({ drag: null, over: null }),
+
+      dirty, saving: S.saving, saveLabel: S.saving ? 'Saving…' : 'Save ' + sec.label,
+      dirtyText: others.length ? 'Also unsaved: ' + others.join(', ') + '. Ctrl/⌘ S saves this section.' : 'Nothing changes on the site until you save. Ctrl/⌘ S works too.',
+      onSave: () => this.save(), onDiscard: () => this.discard(),
+
+      formOpen: !!F, statPreview: !!(F && fsec.preview === 'stat'),
+      formKicker: F ? fsec.label + ' · ' + (F.index >= 0 ? 'Edit' : 'New') : '',
+      formTitle: F ? (F.index >= 0 ? this.itemName(F.type, fv) : (fsec.addLabel || 'New ' + fsec.one)) : '',
+      formHasLink: !!link, formLinkHref: link ? link.href : '', formLinkLabel: link ? link.label : '',
+      formSubmitLabel: F ? (F.index >= 0 ? 'Apply' : (fsec.addLabel || 'Add ' + fsec.one)) : '',
+      formErrText: errCount ? 'Fix ' + errCount + ' field' + (errCount === 1 ? '' : 's') + ' to continue.' : '',
+      submitForm: (e) => { e.preventDefault(); this.applyForm(); }, closeForm: () => this.closeForm(),
+      fields: F ? this.fieldVals(F, E, mob) : [],
+      pv: { n: fv.n === '' || fv.n == null ? '0' : fv.n, suffix: fv.suffix || '', label: (fv.label || '').trim() || 'Label' },
+
+      confirmOpen: !!cf,
+      cf: cf ? { title: cf.title, body: cf.body, okLabel: cf.okLabel || 'OK', cancelLabel: cf.cancelLabel || 'Cancel', ok: () => cf.run(), cancel: () => this.setState({ confirm: null }) } : {},
+      toastOpen: !!S.toast, t: S.toast || {}, toastBottom: dirty ? '96px' : '24px',
+      closeToast: () => { clearTimeout(this.toastTimer); this.setState({ toast: null }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

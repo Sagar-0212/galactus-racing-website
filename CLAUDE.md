@@ -14,7 +14,7 @@ Visitors: company sponsors on laptops, students on mid-range Android phones, jud
 | `team.html` | Team page (Prompt 7): intro (headline line masks, red line last, wedge wipe), leadership (duotone portraits → colour on hover, name underline), sub-team **tabs** (one ARIA tabpanel, arrow/Home/End keys, GSAP Flip switch in `src/motion/team.js`, sideways-scrolling row on phones), recruitment (Apply → `contact.json` "Apply" URL, else `#contact`) |
 | `404.html` | 404 page (Prompt 8), root-absolute links, `noindex`. Vercel serves it for unknown URLs |
 | `src/data/site.json` | Site URL (**placeholder `galactus-racing-website.vercel.app` until the real domain is known**). Feeds canonical + Open Graph/Twitter tags (`%SITE_URL%` in the HTML), and `sitemap.xml` + `robots.txt`, which the build generates |
-| `admin.html` | Admin panel, **dev only** (not in the production build). Still runs on the Claude Design runtime (`src/admin/support.js`, loads React from a CDN) with the **mock** API in `src/admin/admin-api.js`. Rebuild it when the real backend exists |
+| `admin.html` | Admin dashboard (vanilla JS, `src/admin/`, `src/styles/admin.css`). **Not in the normal production build**; `npm run build:admin` (or `ADMIN=1 npm run build`) includes it for testing. `api.js` = the only data layer (demo: seeded from `src/data/*.json`, saved in localStorage; Supabase replaces just this file), `schema.js` = screens + form fields, `form.js` = form engine, `image.js` = in-browser resize to 1600px WebP, `main.js` = shell/routes/screens. Demo login lives in `api.js`. Old Claude Design version: `archive/admin-claude-design/` |
 | `src/data/*.json` | **All content** (stats, cars, evolution, journey, achievements, gallery, team, subteams, sponsors, packages, fundraising, contact). Unverified facts carry `[TODO]` |
 | `src/render/*.js` | Turns the JSON into HTML. `ui.js` = design-system components (Button, Card, Headline…), `layout.js` = header/menu/footer, `home.js`, `team.js`. Run at build time by the plugin in `vite.config.js`; the gallery grid is also re-rendered at runtime |
 | `src/home.js`, `src/team.js` | Page behaviour: menu, gallery filter, lightbox, enquiry form |
@@ -41,11 +41,11 @@ Don't build anything inside `.dc.html` any more; the archive is reference only.
 
 ## Target stack (after conversion)
 - **Vite 8, multi-page, vanilla JS + CSS.** Pages: `index.html`, `team.html` (built), `admin.html` (dev only). No React on the public pages.
-- Content lives in `src/data/*.json` (stats, cars, journey, achievements, gallery, team, sponsors, packages, contact), shaped like the `SEED` in `admin-api.js`, so the admin panel and a future backend can feed it later.
+- Content lives in `src/data/*.json` (stats, cars, journey, achievements, gallery, team, sponsors, packages, contact), seeded into the admin by `src/admin/api.js`, so the admin panel and a future backend can feed it later.
 - Animation: **GSAP + ScrollTrigger**, **Lenis** smooth scroll driven from the GSAP ticker (`lenis.on('scroll', ScrollTrigger.update)`, `gsap.ticker.add(t => lenis.raf(t*1000))`, `gsap.ticker.lagSmoothing(0)`).
 - 3D: **Three.js** (plain, ES modules via npm). Only in the Cars section, and only if it beats the photo.
 - Before using any GSAP, ScrollTrigger, Lenis or Three.js API, check the current docs (Context7 MCP). Their APIs change.
-- **Backend (decided): Supabase** — database + email login + image storage. It is wired into the admin panel only **after the frontend is done**. Until then: keep `admin.html` working in dev on its current runtime (mock API), keep `src/data/*.json` shaped like `SEED` in `src/admin/admin-api.js`, and don't add any other backend (no Formspree/EmailJS/Firebase etc.).
+- **Backend (decided): Supabase** — database + email login + image storage. It is wired into the admin panel only **after the frontend is done**. Until then: the admin runs on the demo data layer in `src/admin/api.js` (only that file changes for Supabase; keep its function list), keep `src/data/*.json` shaped as `api.js` seeds them, and don't add any other backend (no Formspree/EmailJS/Firebase etc.).
 - Deploy target: **Vercel** (`vercel.json`: build `npm run build`, output `dist`). Not deployed yet (I import the repo on vercel.com myself). Repo: `Sagar-0212/galactus-racing-website` (branch `main`).
 
 ## Design system (MTVNA) — follow it

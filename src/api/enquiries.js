@@ -1,4 +1,4 @@
-// Sponsorship enquiries. One function, same contract as POST /enquiries in src/admin/admin-api.js
+// Sponsorship enquiries. One function, same shape as the enquiries in src/admin/api.js
 // (public, no auth):
 //   request body  {name, company, email, phone, interest, message}
 //   201 response  {id, status: 'New', notes: '', receivedAt, ...body}

@@ -48,4 +48,4 @@ npm run preview   # serve dist/ at http://localhost:4173
 
 ## Backend (later)
 
-The admin panel and the enquiry form will connect to **Supabase** (database, email login, image storage) once the frontend is finished. Until then the admin panel uses a mock API (`src/admin/admin-api.js`) with demo login details; that is not real security and is not part of the production build. Supabase keys will live in `.env` files, which are git-ignored.
+The admin panel and the enquiry form will connect to **Supabase** (database, email login, image storage) once the frontend is finished. Until then the admin dashboard (`admin.html`) runs in demo mode: content is seeded from `src/data/*.json` and changes are saved only in your browser (`src/admin/api.js`, which also holds the demo login). That is not real security, and the page is not part of the production build; build it for testing with `npm run build:admin`, then `npm run preview` and open `/admin.html`. Supabase keys will live in `.env` files, which are git-ignored.
