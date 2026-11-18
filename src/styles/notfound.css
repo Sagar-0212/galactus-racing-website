@@ -1,0 +1,11 @@
+/* 404 page: paper, the black -17° wedge, headline with the punchline in red, checkered footer. */
+/* this file only loads on the 404 page: footer sits at the bottom of short screens */
+.root { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+.nf { position: relative; flex: 1; box-sizing: border-box; display: flex; align-items: center; padding: 120px var(--gutter) 64px; background: var(--surface-page) var(--grain); overflow: hidden; }
+.nf__wedge { position: absolute; inset: 0; background: var(--ink-1000); clip-path: polygon(62% 100%, 100% 30%, 100% 100%); pointer-events: none; }
+.nf__in { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; max-width: 760px; }
+.nf__sector { font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--text-accent); }
+.nf__p { margin: 0; max-width: 44ch; font-size: var(--fs-body-l); line-height: var(--lh-body); color: var(--text-secondary); }
+.nf__btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.nf__foot { margin-top: 0; background: var(--ink-1000); }
+@media (max-width: 699px) { .nf__wedge { clip-path: polygon(0 100%, 100% 72%, 100% 100%); } }

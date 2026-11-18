@@ -1,0 +1,10 @@
+{
+  "name": "Galactus Racing",
+  "url": "https://galactus-racing-website.vercel.app",
+  "urlTodo": "Replace with the real domain once the site is live (Vercel gives <project>.vercel.app; a custom domain can come later). Used for canonical links, Open Graph tags, sitemap.xml and robots.txt.",
+  "ogImage": "/assets/og-image.jpg",
+  "pages": [
+    { "path": "/", "priority": "1.0" },
+    { "path": "/team.html", "priority": "0.8" }
+  ]
+}

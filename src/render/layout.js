@@ -6,12 +6,13 @@ const HOME_NAV = [
   ['team.html', 'Team'], ['#sponsors', 'Sponsors'], ['#contact', 'Contact'],
 ];
 
-// page: 'home' | 'team'
+// page: 'home' | 'team' | '404' (404 links are root-absolute: the page can be served at any depth)
 export function navLinks(page) {
   return HOME_NAV.map(([href, label]) => {
-    if (page === 'team') {
-      const h = href === 'team.html' ? href : href === '#home' ? 'index.html' : 'index.html' + href;
-      return { href: h, label, current: href === 'team.html' ? 'page' : null };
+    if (page !== 'home') {
+      const root = page === '404' ? '/' : 'index.html';
+      const h = href === 'team.html' ? (page === '404' ? '/team.html' : href) : href === '#home' ? root : root + href;
+      return { href: h, label, current: page === 'team' && href === 'team.html' ? 'page' : null };
     }
     return { href, label, current: href === '#home' ? 'true' : null };
   });
@@ -19,7 +20,7 @@ export function navLinks(page) {
 
 export function header({ page }) {
   const links = navLinks(page);
-  const homeHref = page === 'team' ? 'index.html' : '#home';
+  const homeHref = page === 'home' ? '#home' : page === '404' ? '/' : 'index.html';
   const nav = links
     .map((l) => `<a class="hdr__link${l.current ? ' is-current' : ''}" href="${esc(l.href)}"${l.current ? ` aria-current="${l.current}"` : ''}>${esc(l.label)}</a>`)
     .join('');
@@ -36,7 +37,7 @@ export function header({ page }) {
       <span></span><span></span><span class="is-red"></span>
     </button>
   </header>
-  <div id="gr-menu" class="menu${page === 'team' ? ' menu--team' : ''}" data-menu="" data-lenis-prevent="" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
+  <div id="gr-menu" class="menu${page !== 'home' ? ' menu--team' : ''}" data-menu="" data-lenis-prevent="" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
     <button type="button" class="menu__close" data-menu-close="" aria-label="Close menu">Close ✕</button>
     ${links.map((l) => `<a class="menu__link${l.current && page === 'team' ? ' is-current' : ''}" href="${esc(l.href)}"${l.current ? ` aria-current="${l.current}"` : ''}>${esc(l.label)}</a>`).join('')}
   </div>`;
